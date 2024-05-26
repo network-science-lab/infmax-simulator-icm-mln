@@ -2,19 +2,19 @@ name: infmax-simulator-icm-mln
 channels:
   - defaults
 dependencies:
-  - bzip2=1.0.8=h80987f9_6
-  - ca-certificates=2024.3.11=hca03da5_0
-  - libffi=3.4.4=hca03da5_1
-  - ncurses=6.4=h313beb8_0
-  - openssl=3.0.13=h1a28f6b_2
-  - pip=24.0=py310hca03da5_0
-  - python=3.10.14=hb885b13_1
-  - readline=8.2=h1a28f6b_0
-  - setuptools=69.5.1=py310hca03da5_0
-  - sqlite=3.45.3=h80987f9_0
-  - tk=8.6.14=h6ba3021_0
-  - wheel=0.43.0=py310hca03da5_0
-  - xz=5.4.6=h80987f9_1
-  - zlib=1.2.13=h18a0788_1
+  - bzip2=1.0.8
+  - ca-certificates=2024.3.11
+  - libffi=3.4.4
+  - ncurses=6.4
+  - openssl=3.0.13
+  - pip=24.0
+  - python=3.10.14
+  - readline=8.2
+  - setuptools=69.5.1
+  - sqlite=3.45.3
+  - tk=8.6.14
+  - wheel=0.43.0
+  - xz=5.4.6
+  - zlib=1.2.13
   - pip:
       - -r requirements.txt
