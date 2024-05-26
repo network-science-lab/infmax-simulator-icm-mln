@@ -112,7 +112,7 @@ def run_experiments(config):
             )
 
             # obtain global data and if case is even local one as well
-            diffusion_len, active_actors, seed_actors = extract_basic_stats(
+            diffusion_len, active_actors, seed_actors = extract_simulation_result(
                 detailed_logs=logs._local_stats
             )
             active_actors_prct = active_actors / net.get_actors_num() * 100
