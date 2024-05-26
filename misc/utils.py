@@ -172,7 +172,7 @@ def zip_detailed_logs(logged_dirs: list[Path], rm_logged_dirs: bool = True) -> N
     parent_dir = logged_dirs[0].parent
     
     # Create the name for the zip file based on the parent directory
-    zip_filename = parent_dir / "detailed_logs.zip"
+    zip_filename = parent_dir / "dataset.zip"
 
     # Create the archive
     try:

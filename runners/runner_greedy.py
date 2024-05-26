@@ -106,9 +106,8 @@ def run_experiments(config):
         investigated_case_file_path = out_dir.joinpath(f"proto-{protocol}--p-{round(p, 3)}--net-{net_name}.csv")
         save_magrinal_efficiences(marginal_efficiencies, investigated_case_file_path)
 
-    # # save global logs and config
-    # global_stats_handler.to_csv(out_dir.joinpath("results.csv"))
-    # zip_detailed_logs(detailed_stats_dirs, rm_logged_dirs=True)
+    # save global logs and config
+    zip_detailed_logs([out_dir], rm_logged_dirs=True)
 
     finish_time = get_current_time()
     print(f"Experiments finished at {finish_time}")
