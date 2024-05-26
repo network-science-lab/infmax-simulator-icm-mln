@@ -1,16 +1,13 @@
 from dataclasses import dataclass, asdict
 import datetime
-import json
 import os
 import random
 import shutil
 import subprocess
-import sys
 
 from pathlib import Path
 
 import numpy as np
-import network_diffusion as nd
 import pandas as pd
 
 
@@ -97,20 +94,6 @@ def save_magrinal_efficiences(marginal_efficiencies: list[SimulationResult], out
     pd.DataFrame(me_dict_all).to_csv(out_path)
 
 
-def compute_gain(seeds_prct, coverage_prct):
-    max_available_gain = 100 - seeds_prct
-    obtained_gain = coverage_prct - seeds_prct
-    return 100 * obtained_gain / max_available_gain
-
-
-def block_prints():
-    sys.stdout = open(os.devnull, 'w')
-
-
-def enable_prints():
-    sys.stdout = sys.__stdout__
-
-
 def get_current_time():
     now = datetime.datetime.now()
     return now.strftime("%Y-%m-%d %H:%M:%S")
@@ -123,45 +106,6 @@ def get_diff_of_times(strftime_1, strftime_2):
     return round((t_2 - t_1).seconds / 60, 2)
 
 
-def get_seed_selector(selector_name):
-    if selector_name == "cbim":
-        return nd.seeding.CBIMSeedselector
-    elif selector_name == "cim":
-        return nd.seeding.CIMSeedSelector
-    elif selector_name == "degree_centrality":
-        return nd.seeding.DegreeCentralitySelector
-    elif selector_name == "degree_centrality_discount":
-        return nd.seeding.DegreeCentralityDiscountSelector
-    elif selector_name == "k_shell":
-        return nd.seeding.KShellSeedSelector
-    elif selector_name == "k_shell_mln":
-        return nd.seeding.KShellMLNSeedSelector
-    elif selector_name == "kpp_shell":
-        return nd.seeding.KPPShellSeedSelector
-    elif selector_name == "neighbourhood_size":
-        return nd.seeding.NeighbourhoodSizeSelector
-    elif selector_name == "neighbourhood_size_discount":
-        return nd.seeding.NeighbourhoodSizeDiscountSelector
-    elif selector_name == "page_rank":
-        return nd.seeding.PageRankSeedSelector
-    elif selector_name == "page_rank_mln":
-        return nd.seeding.PageRankMLNSeedSelector
-    elif selector_name == "random":
-        return nd.seeding.RandomSeedSelector
-    elif selector_name == "vote_rank":
-        return nd.seeding.VoteRankSeedSelector
-    elif selector_name == "vote_rank_mln":
-        return nd.seeding.VoteRankMLNSeedSelector
-    raise AttributeError(f"{selector_name} is not a valid seed selector name!")
-
-
-class JSONEncoder(json.JSONEncoder):
-        def default(self, obj):
-            if isinstance(obj, nd.MLNetworkActor):
-                return obj.__dict__
-            return super().default(obj)
-
-
 def zip_detailed_logs(logged_dirs: list[Path], rm_logged_dirs: bool = True) -> None:
     # Ensure at least one directory is provided
     if len(logged_dirs) == 0:
@@ -172,7 +116,7 @@ def zip_detailed_logs(logged_dirs: list[Path], rm_logged_dirs: bool = True) -> N
     parent_dir = logged_dirs[0].parent
     
     # Create the name for the zip file based on the parent directory
-    zip_filename = parent_dir / "dataset.zip"
+    zip_filename = parent_dir / "_output.zip"
 
     # Create the archive
     try:

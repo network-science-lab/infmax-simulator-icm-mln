@@ -37,9 +37,10 @@ def run_experiments(config):
     )
     repetitions = config["run"]["repetitions"]
 
-    # prepare output directory
-    out_dir = Path(config["logging"]["out_dir"]) / config["logging"]["name"]
+    # prepare output directory and deterimne how to store results
+    out_dir = Path(config["logging"]["out_dir"])
     out_dir.mkdir(exist_ok=True, parents=True)
+    compress_to_zip = config["logging"]["compress_to_zip"]
 
     # save config
     with open(out_dir / "config.yaml", "w") as f:
@@ -107,7 +108,8 @@ def run_experiments(config):
         save_magrinal_efficiences(marginal_efficiencies, investigated_case_file_path)
 
     # save global logs and config
-    zip_detailed_logs([out_dir], rm_logged_dirs=True)
+    if compress_to_zip:
+        zip_detailed_logs([out_dir], rm_logged_dirs=True)
 
     finish_time = get_current_time()
     print(f"Experiments finished at {finish_time}")

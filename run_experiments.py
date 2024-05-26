@@ -3,7 +3,7 @@ import warnings
 import yaml
 
 from misc.utils import set_seed
-from runners import runner_greedy, runner_optimised
+from runners import main_runner
 
 
 warnings.filterwarnings(action="ignore", category=FutureWarning)
@@ -19,7 +19,7 @@ def parse_args(*args):
     )
     parser.add_argument(
         "--runner",
-        help="A runner function to execute (default: runner_optimised).",
+        help="A runner function to execute (default: main_runner).",
         type=str,
         default="runner_optimised",
     )
@@ -29,7 +29,7 @@ def parse_args(*args):
 if __name__ == "__main__":
 
     args = parse_args(
-        ["--config", "_experiments/examples/example_greedy.yaml", "--runner", "runner_greedy"]
+        ["--config", "_configs/example.yaml", "--runner", "main_runner"]
     )
     # args = parse_args()
 
@@ -40,11 +40,8 @@ if __name__ == "__main__":
         set_seed(config["run"]["random_seed"])
     print(f"Loaded config: {config}")
 
-    if args.runner == "runner_greedy":
+    if args.runner == "main_runner":
         print(f"Inferred runner as: {args.runner}")
-        runner_greedy.run_experiments(config)
-    elif args.runner == "runner_optimised":
-        print(f"Inferred runner as: {args.runner}")
-        runner_optimised.run_experiments(config)
+        main_runner.run_experiments(config)
     else:
         raise AttributeError(f"Incorrect runner name ({args.runner})!")
