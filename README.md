@@ -1,9 +1,9 @@
-# Inluence Maximisation Simulator for Multilayer Networks under Independent Cascade Model 
+# Inf. Max. Simulator for Multilayer Networks under ICM 
 
 A repository to generate dataset with marginal efficiency for each actor from the evaluated network.
 
-Author: Michał Czuba + Network Science Lab
-Affiliation: WUST, Wrocław, Lower Silesia, Poland
+* Author: Michał Czuba + Network Science Lab
+* Affiliation: WUST, Wrocław, Lower Silesia, Poland
 
 ## Data
 
@@ -19,7 +19,7 @@ conda activate infmax-simulator-icm-mln
 ## Structure of the repository
 ```
 .
-├── _configs           -> definitions of the spreading regime under which computations are performed
+├── _configs           -> def. of the spreading regimes under which do computations
 ├── _data_set          -> networks to compute actors' marginal efficiency for
 ├── _output            -> a directory where we recommend to save results
 ├── env                -> a definition of the runtime environment
