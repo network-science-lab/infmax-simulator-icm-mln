@@ -9,7 +9,7 @@ from runners import runner_greedy, runner_optimised
 warnings.filterwarnings(action="ignore", category=FutureWarning)
 
 
-def parse_args():
+def parse_args(*args):
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--config",
@@ -23,12 +23,15 @@ def parse_args():
         type=str,
         default="runner_optimised",
     )
-    return parser.parse_args()
+    return parser.parse_args(*args)
 
 
 if __name__ == "__main__":
 
-    args = parse_args()
+    args = parse_args(
+        ["--config", "_experiments/examples/example_greedy.yaml", "--runner", "runner_greedy"]
+    )
+    # args = parse_args()
 
     with open(args.config, "r") as f:
         config = yaml.safe_load(f)

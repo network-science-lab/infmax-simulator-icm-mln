@@ -1,6 +1,7 @@
 from functools import wraps
 from pathlib import Path
 
+from network_diffusion.mln.functions import get_toy_network
 import pandas as pd
 import network_diffusion as nd
 import networkx as nx
@@ -178,4 +179,6 @@ def load_network(net_name: str) -> nd.MultilayerNetwork:
         return get_sf5_network()
     elif net_name == "timik1q2009":
         return get_timik1q2009_network()
+    elif net_name == "toy_network":
+        return get_toy_network()
     raise AttributeError(f"Unknown network: {net_name}")
