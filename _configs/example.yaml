@@ -8,11 +8,11 @@ model:
     ]
 
 networks: [
-  # "aucs",
+  "aucs",
   # "ckm_physicians",
   # "eu_transportation",
   # "lazega",
-  "toy_network"
+  # "toy_network"
 ]
 
 run:
@@ -22,4 +22,4 @@ run:
 logging:
   compress_to_zip: False
   out_dir: "./_output"
-  name: new_greedy
+  name: examplary_pipeline

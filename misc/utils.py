@@ -85,7 +85,8 @@ def extract_simulation_result(detailed_logs, net, actor):
 
 def mean_repeated_results(repeated_results: list[SimulationResult]) -> SimulationResult:
     rr_dict_all = [asdict(rr) for rr in repeated_results]
-    rr_dict_mean = pd.DataFrame(rr_dict_all).mean().round(2).to_dict()
+    rr_df_all = pd.DataFrame(rr_dict_all)
+    rr_dict_mean = rr_df_all.groupby("actor_id").mean().reset_index().iloc[0].round(3).to_dict()
     return SimulationResult(**rr_dict_mean)
 
 
