@@ -1,12 +1,15 @@
 from dataclasses import dataclass
 from itertools import product
 from pathlib import Path
+import warnings
 import yaml
 
 from misc.net_loader import load_network
 from misc.utils import *
 from tqdm import tqdm
 import network_diffusion as nd
+
+warnings.filterwarnings(action="ignore", category=FutureWarning)
 
 
 @dataclass(frozen=True)

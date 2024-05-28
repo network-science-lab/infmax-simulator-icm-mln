@@ -2,14 +2,10 @@
 # TODO: merge argparser with yaml config
 
 import argparse
-import warnings
 import yaml
 
 from misc.utils import set_seed
 from runners import main_runner
-
-
-warnings.filterwarnings(action="ignore", category=FutureWarning)
 
 
 def parse_args(*args):

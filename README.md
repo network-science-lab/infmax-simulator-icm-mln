@@ -19,14 +19,16 @@ conda activate infmax-simulator-icm-mln
 ## Structure of the repository
 ```
 .
-├── _configs           -> def. of the spreading regimes under which do computations
-├── _data_set          -> networks to compute actors' marginal efficiency for
-├── _output            -> a directory where we recommend to save results
-├── env                -> a definition of the runtime environment
-├── misc               -> miscellaneous scripts helping in simulations
-├── runners            -> scripts to execute experiments according to provided configs
+├── _configs                -> def. of the spreading regimes under which do computations
+├── _data_set               -> networks to compute actors' marginal efficiency for
+├── _test_data              -> examplary outputs of the dataset generator used in the E2E test
+├── _output                 -> a directory where we recommend to save results
+├── env                     -> a definition of the runtime environment
+├── misc                    -> miscellaneous scripts helping in simulations
+├── runners                 -> scripts to execute experiments according to provided configs
 ├── README.md          
-└── run_experiments.py -> main entrypoint to trigger the pipeline
+├── run_experiments.py      -> main entrypoint to trigger the pipeline
+└── test_reproducibility.py -> E2E test to prove that results can be repeated
 ```
 
 ## Running the pipeline
@@ -44,3 +46,7 @@ actors_not_infected: int
 peak_infections_nb: int
 peak_iteration_nb: int
 ```
+
+## Results reproducibility
+
+Results are supposed to be fully reproducable. There is a test for that: `test_reproducibility.py`.
