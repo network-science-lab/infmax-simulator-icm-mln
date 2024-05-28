@@ -41,6 +41,7 @@ def run_experiments(config):
     out_dir = Path(config["logging"]["out_dir"])
     out_dir.mkdir(exist_ok=True, parents=True)
     compress_to_zip = config["logging"]["compress_to_zip"]
+    average_results = config["run"]["average_results"]
 
     # save config
     with open(out_dir / "config.yaml", "w", encoding="utf-8") as f:
@@ -101,7 +102,10 @@ def run_experiments(config):
                 repeated_results.append(simulation_result)
             
             # get mean value for each result
-            marginal_efficiencies.append(mean_repeated_results(repeated_results))
+            if average_results:
+                marginal_efficiencies.append(mean_repeated_results(repeated_results))
+            else:
+                marginal_efficiencies.extend(repeated_results)
         
         # save efficiences obtained for this case
         investigated_case_file_path = out_dir / f"proto-{protocol}--p-{round(p, 3)}--net-{net_name}.csv"

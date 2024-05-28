@@ -22,10 +22,10 @@ def set_seed(seed):
 class SimulationResult:
     actor_id: int
     simulation_length: int
-    actors_infected: int
-    actors_not_infected: int
-    peak_infections_nb: int
-    peak_iteration_nb: int
+    actors_infect: int
+    actors_ninfect: int
+    peak_infect_nb: int
+    peak_infect_iter: int
 
 
 def extract_simulation_result(detailed_logs, net, actor):
@@ -49,22 +49,19 @@ def extract_simulation_result(detailed_logs, net, actor):
 
         # sanity checks
         if epoch_num == 0:
-            assert (
-                actorwise_log["active_actors"] == 1, 
+            assert actorwise_log["active_actors"] == 1, \
                 f"Number of seeds must be 1 (got: {actorwise_log['active_actors']} + )"
-            )
+            
         else:
-            assert (
-                actors_infected_epoch >= actors_infected_total,
+            assert actors_infected_epoch >= actors_infected_total, \
                 f"Results contradict themselves! \
                 Number of active actors in {epoch_num} epoch: {actors_infected_epoch} \
                 number of all actors active so far: {actors_infected_total}"
-            )
     
         # update peaks
         if actorwise_log["active_actors"] > peak_infections_nb:
             peak_infections_nb = actorwise_log["active_actors"]
-            peak_iteration_nb = epoch_num + 1  # we don't start counting from 0 :)
+            peak_iteration_nb = epoch_num + 1  # TODO we don't start counting from 0 :)
         
         # update nb of infected actors
         actors_infected_total = actors_infected_epoch
@@ -72,10 +69,10 @@ def extract_simulation_result(detailed_logs, net, actor):
     return SimulationResult(
         actor_id=actor.actor_id,
         simulation_length=len(detailed_logs) - 1,
-        actors_infected=actors_infected_total,  # do we consider within this number the seed as well?
-        actors_not_infected=actors_nb - actors_infected_total,
-        peak_infections_nb=peak_infections_nb,
-        peak_iteration_nb=peak_iteration_nb
+        actors_infect=actors_infected_total,  # TODO do we consider within this number the seed as well?
+        actors_ninfect=actors_nb - actors_infected_total,
+        peak_infect_nb=peak_infections_nb,
+        peak_infect_iter=peak_iteration_nb
     )
 
 

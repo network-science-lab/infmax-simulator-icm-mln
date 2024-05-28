@@ -8,16 +8,17 @@ model:
     ]
 
 networks: [
-  "aucs",
+  # "aucs",
   # "ckm_physicians",
   # "eu_transportation",
   # "lazega",
-  # "toy_network"
+  "toy_network"
 ]
 
 run:
-  repetitions: 20
+  repetitions: 30
   random_seed: 43
+  average_results: False
 
 logging:
   compress_to_zip: False
