@@ -1,3 +1,6 @@
+# TODO: change prints to logs
+# TODO: merge argparser with yaml config
+
 import argparse
 import warnings
 import yaml
@@ -10,7 +13,7 @@ warnings.filterwarnings(action="ignore", category=FutureWarning)
 
 
 def parse_args(*args):
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser()  # TODO: rewrite to follow Unix convention of CLI software
     parser.add_argument(
         "--config",
         help="Experiment config file (default: config.yaml).",
@@ -21,7 +24,7 @@ def parse_args(*args):
         "--runner",
         help="A runner function to execute (default: main_runner).",
         type=str,
-        default="runner_optimised",
+        default="main_runner",
     )
     return parser.parse_args(*args)
 
@@ -33,10 +36,10 @@ if __name__ == "__main__":
     )
     # args = parse_args()
 
-    with open(args.config, "r") as f:
+    with open(args.config, "r", encoding="utf-8") as f:
         config = yaml.safe_load(f)
-    if _ := config["run"].get("random_seed"):
-        print(f"Setting random seed as {_}!")
+    if random_seed := config["run"].get("random_seed"):
+        print(f"Setting random seed as {random_seed}!")
         set_seed(config["run"]["random_seed"])
     print(f"Loaded config: {config}")
 

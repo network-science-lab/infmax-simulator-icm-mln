@@ -9,7 +9,7 @@ from tqdm import tqdm
 import network_diffusion as nd
 
 
-@dataclass
+@dataclass(frozen=True)
 class Network:
     name: str
     graph: nd.MultilayerNetwork
@@ -43,7 +43,7 @@ def run_experiments(config):
     compress_to_zip = config["logging"]["compress_to_zip"]
 
     # save config
-    with open(out_dir / "config.yaml", "w") as f:
+    with open(out_dir / "config.yaml", "w", encoding="utf-8") as f:
         yaml.dump(config, f)
 
     # get a start time
@@ -104,7 +104,7 @@ def run_experiments(config):
             marginal_efficiencies.append(mean_repeated_results(repeated_results))
         
         # save efficiences obtained for this case
-        investigated_case_file_path = out_dir.joinpath(f"proto-{protocol}--p-{round(p, 3)}--net-{net_name}.csv")
+        investigated_case_file_path = out_dir / f"proto-{protocol}--p-{round(p, 3)}--net-{net_name}.csv"
         save_magrinal_efficiences(marginal_efficiencies, investigated_case_file_path)
 
     # save global logs and config

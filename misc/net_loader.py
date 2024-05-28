@@ -1,3 +1,5 @@
+#  TODO: clean loaders for functions we're not using
+
 from functools import wraps
 from pathlib import Path
 
@@ -9,19 +11,19 @@ import networkx as nx
 
 def _network_from_pandas(path):
     df = pd.read_csv(path, names=["node_1", "node_2", "layer"])
-    net_dict = {l_name: nx.Graph() for l_name in [*df["layer"].unique()]}
-    for _, row in df.iterrows():
+    net_dict = {l_name: nx.Graph() for l_name in df["layer"].unique()}
+    for _, row in df.iterrows():  # TODO: consider changing the method of iterating
         net_dict[row["layer"]].add_edge(row["node_1"], row["node_2"])
     return nd.MultilayerNetwork.from_nx_layers(
-        layer_names=[*net_dict.keys()], network_list=[*net_dict.values()]
+        layer_names=list(*net_dict.keys()), network_list=list(net_dict.values())
     )
 
 
-def returns_some_layers(get_network_func):
+def return_some_layers(get_network_func):
     @wraps(get_network_func)
     def wrapper(layer_slice = None):
         net = get_network_func()
-        if layer_slice is None or len(layer_slice) == 0:
+        if not layer_slice:
             return net
         l_graphs = [net.layers[layer] for layer in layer_slice]
         return nd.MultilayerNetwork.from_nx_layers(l_graphs, layer_slice)
@@ -38,7 +40,7 @@ def get_ckm_physicians_network():
     )
 
 
-@returns_some_layers
+@return_some_layers
 def get_eu_transportation_network():
     return _network_from_pandas(
         "_data_set/EUAirTransportation_multiplex_4NoNature.edges"
@@ -59,7 +61,7 @@ def get_er3_network():
     return nd.MultilayerNetwork.from_mpx(file_path="_data_set/er_3.mpx")
 
 
-@returns_some_layers
+@return_some_layers
 def get_er5_network():
     return nd.MultilayerNetwork.from_mpx(file_path="_data_set/er_5.mpx")
 
@@ -72,7 +74,7 @@ def get_sf3_network():
     return nd.MultilayerNetwork.from_mpx(file_path="_data_set/sf_3.mpx")
 
 
-@returns_some_layers
+@return_some_layers
 def get_sf5_network():
     return nd.MultilayerNetwork.from_mpx(file_path="_data_set/sf_5.mpx")
 
@@ -80,7 +82,7 @@ def get_sf5_network():
 def get_ddm_network(layernames_path, edgelist_path, weighted, digraph):
     # read mapping of layer IDs to their names
     with open(layernames_path) as file:
-        layer_names = file.readlines()
+        layer_names = file.readlines(encoding="utf-8")
     layer_names = [ln.rstrip('\n').split(" ") for ln in layer_names]
     layer_names = {ln[0]: ln[1] for ln in layer_names}
     
@@ -92,11 +94,11 @@ def get_ddm_network(layernames_path, edgelist_path, weighted, digraph):
     )
     net_ids_dict = {
         l_name: nx.DiGraph() if digraph else nx.Graph()
-        for l_name in [*df["layer_id"].unique()]
+        for l_name in list(df["layer_id"].unique())
     }
 
     # populate network with edges
-    for _, row in df.iterrows():
+    for _, row in df.iterrows():  # TODO: consider changing the method of iterating
         if weighted:
             attrs = {"weight": row["weight"]}
         else:

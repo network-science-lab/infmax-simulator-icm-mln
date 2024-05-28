@@ -18,7 +18,7 @@ def set_seed(seed):
     os.environ["PYTHONHASHSEED"] = str(seed)
 
 
-@dataclass
+@dataclass(frozen=True)
 class SimulationResult:
     actor_id: int
     simulation_length: int
@@ -30,7 +30,6 @@ class SimulationResult:
 
 def extract_simulation_result(detailed_logs, net, actor):
     """Get length of diffusion, real number of seeds and final coverage."""
-    # simulation_length = 0
     actors_infected_total = 0
     peak_infections_nb = 0
     peak_iteration_nb = 0
@@ -50,26 +49,23 @@ def extract_simulation_result(detailed_logs, net, actor):
 
         # sanity checks
         if epoch_num == 0:
-            if actorwise_log["active_actors"] != 1: raise ArithmeticError(
-                "Number of seeds must be 1 (got: " + actorwise_log["active_actors"] + ")"
+            assert (
+                actorwise_log["active_actors"] == 1, 
+                f"Number of seeds must be 1 (got: {actorwise_log['active_actors']} + )"
             )
         else:
-            if actors_infected_epoch < actors_infected_total:
-                raise ArithmeticError(
-                    f"Results contradict themselves! \
-                    Number of active actors in {epoch_num} epoch: {actors_infected_epoch} \
-                    number of all actors active so far: {actors_infected_total}"
-                )
+            assert (
+                actors_infected_epoch >= actors_infected_total,
+                f"Results contradict themselves! \
+                Number of active actors in {epoch_num} epoch: {actors_infected_epoch} \
+                number of all actors active so far: {actors_infected_total}"
+            )
     
         # update peaks
         if actorwise_log["active_actors"] > peak_infections_nb:
             peak_infections_nb = actorwise_log["active_actors"]
             peak_iteration_nb = epoch_num + 1  # we don't start counting from 0 :)
         
-        # # update real length of diffusion
-        # if actors_infected_epoch != actors_infected_total:
-        #     simulation_length = epoch_num + 1  # we don't start counting from 0 :)
-
         # update nb of infected actors
         actors_infected_total = actors_infected_epoch
 
@@ -104,7 +100,7 @@ def get_diff_of_times(strftime_1, strftime_2):
     fmt = "%Y-%m-%d %H:%M:%S"
     t_1 = datetime.datetime.strptime(strftime_1, fmt)
     t_2 = datetime.datetime.strptime(strftime_2, fmt)
-    return round((t_2 - t_1).seconds / 60, 2)
+    return round((t_2 - t_1).seconds / 60, 2)  # TODO: consider using timedelta
 
 
 def zip_detailed_logs(logged_dirs: list[Path], rm_logged_dirs: bool = True) -> None:
@@ -140,16 +136,20 @@ def zip_detailed_logs(logged_dirs: list[Path], rm_logged_dirs: bool = True) -> N
 def nodewise_to_actorwise_epochlog(nodewise_epochlog, actors_nb):
     inactive_nodes, active_nodes, activated_nodes = [], [], []
     for node_log in nodewise_epochlog:
-        if node_log["new_state"] == "0":
-            inactive_nodes.append(node_log["node_name"])
-        if node_log["new_state"] == "1":
-            active_nodes.append(node_log["node_name"])
-        if node_log["new_state"] == "-1":
-            activated_nodes.append(node_log["node_name"])
+        new_state = node_log["new_state"]
+        node_name = node_log["node_name"]
+        if new_state == "0":
+            inactive_nodes.append(node_name)
+        elif new_state == "1":
+            active_nodes.append(node_name)
+        elif new_state == "-1":
+            activated_nodes.append(node_name)
+        else:
+            raise ValueError
     actorwise_log = {
         "inactive_actors": len(set(inactive_nodes)),
         "active_actors": len(set(active_nodes)),
         "activated_actors": len(set(activated_nodes)),
     }
-    assert actors_nb == sum([v for v in actorwise_log.values()])
+    assert actors_nb == sum(actorwise_log.values())
     return actorwise_log
