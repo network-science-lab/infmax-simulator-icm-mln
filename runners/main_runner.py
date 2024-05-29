@@ -19,7 +19,10 @@ class Network:
 
 
 def get_parameter_space(protocols: list[str], p_values: list[float], networks: list[str]) -> product:
-    nets = [Network(n, load_network(n)) for n in networks]
+    nets = []
+    for n in networks:
+        print(f"Loading {n} network")
+        nets.append(Network(n, load_network(n)))
     return product(protocols, p_values, nets)
 
 

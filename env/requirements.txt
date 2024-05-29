@@ -1,3 +1,4 @@
+dvc~=3.51.1
 matplotlib~=3.9.0
 network-diffusion~=0.13.0
 networkx~=2.8.5

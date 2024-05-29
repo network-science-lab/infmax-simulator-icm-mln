@@ -31,52 +31,46 @@ def return_some_layers(get_network_func):
 
 
 def get_aucs_network():
-    return nd.MultilayerNetwork.from_mpx(file_path="_data_set/aucs.mpx")
+    return nd.MultilayerNetwork.from_mpx(file_path="_data_set/small_real/aucs.mpx")
 
 
 def get_ckm_physicians_network():
-    return _network_from_pandas(
-        "_data_set/CKM-Physicians-Innovation_4NoNature.edges"
-    )
+    return _network_from_pandas("_data_set/small_real/CKM-Physicians-Innovation_4NoNature.edges")
 
 
 @return_some_layers
 def get_eu_transportation_network():
-    return _network_from_pandas(
-        "_data_set/EUAirTransportation_multiplex_4NoNature.edges"
-    )
+    return _network_from_pandas("_data_set/small_real/EUAirTransportation_multiplex_4NoNature.edges")
 
 
 def get_lazega_network():
-    return _network_from_pandas(
-        "_data_set/Lazega-Law-Firm_4NoNatureNoLoops.edges"
-    )
+    return _network_from_pandas("_data_set/small_real/Lazega-Law-Firm_4NoNatureNoLoops.edges")
 
 
 def get_er2_network():
-    return nd.MultilayerNetwork.from_mpx(file_path="_data_set/er_2.mpx")
+    return nd.MultilayerNetwork.from_mpx(file_path="_data_set/small_artificial/er_2.mpx")
 
 
 def get_er3_network():
-    return nd.MultilayerNetwork.from_mpx(file_path="_data_set/er_3.mpx")
+    return nd.MultilayerNetwork.from_mpx(file_path="_data_set/small_artificial/er_3.mpx")
 
 
 @return_some_layers
 def get_er5_network():
-    return nd.MultilayerNetwork.from_mpx(file_path="_data_set/er_5.mpx")
+    return nd.MultilayerNetwork.from_mpx(file_path="_data_set/small_artificial/er_5.mpx")
 
 
 def get_sf2_network():
-    return nd.MultilayerNetwork.from_mpx(file_path="_data_set/sf_2.mpx")
+    return nd.MultilayerNetwork.from_mpx(file_path="_data_set/small_artificial/sf_2.mpx")
 
 
 def get_sf3_network():
-    return nd.MultilayerNetwork.from_mpx(file_path="_data_set/sf_3.mpx")
+    return nd.MultilayerNetwork.from_mpx(file_path="_data_set/small_artificial/sf_3.mpx")
 
 
 @return_some_layers
 def get_sf5_network():
-    return nd.MultilayerNetwork.from_mpx(file_path="_data_set/sf_5.mpx")
+    return nd.MultilayerNetwork.from_mpx(file_path="_data_set/small_artificial/sf_5.mpx")
 
 
 def get_ddm_network(layernames_path, edgelist_path, weighted, digraph):
@@ -118,7 +112,7 @@ def get_ddm_network(layernames_path, edgelist_path, weighted, digraph):
 
 
 def get_arxiv_network():
-    root_path = Path("_data_set/arXiv-Netscience_Multiplex_Coauthorship/Dataset")
+    root_path = Path("_data_set/arxiv_netscience_coauthorship/Dataset")
     net = get_ddm_network(
         layernames_path= root_path / "arxiv_netscience_layers.txt",
         edgelist_path=root_path / "arxiv_netscience_multiplex.edges",
@@ -129,7 +123,7 @@ def get_arxiv_network():
 
 
 def get_cannes_network():
-    root_path = Path("_data_set/Cannes2013_Multiplex_Social/Dataset")
+    root_path = Path("_data_set/cannes_2013_social/Dataset")
     net = get_ddm_network(
         layernames_path= root_path / "Cannes2013_layers.txt",
         edgelist_path=root_path / "Cannes2013_multiplex.edges",
@@ -159,7 +153,7 @@ def load_network(net_name: str) -> nd.MultilayerNetwork:
         return get_ckm_physicians_network()
     elif net_name == "eu_transportation":
         return get_eu_transportation_network()
-    elif net_name == "eu_trans_1":
+    elif net_name == "eu_transport_klm":
         return get_eu_transportation_network(["KLM"])
     elif net_name == "lazega":
         return get_lazega_network()

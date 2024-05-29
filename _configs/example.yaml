@@ -8,11 +8,23 @@ model:
     ]
 
 networks: [
+  # "arxiv",
   # "aucs",
+  # "cannes",
   # "ckm_physicians",
   # "eu_transportation",
+  # "eu_transport_klm",
   # "lazega",
-  "toy_network"
+  # "er1",
+  # "er2",
+  # "er3",
+  # "er5",
+  # "sf1",
+  # "sf2",
+  # "sf3",
+  # "sf5",
+  # "timik1q2009",
+  "toy_network",
 ]
 
 run:
