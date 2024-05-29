@@ -2,12 +2,8 @@
 
 A repository to generate dataset with marginal efficiency for each actor from the evaluated network.
 
-* Author: Michał Czuba + Network Science Lab
+* Authors: Piotr Bródka, Michał Czuba, Adam Piróg, Mateusz Stolarski
 * Affiliation: WUST, Wrocław, Lower Silesia, Poland
-
-## Data
-
-TODO
 
 ## Configuration of the runtime
 
@@ -15,6 +11,12 @@ TODO
 conda env create -f env/conda.yaml
 conda activate infmax-simulator-icm-mln
 ```
+
+## Data
+
+The dataset is stored on DVC. In order to fetch it, please sent a request to get  an access via 
+e-mail (michal.czuba@pwr.edu.pl). Then, simply execute `dvc push` in your shell.
+
 
 ## Structure of the repository
 ```
