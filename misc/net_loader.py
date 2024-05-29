@@ -15,7 +15,7 @@ def _network_from_pandas(path):
     for _, row in df.iterrows():  # TODO: consider changing the method of iterating
         net_dict[row["layer"]].add_edge(row["node_1"], row["node_2"])
     return nd.MultilayerNetwork.from_nx_layers(
-        layer_names=list(*net_dict.keys()), network_list=list(net_dict.values())
+        layer_names=list(net_dict.keys()), network_list=list(net_dict.values())
     )
 
 
@@ -81,8 +81,8 @@ def get_sf5_network():
 
 def get_ddm_network(layernames_path, edgelist_path, weighted, digraph):
     # read mapping of layer IDs to their names
-    with open(layernames_path) as file:
-        layer_names = file.readlines(encoding="utf-8")
+    with open(layernames_path, encoding="utf-8") as file:
+        layer_names = file.readlines()
     layer_names = [ln.rstrip('\n').split(" ") for ln in layer_names]
     layer_names = {ln[0]: ln[1] for ln in layer_names}
     

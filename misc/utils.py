@@ -97,7 +97,7 @@ def get_diff_of_times(strftime_1, strftime_2):
     fmt = "%Y-%m-%d %H:%M:%S"
     t_1 = datetime.datetime.strptime(strftime_1, fmt)
     t_2 = datetime.datetime.strptime(strftime_2, fmt)
-    return round((t_2 - t_1).seconds / 60, 2)  # TODO: consider using timedelta
+    return t_2 - t_1
 
 
 def zip_detailed_logs(logged_dirs: list[Path], rm_logged_dirs: bool = True) -> None:
