@@ -28,7 +28,8 @@ def compare_results(gt_dir: Path, test_dir: Path, csv_names: list[str]) -> None:
     for csv_name in csv_names:
         gt_df = pd.read_csv(gt_dir / csv_name, index_col=0)
         test_df = pd.read_csv(test_dir / csv_name, index_col=0)
-        assert gt_df.equals(test_df), f"Error in {csv_name}"
+        assert gt_df.equals(test_df), f"Error in test of {csv_name}"
+        print(f"Test passed for {csv_name}")
 
 
 def test_e2e():

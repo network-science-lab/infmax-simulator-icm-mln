@@ -39,12 +39,12 @@ result, for each evaluated spreading case, a csv file will be obtained with a fo
 regarding each actor of the network:
 
 ```python
-actor_id: int
-simulation_length: int
-actors_infected: int
-actors_not_infected: int
-peak_infections_nb: int
-peak_iteration_nb: int
+actor: int              # actor's id
+simulation_length: int  # nb. of simulation steps
+exposed: int            # nb. of infected actors
+not_exposed: int        # nb. of not infected actors
+peak_infected: int      # maximal nb. of infected actors in a single sim. step
+peak_iteration: int     # a sim. step when the peak occured
 ```
 
 ## Results reproducibility

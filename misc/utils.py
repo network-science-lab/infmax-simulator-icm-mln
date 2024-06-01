@@ -15,17 +15,17 @@ def set_seed(seed):
     """Fix seeds for reproducable experiments."""
     random.seed(seed)
     np.random.seed(seed)
-    os.environ["PYTHONHASHSEED"] = str(seed)
+    os.environ["PYTHONHASHSEED"] = str(seed)  # TODO: check if setting this have impact on the func.
 
 
 @dataclass(frozen=True)
 class SimulationResult:
-    actor_id: int
-    simulation_length: int
-    actors_infect: int
-    actors_ninfect: int
-    peak_infect_nb: int
-    peak_infect_iter: int
+    actor: int  # actor's id
+    simulation_length: int  # nb. of simulation steps
+    exposed: int  # nb. of infected actors
+    not_exposed: int  # nb. of not infected actors
+    peak_infected: int  # maximal nb. of infected actors in a single sim. step
+    peak_iteration: int  # a sim. step when the peak occured
 
 
 def extract_simulation_result(detailed_logs, net, actor):
@@ -67,12 +67,12 @@ def extract_simulation_result(detailed_logs, net, actor):
         actors_infected_total = actors_infected_epoch
 
     return SimulationResult(
-        actor_id=actor.actor_id,
+        actor=actor.actor_id,
         simulation_length=len(detailed_logs) - 1,
-        actors_infect=actors_infected_total,  # TODO do we consider within this number the seed as well?
-        actors_ninfect=actors_nb - actors_infected_total,
-        peak_infect_nb=peak_infections_nb,
-        peak_infect_iter=peak_iteration_nb
+        exposed=actors_infected_total,  # TODO do we consider within this number the seed as well?
+        not_exposed=actors_nb - actors_infected_total,
+        peak_infected=peak_infections_nb,
+        peak_iteration=peak_iteration_nb
     )
 
 
@@ -85,7 +85,7 @@ def mean_repeated_results(repeated_results: list[SimulationResult]) -> Simulatio
 
 def save_magrinal_efficiences(marginal_efficiencies: list[SimulationResult], out_path: Path) -> None:
     me_dict_all = [asdict(me) for me in marginal_efficiencies]
-    pd.DataFrame(me_dict_all).to_csv(out_path)
+    pd.DataFrame(me_dict_all).to_csv(out_path, index=False)
 
 
 def get_current_time():

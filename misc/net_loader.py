@@ -113,7 +113,7 @@ def get_ddm_network(layernames_path, edgelist_path, weighted, digraph):
 
     # create multilater network from edges
     return nd.MultilayerNetwork.from_nx_layers(
-        layer_names=[*net_names_dict.keys()], network_list=[*net_names_dict.values()]
+        layer_names=list(net_names_dict.keys()), network_list=list(net_names_dict.values())
     )
 
 
