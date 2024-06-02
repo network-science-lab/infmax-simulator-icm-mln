@@ -15,7 +15,7 @@ conda activate infmax-simulator-icm-mln
 ## Data
 
 The dataset is stored on DVC. In order to fetch it, please sent a request to get  an access via 
-e-mail (michal.czuba@pwr.edu.pl). Then, simply execute `dvc push` in your shell.
+e-mail (michal.czuba@pwr.edu.pl). Then, simply execute `dvc pull` in your shell.
 
 
 ## Structure of the repository
