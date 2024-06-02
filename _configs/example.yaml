@@ -35,4 +35,3 @@ run:
 logging:
   compress_to_zip: False
   out_dir: "./_output"
-  name: examplary_pipeline
