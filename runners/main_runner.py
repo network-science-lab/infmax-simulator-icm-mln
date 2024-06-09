@@ -28,9 +28,9 @@ def get_parameter_space(protocols: list[str], p_values: list[float], networks: l
 
 def get_ranking(
     actor: nd.MLNetworkActor, actors: list[nd.MLNetworkActor]
-) -> nd.seeding.MockyActorSelector:
+) -> nd.seeding.MockingActorSelector:
     ranking_list = [actor, *set(actors).difference({actor})]
-    return nd.seeding.MockyActorSelector(ranking_list)
+    return nd.seeding.MockingActorSelector(ranking_list)
 
 
 def run_experiments(config):
