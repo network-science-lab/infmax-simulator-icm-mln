@@ -5,5 +5,6 @@ network-diffusion~=0.14.4rc20240609123206
 networkx~=2.8.5
 numpy~=1.24.2
 pandas~=1.5.3
+pytest~=8.2.2
 PyYAML~=6.0.1
 tqdm~=4.65.0

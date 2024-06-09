@@ -1,6 +1,5 @@
 from dataclasses import dataclass, asdict
 import datetime
-import os
 import random
 import shutil
 import subprocess
@@ -15,7 +14,6 @@ def set_seed(seed):
     """Fix seeds for reproducable experiments."""
     random.seed(seed)
     np.random.seed(seed)
-    os.environ["PYTHONHASHSEED"] = str(seed)  # TODO: check if setting this have impact on the func.
 
 
 @dataclass(frozen=True)
