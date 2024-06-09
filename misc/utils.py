@@ -2,7 +2,6 @@ from dataclasses import dataclass, asdict
 import datetime
 import random
 import shutil
-import subprocess
 
 from pathlib import Path
 
@@ -99,32 +98,14 @@ def get_diff_of_times(strftime_1, strftime_2):
 
 
 def zip_detailed_logs(logged_dirs: list[Path], rm_logged_dirs: bool = True) -> None:
-    # Ensure at least one directory is provided
     if len(logged_dirs) == 0:
         print("No directories provided to create archive from.")
         return
-    
-    # Get the parent directory of the first directory in logged_dirs
-    parent_dir = logged_dirs[0].parent
-    
-    # Create the name for the zip file based on the parent directory
-    zip_filename = parent_dir / "_output.zip"
-
-    # Create the archive
-    try:
-        logged_dirs_as_str = " ".join([str(ld) for ld in logged_dirs])
-        command = f"zip -r {zip_filename} {logged_dirs_as_str}"
-        subprocess.check_output(
-            command, shell=True, stderr=subprocess.STDOUT, universal_newlines=True
-        )
-    except subprocess.CalledProcessError as e:
-        print(f"Error executing command: {e}")
-
-    # Optionally remove the logged directories
+    for dir_path in logged_dirs:
+        shutil.make_archive(logged_dirs[0].parent / "_output", "zip", root_dir=str(dir_path))
     if rm_logged_dirs:
         for dir_path in logged_dirs:
             shutil.rmtree(dir_path)
-
     print(f"Compressed detailed logs.")
 
 
