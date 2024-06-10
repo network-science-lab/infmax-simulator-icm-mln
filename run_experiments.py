@@ -9,7 +9,7 @@ from runners import main_runner
 
 
 def parse_args(*args):
-    parser = argparse.ArgumentParser()  # TODO: rewrite to follow Unix convention of CLI software
+    parser = argparse.ArgumentParser()
     parser.add_argument(
         "config",
         help="Experiment config file (default: config.yaml).",
@@ -33,7 +33,7 @@ if __name__ == "__main__":
     with open(args.config, "r", encoding="utf-8") as f:
         config = yaml.safe_load(f)
     if random_seed := config["run"].get("random_seed"):
-        print(f"Setting random seed as {random_seed}!")
+        print(f"Setting randomness seed as {random_seed}!")
         set_seed(config["run"]["random_seed"])
     print(f"Loaded config: {config}")
 
