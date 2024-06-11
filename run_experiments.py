@@ -1,5 +1,4 @@
 # TODO: change prints to logs
-# TODO: merge argparser with yaml config
 
 import argparse
 import yaml

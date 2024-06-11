@@ -9,6 +9,7 @@ from typing import Any
 import warnings
 import yaml
 
+from misc.spreading_model import FixedBudgetMICModel
 from misc.net_loader import load_network
 from misc.utils import (
     extract_simulation_result,
@@ -79,13 +80,7 @@ def experiment_step(
     p_bar: tqdm,
     out_dir: Path,
 ) -> None:
-    # obtain pool of actors and a budget in the run
     actors = net.get_actors()
-    actors_nb = len(actors)
-    active_fraction = 100 * (1 / actors_nb)
-    seeding_budget = (100 - active_fraction, active_fraction, 0)
-
-    # init a container for computed marginal efficiency of each actor
     marginal_efficiencies = []
 
     # iterate through all available actors and check their influencial power
@@ -93,8 +88,7 @@ def experiment_step(
 
         # initialise model with "ranking" that prioritises current actor
         apriori_ranking = get_ranking(actor, actors)
-        micm = nd.models.MICModel(
-            seeding_budget=seeding_budget,
+        micm = FixedBudgetMICModel(
             seed_selector=apriori_ranking,
             protocol=protocol,
             probability=p,
@@ -113,7 +107,7 @@ def experiment_step(
                     case_idx=case_idx,
                     cases_nb=len(p_bar),
                     actor_idx=actor_idx,
-                    actors_nb=actors_nb,
+                    actors_nb=len(actors),
                     rep_idx=rep,
                     reps_nb=repetitions_nb
                 )
@@ -122,12 +116,12 @@ def experiment_step(
             # run experiment on a deep copy of the network!
             experiment = nd.Simulator(model=micm, network=net.copy())
             logs = experiment.perform_propagation(
-                n_epochs=actors_nb * 2,  # this value is an "overkill"
+                n_epochs=len(actors) * 2,  # this value is an "overkill"
                 patience=1,
             )
 
             # compute boost that current actor provides
-            simulation_result = extract_simulation_result(logs._local_stats, net, actor)
+            simulation_result = extract_simulation_result(logs.get_detailed_logs(), net, actor)
             repeated_results.append(simulation_result)
         
         # get mean value for each result

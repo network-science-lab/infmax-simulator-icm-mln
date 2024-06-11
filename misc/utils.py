@@ -47,7 +47,7 @@ def extract_simulation_result(detailed_logs, net, actor):
         # sanity checks
         if epoch_num == 0:
             assert actorwise_log["active_actors"] == 1, \
-                f"Number of seeds must be 1 (got: {actorwise_log['active_actors']} + )"
+                f"Number of seeds must be 1 (got: {actorwise_log['active_actors']})"
             
         else:
             assert actors_infected_epoch >= actors_infected_total, \
