@@ -17,8 +17,9 @@ conda activate infmax-simulator-icm-mln
 Dataset is stored in a separate rpository bounded with this project as a git submodule. Thus, to
 obtain it, execute: `git submodule init` and `git submodule update`. Then, you have to pull the data
 from the DVC remote. In order to access it, please sent a request to get  an access via  e-mail
-(michal.czuba@pwr.edu.pl). Then, simply execute:
-`cd _data_set && dvc pull ns-data-sources/raw/multi_layer_networks/*.dvc && cd ..` in a shell.
+(michal.czuba@pwr.edu.pl). Then, simply execute in a shell:
+* `cd _data_set && dvc pull ns-data-sources/raw/multi_layer_networks/*.dvc && cd ..`
+* `cd _data_set && dvc pull ns-data-sources/spreading_potentials/multi_layer_networks/*.dvc && cd ..`
 
 ## Structure of the repository
 ```
