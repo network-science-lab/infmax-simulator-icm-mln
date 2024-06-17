@@ -1,9 +1,7 @@
 from dataclasses import dataclass, asdict
 import datetime
-import os
 import random
 import shutil
-import subprocess
 
 from pathlib import Path
 
@@ -15,7 +13,6 @@ def set_seed(seed):
     """Fix seeds for reproducable experiments."""
     random.seed(seed)
     np.random.seed(seed)
-    os.environ["PYTHONHASHSEED"] = str(seed)  # TODO: check if setting this have impact on the func.
 
 
 @dataclass(frozen=True)
@@ -50,7 +47,7 @@ def extract_simulation_result(detailed_logs, net, actor):
         # sanity checks
         if epoch_num == 0:
             assert actorwise_log["active_actors"] == 1, \
-                f"Number of seeds must be 1 (got: {actorwise_log['active_actors']} + )"
+                f"Number of seeds must be 1 (got: {actorwise_log['active_actors']})"
             
         else:
             assert actors_infected_epoch >= actors_infected_total, \
@@ -79,7 +76,7 @@ def extract_simulation_result(detailed_logs, net, actor):
 def mean_repeated_results(repeated_results: list[SimulationResult]) -> SimulationResult:
     rr_dict_all = [asdict(rr) for rr in repeated_results]
     rr_df_all = pd.DataFrame(rr_dict_all)
-    rr_dict_mean = rr_df_all.groupby("actor_id").mean().reset_index().iloc[0].round(3).to_dict()
+    rr_dict_mean = rr_df_all.groupby("actor").mean().reset_index().iloc[0].round(3).to_dict()
     return SimulationResult(**rr_dict_mean)
 
 
@@ -101,32 +98,14 @@ def get_diff_of_times(strftime_1, strftime_2):
 
 
 def zip_detailed_logs(logged_dirs: list[Path], rm_logged_dirs: bool = True) -> None:
-    # Ensure at least one directory is provided
     if len(logged_dirs) == 0:
         print("No directories provided to create archive from.")
         return
-    
-    # Get the parent directory of the first directory in logged_dirs
-    parent_dir = logged_dirs[0].parent
-    
-    # Create the name for the zip file based on the parent directory
-    zip_filename = parent_dir / "_output.zip"
-
-    # Create the archive
-    try:
-        logged_dirs_as_str = " ".join([str(ld) for ld in logged_dirs])
-        command = f"zip -r {zip_filename} {logged_dirs_as_str}"
-        subprocess.check_output(
-            command, shell=True, stderr=subprocess.STDOUT, universal_newlines=True
-        )
-    except subprocess.CalledProcessError as e:
-        print(f"Error executing command: {e}")
-
-    # Optionally remove the logged directories
+    for dir_path in logged_dirs:
+        shutil.make_archive(logged_dirs[0].parent / "_output", "zip", root_dir=str(dir_path))
     if rm_logged_dirs:
         for dir_path in logged_dirs:
             shutil.rmtree(dir_path)
-
     print(f"Compressed detailed logs.")
 
 
