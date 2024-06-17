@@ -152,9 +152,9 @@ def get_timik1q2009_network():
 
 
 def load_network(net_name: str) -> nd.MultilayerNetwork:
-    if net_name == "arxiv":
+    if net_name == "arxiv_netscience_coauthorship":
         return get_arxiv_network()
-    elif net_name == "arxiv_math.oc":
+    elif net_name == "arxiv_netscience_coauthorship_math.oc":
         return get_arxiv_network(["math.OC"])
     elif net_name == "aucs":
         return get_aucs_network()
