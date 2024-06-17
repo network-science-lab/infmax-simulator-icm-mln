@@ -110,6 +110,7 @@ def get_ddm_network(layernames_path, edgelist_path, weighted, digraph):
     )
 
 
+@return_some_layers
 def get_arxiv_network():
     root_path = Path("_data_set/arxiv_netscience_coauthorship/Dataset")
     net = get_ddm_network(
@@ -144,6 +145,8 @@ def get_timik1q2009_network():
 def load_network(net_name: str) -> nd.MultilayerNetwork:
     if net_name == "arxiv":
         return get_arxiv_network()
+    elif net_name == "arxiv_math.oc":
+        return get_arxiv_network(["math.OC"])
     elif net_name == "aucs":
         return get_aucs_network()
     elif net_name == "cannes":
