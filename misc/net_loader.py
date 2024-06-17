@@ -8,6 +8,9 @@ import network_diffusion as nd
 import networkx as nx
 
 
+DATASET_PREFIX = "_data_set/ns-data-sources/raw/multi_layer_networks"
+
+
 def _network_from_pandas(path):
     df = pd.read_csv(path, names=["node_1", "node_2", "layer"])
     net_dict = {l_name: nx.Graph() for l_name in df["layer"].unique()}
@@ -30,46 +33,52 @@ def return_some_layers(get_network_func):
 
 
 def get_aucs_network():
-    return nd.MultilayerNetwork.from_mpx(file_path="_data_set/small_real/aucs.mpx")
+    return nd.MultilayerNetwork.from_mpx(file_path=f"{DATASET_PREFIX}/small_real/aucs.mpx")
 
 
 def get_ckm_physicians_network():
-    return _network_from_pandas("_data_set/small_real/CKM-Physicians-Innovation_4NoNature.edges")
+    return _network_from_pandas(
+        f"{DATASET_PREFIX}/small_real/CKM-Physicians-Innovation_4NoNature.edges"
+    )
 
 
 @return_some_layers
 def get_eu_transportation_network():
-    return _network_from_pandas("_data_set/small_real/EUAirTransportation_multiplex_4NoNature.edges")
+    return _network_from_pandas(
+        f"{DATASET_PREFIX}/small_real/EUAirTransportation_multiplex_4NoNature.edges"
+    )
 
 
 def get_lazega_network():
-    return _network_from_pandas("_data_set/small_real/Lazega-Law-Firm_4NoNatureNoLoops.edges")
+    return _network_from_pandas(
+        f"{DATASET_PREFIX}/small_real/Lazega-Law-Firm_4NoNatureNoLoops.edges"
+    )
 
 
 def get_er2_network():
-    return nd.MultilayerNetwork.from_mpx(file_path="_data_set/small_artificial/er_2.mpx")
+    return nd.MultilayerNetwork.from_mpx(file_path=f"{DATASET_PREFIX}/small_artificial/er_2.mpx")
 
 
 def get_er3_network():
-    return nd.MultilayerNetwork.from_mpx(file_path="_data_set/small_artificial/er_3.mpx")
+    return nd.MultilayerNetwork.from_mpx(file_path=f"{DATASET_PREFIX}/small_artificial/er_3.mpx")
 
 
 @return_some_layers
 def get_er5_network():
-    return nd.MultilayerNetwork.from_mpx(file_path="_data_set/small_artificial/er_5.mpx")
+    return nd.MultilayerNetwork.from_mpx(file_path=f"{DATASET_PREFIX}/small_artificial/er_5.mpx")
 
 
 def get_sf2_network():
-    return nd.MultilayerNetwork.from_mpx(file_path="_data_set/small_artificial/sf_2.mpx")
+    return nd.MultilayerNetwork.from_mpx(file_path=f"{DATASET_PREFIX}/small_artificial/sf_2.mpx")
 
 
 def get_sf3_network():
-    return nd.MultilayerNetwork.from_mpx(file_path="_data_set/small_artificial/sf_3.mpx")
+    return nd.MultilayerNetwork.from_mpx(file_path=f"{DATASET_PREFIX}/small_artificial/sf_3.mpx")
 
 
 @return_some_layers
 def get_sf5_network():
-    return nd.MultilayerNetwork.from_mpx(file_path="_data_set/small_artificial/sf_5.mpx")
+    return nd.MultilayerNetwork.from_mpx(file_path=f"{DATASET_PREFIX}/small_artificial/sf_5.mpx")
 
 
 def get_ddm_network(layernames_path, edgelist_path, weighted, digraph):
@@ -112,7 +121,7 @@ def get_ddm_network(layernames_path, edgelist_path, weighted, digraph):
 
 @return_some_layers
 def get_arxiv_network():
-    root_path = Path("_data_set/arxiv_netscience_coauthorship/Dataset")
+    root_path = Path(f"{DATASET_PREFIX}/arxiv_netscience_coauthorship/Dataset")
     net = get_ddm_network(
         layernames_path= root_path / "arxiv_netscience_layers.txt",
         edgelist_path=root_path / "arxiv_netscience_multiplex.edges",
@@ -123,7 +132,7 @@ def get_arxiv_network():
 
 
 def get_cannes_network():
-    root_path = Path("_data_set/cannes_2013_social/Dataset")
+    root_path = Path(f"{DATASET_PREFIX}/cannes_2013_social/Dataset")
     net = get_ddm_network(
         layernames_path= root_path / "Cannes2013_layers.txt",
         edgelist_path=root_path / "Cannes2013_multiplex.edges",
@@ -136,7 +145,7 @@ def get_cannes_network():
 def get_timik1q2009_network():
     layer_graphs = []
     layer_names = []
-    for i in Path("_data_set/timik1q2009").glob("*.csv"):
+    for i in Path(f"{DATASET_PREFIX}/timik1q2009").glob("*.csv"):
         layer_names.append(i.stem)
         layer_graphs.append(nx.from_pandas_edgelist(pd.read_csv(i)))
     return nd.MultilayerNetwork.from_nx_layers(layer_graphs, layer_names)
