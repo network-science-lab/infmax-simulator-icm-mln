@@ -9,7 +9,7 @@ from typing import Any
 import warnings
 import yaml
 
-from misc.spreading_model import FixedBudgetMICModel
+from misc.nd_model import FixedBudgetMICModel
 from misc.net_loader import load_network
 from misc.utils import (
     extract_simulation_result,
