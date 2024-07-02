@@ -132,7 +132,14 @@ class TorchMICModel:
 class TorchMICSimulator:
     """Simulator for TorchMICModel."""
 
-    def __init__(self, model: TorchMICModel, net: nd.mln.MultilayerNetworkTorch, n_steps: int, seed_set: set[Any]) -> None:
+    def __init__(
+        self,
+        model: TorchMICModel,
+        net: nd.mln.MultilayerNetworkTorch,
+        n_steps: int,
+        seed_set: set[Any],
+        debug: bool = False
+    ) -> None:
         """
         Create the object.
 
@@ -143,9 +150,9 @@ class TorchMICSimulator:
         self.net = net
         self.n_steps = n_steps
         self.seed_set = seed_set
+        self.debug = debug
 
-    @staticmethod
-    def create_states_tensor(net: nd.mln.MultilayerNetworkTorch, seed_set: set[Any]) -> torch.Tensor:
+    def create_states_tensor(self, net: nd.mln.MultilayerNetworkTorch, seed_set: set[Any]) -> torch.Tensor:
         """
         Create tensor of states
 
@@ -156,7 +163,7 @@ class TorchMICSimulator:
             representation
         """
         seed_set_mapped = [net.actors_map[seed] for seed in seed_set]
-        print(f"{seed_set} -> {seed_set_mapped}")
+        if self.debug: print(f"{seed_set} -> {seed_set_mapped}")
         states_raw = torch.clone(net.nodes_mask)
         states_raw[states_raw == 1.] = -1 * float("inf")
         states_raw[:, seed_set_mapped] += 1
@@ -190,20 +197,20 @@ class TorchMICSimulator:
         peak_iteration = 0
 
         S_i = self.create_states_tensor(self.net, self.seed_set)
-        print(f"Step: 0, actor-wise states: {self.count_states(S_i)}")
+        if self.debug: print(f"Step: 0, actor-wise states: {self.count_states(S_i)}")
 
         for j in range(1, self.n_steps):
 
             S_j = self.model.simulation_step(self.net, S_i)
             step_result = self.count_states(S_j)
-            print(f"Step: {j}, actor-wise states: {step_result}")
+            if self.debug: print(f"Step: {j}, actor-wise states: {step_result}")
 
             if step_result.get(1, 0) > peak_infected:
                 peak_infected = step_result.get(1, 0)
                 peak_iteration = j
             
             if self.is_steady_state(S_i, S_j):
-                print(f"Simulation stopped after {j}th step")
+                if self.debug: print(f"Simulation stopped after {j}th step")
                 simulation_length = j - 1
                 exposed = step_result.get(-1, 0) + step_result.get(1, 0)
                 not_exposed = step_result.get(0, 0)
