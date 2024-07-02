@@ -12,8 +12,8 @@ def tcase_config():
     return {
         "model": {"parameters": {"protocols": ["OR", "AND"], "p_values": [0.1, 0.35, 0.9]}},
         "networks": ["toy_network"],
-        "run": {"repetitions": 3, "random_seed": 43, "average_results": False},
-        "logging": {"compress_to_zip": False, "out_dir": None}
+        "run": {"repetitions": 3, "random_seed": 43, "average_results": False, "experiment_step": "classic"},
+        "logging": {"compress_to_zip": False, "out_dir": None},
     }
 
 
