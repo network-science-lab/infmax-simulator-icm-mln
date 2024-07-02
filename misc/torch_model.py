@@ -1,7 +1,7 @@
 from typing import Any
 
 import torch
-import network_diffusion.mln.mlnetwork_torch as mlnt
+import network_diffusion as nd
 
 
 class TorchMICModel:
@@ -28,7 +28,7 @@ class TorchMICModel:
         pass
 
     @staticmethod
-    def protocol_AND(S_raw: torch.Tensor, net: mlnt.MultilayerNetworkTorch) -> torch.Tensor:
+    def protocol_AND(S_raw: torch.Tensor, net: nd.mln.MultilayerNetworkTorch) -> torch.Tensor:
         """
         Aggregate positive impulses from the layers using AND strategy.
 
@@ -40,7 +40,7 @@ class TorchMICModel:
         return (S_raw + net.nodes_mask > 0).all(dim=0).to(torch.float)
 
     @staticmethod
-    def protocol_OR(S_raw: torch.Tensor, net: mlnt.MultilayerNetworkTorch) -> torch.Tensor:
+    def protocol_OR(S_raw: torch.Tensor, net: nd.mln.MultilayerNetworkTorch) -> torch.Tensor:
         """
         Aggregate positive impulses from the layers using OR strategy.
 
@@ -67,7 +67,7 @@ class TorchMICModel:
         assert A.shape == T.shape
         assert ((A - T).to_dense() < 0).sum() == 0
         return T
-    
+
     @staticmethod
     def mask_S_from(S: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
         """Create mask for T which discards signals from nodes which state != 1."""
@@ -106,7 +106,7 @@ class TorchMICModel:
         decayed_S[decayed_S == -0.] = 0.
         return decayed_S
 
-    def simulation_step(self, net: mlnt.MultilayerNetworkTorch, S0: torch.Tensor) -> torch.Tensor:
+    def simulation_step(self, net: nd.mln.MultilayerNetworkTorch, S0: torch.Tensor) -> torch.Tensor:
         """
         Perform a single simulation step.
         
@@ -132,7 +132,7 @@ class TorchMICModel:
 class TorchMICSimulator:
     """Simulator for TorchMICModel."""
 
-    def __init__(self, model: TorchMICModel, net: mlnt.MultilayerNetworkTorch, n_steps: int, seed_set: set[Any]) -> None:
+    def __init__(self, model: TorchMICModel, net: nd.mln.MultilayerNetworkTorch, n_steps: int, seed_set: set[Any]) -> None:
         """
         Create the object.
 
@@ -145,7 +145,7 @@ class TorchMICSimulator:
         self.seed_set = seed_set
 
     @staticmethod
-    def create_states_tensor(net: mlnt.MultilayerNetworkTorch, seed_set: set[Any]) -> torch.Tensor:
+    def create_states_tensor(net: nd.mln.MultilayerNetworkTorch, seed_set: set[Any]) -> torch.Tensor:
         """
         Create tensor of states
 

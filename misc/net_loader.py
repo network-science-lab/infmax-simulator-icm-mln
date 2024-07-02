@@ -2,6 +2,7 @@
 
 from functools import wraps
 from pathlib import Path
+from typing import Callable
 
 import pandas as pd
 import network_diffusion as nd
@@ -151,6 +152,20 @@ def get_timik1q2009_network():
     return nd.MultilayerNetwork.from_nx_layers(layer_graphs, layer_names)
 
 
+def convert_to_torch(load_networks_func: Callable) -> Callable:
+    """Decorate loader function so that it can convert the network on the fly to the tensor repr."""
+    @wraps(load_networks_func)
+    def wrapper(
+        *args, as_tensor: bool, **kwargs
+    ) -> nd.MultilayerNetwork | nd.mln.MultilayerNetworkTorch:
+        net = load_networks_func(*args, **kwargs)
+        if as_tensor:
+            return nd.mln.MultilayerNetworkTorch.from_mln(net)
+        return net
+    return wrapper
+
+
+@convert_to_torch
 def load_network(net_name: str) -> nd.MultilayerNetwork:
     if net_name == "arxiv_netscience_coauthorship":
         return get_arxiv_network()

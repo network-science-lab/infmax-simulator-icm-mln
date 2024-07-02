@@ -14,20 +14,15 @@ def parse_args(*args):
         help="Experiment config file (default: config.yaml).",
         type=str,
     )
-    parser.add_argument(
-        "runner",
-        help="A runner function to execute (default: main_runner).",
-        type=str,
-        default="main_runner",
-    )
     return parser.parse_args(*args)
 
 
 if __name__ == "__main__":
 
     # Uncomment for debugging
-    # args = parse_args(["_configs/example.yaml", "main_runner"])
-    args = parse_args()
+    # args = parse_args(["_configs/example_tensor.yaml"])
+    args = parse_args(["_configs/example_classic.yaml"])
+    # args = parse_args()
 
     with open(args.config, "r", encoding="utf-8") as f:
         config = yaml.safe_load(f)
@@ -36,8 +31,4 @@ if __name__ == "__main__":
         set_seed(config["run"]["random_seed"])
     print(f"Loaded config: {config}")
 
-    if args.runner == "main_runner":
-        print(f"Inferred runner as: {args.runner}")
-        main_runner.run_experiments(config)
-    else:
-        raise AttributeError(f"Incorrect runner name ({args.runner})!")
+    main_runner.run_experiments(config)

@@ -1,5 +1,4 @@
 model:
-  name: MICModel
   parameters:
     protocols: ["AND", "OR"]
     p_values: [
@@ -28,6 +27,7 @@ networks: [
 ]
 
 run:
+  experiment_step: "tensor"
   repetitions: 30
   random_seed: 43
   average_results: False
