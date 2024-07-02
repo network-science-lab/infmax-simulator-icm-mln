@@ -28,7 +28,7 @@ class TorchMICModel:
         pass
 
     @staticmethod
-    def protocol_AND(S_raw: torch.Tensor, net: nd.mln.MultilayerNetworkTorch) -> torch.Tensor:
+    def protocol_AND(S_raw: torch.Tensor, net: nd.MultilayerNetworkTorch) -> torch.Tensor:
         """
         Aggregate positive impulses from the layers using AND strategy.
 
@@ -40,7 +40,7 @@ class TorchMICModel:
         return (S_raw + net.nodes_mask > 0).all(dim=0).to(torch.float)
 
     @staticmethod
-    def protocol_OR(S_raw: torch.Tensor, net: nd.mln.MultilayerNetworkTorch) -> torch.Tensor:
+    def protocol_OR(S_raw: torch.Tensor, net: nd.MultilayerNetworkTorch) -> torch.Tensor:
         """
         Aggregate positive impulses from the layers using OR strategy.
 
@@ -106,7 +106,7 @@ class TorchMICModel:
         decayed_S[decayed_S == -0.] = 0.
         return decayed_S
 
-    def simulation_step(self, net: nd.mln.MultilayerNetworkTorch, S0: torch.Tensor) -> torch.Tensor:
+    def simulation_step(self, net: nd.MultilayerNetworkTorch, S0: torch.Tensor) -> torch.Tensor:
         """
         Perform a single simulation step.
         
@@ -135,7 +135,7 @@ class TorchMICSimulator:
     def __init__(
         self,
         model: TorchMICModel,
-        net: nd.mln.MultilayerNetworkTorch,
+        net: nd.MultilayerNetworkTorch,
         n_steps: int,
         seed_set: set[Any],
         debug: bool = False
@@ -152,7 +152,7 @@ class TorchMICSimulator:
         self.seed_set = seed_set
         self.debug = debug
 
-    def create_states_tensor(self, net: nd.mln.MultilayerNetworkTorch, seed_set: set[Any]) -> torch.Tensor:
+    def create_states_tensor(self, net: nd.MultilayerNetworkTorch, seed_set: set[Any]) -> torch.Tensor:
         """
         Create tensor of states
 

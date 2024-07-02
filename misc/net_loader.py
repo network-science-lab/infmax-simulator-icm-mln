@@ -157,10 +157,10 @@ def convert_to_torch(load_networks_func: Callable) -> Callable:
     @wraps(load_networks_func)
     def wrapper(
         *args, as_tensor: bool, **kwargs
-    ) -> nd.MultilayerNetwork | nd.mln.MultilayerNetworkTorch:
+    ) -> nd.MultilayerNetwork | nd.MultilayerNetworkTorch:
         net = load_networks_func(*args, **kwargs)
         if as_tensor:
-            return nd.mln.MultilayerNetworkTorch.from_mln(net)
+            return nd.MultilayerNetworkTorch.from_mln(net)
         return net
     return wrapper
 
