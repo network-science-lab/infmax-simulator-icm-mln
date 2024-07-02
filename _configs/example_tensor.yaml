@@ -30,8 +30,8 @@ run:
   experiment_step: "tensor"
   repetitions: 30
   random_seed: 43
-  average_results: False
+  average_results: True
 
 logging:
   compress_to_zip: False
-  out_dir: "./_output"
+  out_dir: "./_output_tensor"
