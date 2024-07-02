@@ -18,7 +18,7 @@ def experiment_step(
     protocol: str,
     p: float,
     net_name: str,
-    net: nd.mln.MultilayerNetworkTorch,
+    net: nd.MultilayerNetworkTorch,
     repetitions_nb: int,
     average_results: bool,
     case_idx: int,

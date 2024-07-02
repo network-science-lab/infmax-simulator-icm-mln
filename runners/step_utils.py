@@ -12,7 +12,7 @@ warnings.filterwarnings(action="ignore", category=FutureWarning)
 @dataclass(frozen=True)
 class Network:
     name: str
-    graph: nd.MultilayerNetwork | nd.mln.MultilayerNetworkTorch
+    graph: nd.MultilayerNetwork | nd.MultilayerNetworkTorch
 
 
 def get_parameter_space(
