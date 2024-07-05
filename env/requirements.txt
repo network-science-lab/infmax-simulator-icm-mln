@@ -2,7 +2,7 @@ dvc~=3.51.2
 dvc-gdrive~=3.0.1
 matplotlib~=3.9.0
 networkx~=3.3
-network-diffusion==0.16.0rc20240705122426
+network-diffusion==0.16.0rc20240705155104
 numpy~=2.0.0
 pandas~=2.2.2
 pytest~=8.2.2
