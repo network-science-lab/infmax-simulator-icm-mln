@@ -7,12 +7,14 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import torch
 
 
 def set_seed(seed):
     """Fix seeds for reproducable experiments."""
     random.seed(seed)
     np.random.seed(seed)
+    torch.manual_seed(seed)
 
 
 @dataclass(frozen=True)

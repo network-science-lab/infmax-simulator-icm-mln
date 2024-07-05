@@ -52,6 +52,9 @@ peak_infected: int      # maximal nb. of infected actors in a single sim. step
 peak_iteration: int     # a sim. step when the peak occured
 ```
 
+Selecting GPU (for a `tensor` runner) is possible only by setting an env variable before executing 
+the Python code, e.g. `export CUDA_VISIBLE_DEVICES=3`
+
 ## Results reproducibility
 
 Results are supposed to be fully reproducable. There is a test for that: `test_reproducibility.py`.

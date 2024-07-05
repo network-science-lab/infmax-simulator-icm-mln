@@ -7,6 +7,7 @@ from typing import Callable
 import pandas as pd
 import network_diffusion as nd
 import networkx as nx
+import torch
 
 
 DATASET_PREFIX = "_data_set/ns-data-sources/raw/multi_layer_networks"
@@ -160,7 +161,8 @@ def convert_to_torch(load_networks_func: Callable) -> Callable:
     ) -> nd.MultilayerNetwork | nd.MultilayerNetworkTorch:
         net = load_networks_func(*args, **kwargs)
         if as_tensor:
-            return nd.MultilayerNetworkTorch.from_mln(net)
+            device = "cuda:0" if torch.cuda.is_available() else "cpu"
+            return nd.MultilayerNetworkTorch.from_mln(net, device=device)
         return net
     return wrapper
 
