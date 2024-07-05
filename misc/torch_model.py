@@ -193,8 +193,8 @@ class TorchMICSimulator:
         simulation_length = 0
         exposed = 0
         not_exposed = 0
-        peak_infected = 0
-        peak_iteration = 0
+        peak_infected = 1  # this is artificially aligned with the previous approach
+        peak_iteration = 1  # this is artificially aligned with the previous approach
 
         S_i = self.create_states_tensor(self.net, self.seed_set)
         if self.debug: print(f"Step: 0, actor-wise states: {self.count_states(S_i)}")
@@ -207,11 +207,11 @@ class TorchMICSimulator:
 
             if step_result.get(1, 0) > peak_infected:
                 peak_infected = step_result.get(1, 0)
-                peak_iteration = j
+                peak_iteration = j + 1  # this is artificially aligned with the previous approach
             
             if self.is_steady_state(S_i, S_j):
                 if self.debug: print(f"Simulation stopped after {j}th step")
-                simulation_length = j - 1
+                simulation_length = j  # this is artificially aligned with the previous approach
                 exposed = step_result.get(-1, 0) + step_result.get(1, 0)
                 not_exposed = step_result.get(0, 0)
                 break
