@@ -90,7 +90,7 @@ class TorchMICModel:
         S_f = self.mask_S_from(S)
         S_t = self.mask_S_to(S)
         S_new = ((T * S_f).sum(dim=1) * S_t).to_dense()
-        assert torch.all(S[S_new.to(torch.int).to(bool)] == 0) == torch.Tensor([True]), \
+        assert torch.all(S[S_new.to(torch.int).to(bool)] == 0) == torch.Tensor([True]).to(S_new.device), \
             "Some nodes were activated against rules - only these with state 0 can be activated!"
         return S_new
 
