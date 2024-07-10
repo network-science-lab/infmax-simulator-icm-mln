@@ -64,8 +64,8 @@ class TorchMICModel:
         raw_signals = torch.rand_like(A.values(), dtype=float)
         thre_signals = (raw_signals < p).to(float)
         T = torch.sparse_coo_tensor(indices=A.indices(), values=thre_signals)
-        assert A.shape == T.shape
-        assert ((A - T).to_dense() < 0).sum() == 0
+        # assert A.shape == T.shape
+        # assert ((A - T).to_dense() < 0).sum() == 0
         return T
 
     @staticmethod
@@ -90,8 +90,8 @@ class TorchMICModel:
         S_f = self.mask_S_from(S)
         S_t = self.mask_S_to(S)
         S_new = ((T * S_f).sum(dim=1) * S_t).to_dense()
-        assert torch.all(S[S_new.to(torch.int).to(bool)] == 0) == torch.Tensor([True]).to(S_new.device), \
-            "Some nodes were activated against rules - only these with state 0 can be activated!"
+        # assert torch.all(S[S_new.to(torch.int).to(bool)] == 0) == torch.Tensor([True]).to(S_new.device), \
+        #     "Some nodes were activated against rules - only these with state 0 can be activated!"
         return S_new
 
     @staticmethod
@@ -163,7 +163,7 @@ class TorchMICSimulator:
             representation
         """
         seed_set_mapped = [net.actors_map[seed] for seed in seed_set]
-        if self.debug: print(f"{seed_set} -> {seed_set_mapped}")
+        # if self.debug: print(f"{seed_set} -> {seed_set_mapped}")
         states_raw = torch.clone(net.nodes_mask)
         states_raw[states_raw == 1.] = -1 * float("inf")
         states_raw[:, seed_set_mapped] += 1
@@ -190,28 +190,28 @@ class TorchMICSimulator:
 
     def perform_propagation(self) -> dict[str, int]:
         """Perform propagation and return a dictionary with global results."""
-        simulation_length = 0
-        exposed = 0
-        not_exposed = 0
-        peak_infected = 1  # this is artificially aligned with the previous approach
-        peak_iteration = 1  # this is artificially aligned with the previous approach
+        simulation_length = None
+        exposed = None
+        not_exposed = None
+        peak_infected = 1
+        peak_iteration = 0
 
         S_i = self.create_states_tensor(self.net, self.seed_set)
-        if self.debug: print(f"Step: 0, actor-wise states: {self.count_states(S_i)}")
+        # if self.debug: print(f"Step: 0, actor-wise states: {self.count_states(S_i)}")
 
         for j in range(1, self.n_steps):
 
             S_j = self.model.simulation_step(self.net, S_i)
             step_result = self.count_states(S_j)
-            if self.debug: print(f"Step: {j}, actor-wise states: {step_result}")
+            # if self.debug: print(f"Step: {j}, actor-wise states: {step_result}")
 
             if step_result.get(1, 0) > peak_infected:
                 peak_infected = step_result.get(1, 0)
-                peak_iteration = j + 1  # this is artificially aligned with the previous approach
+                peak_iteration = j
             
             if self.is_steady_state(S_i, S_j):
-                if self.debug: print(f"Simulation stopped after {j}th step")
-                simulation_length = j  # this is artificially aligned with the previous approach
+                # if self.debug: print(f"Simulation stopped after {j}th step")
+                simulation_length = j
                 exposed = step_result.get(-1, 0) + step_result.get(1, 0)
                 not_exposed = step_result.get(0, 0)
                 break

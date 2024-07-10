@@ -10,7 +10,7 @@ from runners import main_runner
 @pytest.fixture
 def tcase_config():
     return {
-        "model": {"parameters": {"protocols": ["OR", "AND"], "p_values": [0.1, 0.35, 0.9]}},
+        "model": {"parameters": {"protocols": ["OR", "AND"], "p_values": [0.9, 0.65, 0.1]}},
         "networks": ["toy_network"],
         "run": {"repetitions": 3, "random_seed": 43, "average_results": False, "experiment_step": "classic"},
         "logging": {"compress_to_zip": False, "out_dir": None},
@@ -20,12 +20,12 @@ def tcase_config():
 @pytest.fixture
 def tcase_csv_names():
     return [
-        Path("proto-AND--p-0.1--net-toy_network.csv"),
         Path("proto-AND--p-0.9--net-toy_network.csv"),
-        Path("proto-AND--p-0.35--net-toy_network.csv"),
+        Path("proto-AND--p-0.65--net-toy_network.csv"),
+        Path("proto-AND--p-0.1--net-toy_network.csv"),
+        Path("proto-OR--p-0.9--net-toy_network.csv"),
+        Path("proto-OR--p-0.65--net-toy_network.csv"),
         Path("proto-OR--p-0.1--net-toy_network.csv"),
-        Path("proto-OR--p-0.9--net-toy_network.csv"),
-        Path("proto-OR--p-0.9--net-toy_network.csv"),
     ]
 
 
