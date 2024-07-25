@@ -71,12 +71,16 @@ class TorchMICModel:
     @staticmethod
     def mask_S_from(S: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
         """Create mask for T which discards signals from nodes which state != 1."""
-        return (S > 0).to(torch.int).unsqueeze(-1).repeat(1, 1, S.shape[1]).to_sparse_coo()
+        # return (S > 0).to(torch.int).unsqueeze(-1).repeat(1, 1, S.shape[1]).to_sparse_coo()
+        return (S > 0).to(torch.int).unsqueeze(-1)
+        # # https://discuss.pytorch.org/t/expand-2d-sparse-tensor-to-do-multiplication-with-3d-tensor/150966/2
+        # a = (S > 0).to(torch.int).to_sparse_coo()
+        # return torch.stack([a for _ in range(S.shape[1])], dim=1)
 
     @staticmethod
     def mask_S_to(S: torch.Tensor) -> torch.Tensor:
         """Create mask for T which discards signals to nodes which state != 0."""
-        return torch.abs(torch.abs(S) - 1).to_sparse_coo()
+        return torch.abs(torch.abs(S) - 1) # .to_sparse_coo()
 
     def get_active_nodes(self, T: torch.Tensor, S: torch.Tensor) -> torch.Tensor:
         """
@@ -89,9 +93,14 @@ class TorchMICModel:
         """
         S_f = self.mask_S_from(S)
         S_t = self.mask_S_to(S)
+        # T_perm = T.permute(dims=[0, 2, 1])
+        # S_passed = torch.Tensor([(S_f * T_perm[..., i]).sum() for i in range(S.shape[1])]).to(T.device)
+        # S_passed = (S_f * T_perm).sum(dim=0)
+        # S_new = S_passed * S_t
+        # S_new = torch.mul(S_f, T).sum(dim=1) * S_t
         S_new = ((T * S_f).sum(dim=1) * S_t).to_dense()
-        # assert torch.all(S[S_new.to(torch.int).to(bool)] == 0) == torch.Tensor([True]).to(S_new.device), \
-        #     "Some nodes were activated against rules - only these with state 0 can be activated!"
+        assert torch.all(S[S_new.to(torch.int).to(bool)] == 0) == torch.Tensor([True]).to(S_new.device), \
+            "Some nodes were activated against rules - only these with state 0 can be activated!"
         return S_new
 
     @staticmethod
