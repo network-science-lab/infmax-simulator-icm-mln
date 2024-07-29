@@ -1,0 +1,37 @@
+model:
+  parameters:
+    protocols: ["AND", "OR"]
+    p_values: [
+      0.05, 0.1, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50,
+      0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95, 1.0
+    ]
+
+networks: [
+  # "arxiv",
+  # "aucs",
+  # "cannes",
+  # "ckm_physicians",
+  # "eu_transportation",
+  # "eu_transport_klm",
+  # "lazega",
+  # "er1",
+  # "er2",
+  # "er3",
+  # "er5",
+  # "sf1",
+  # "sf2",
+  # "sf3",
+  # "sf5",
+  # "timik1q2009",
+  "toy_network",
+]
+
+run:
+  experiment_step: "tensor"
+  repetitions: 30
+  random_seed: 43
+  average_results: True
+
+logging:
+  compress_to_zip: False
+  out_dir: "./_output_tensor"

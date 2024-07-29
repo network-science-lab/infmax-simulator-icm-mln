@@ -38,10 +38,10 @@ from the DVC remote. In order to access it, please sent a request to get  an acc
 
 ## Running the pipeline
 
-To run experiments execute: `run_experiments.py` and provide proper CLI arguments, i.e. a path to
-configuration file and a runner type. See examples in `_config/examples` for inspirations. As a
-result, for each evaluated spreading case, a csv file will be obtained with a folllowing data 
-regarding each actor of the network:
+To run experiments execute: `run_experiments.py` and provide proper CLI arguments, i.e. a path to 
+the configuration file. See examples in `_config/examples` for inspirations. As a result, for each
+evaluated spreading case, a csv file will be obtained with a folllowing data regarding each actor of
+the network:
 
 ```python
 actor: int              # actor's id
@@ -51,6 +51,9 @@ not_exposed: int        # nb. of not infected actors
 peak_infected: int      # maximal nb. of infected actors in a single sim. step
 peak_iteration: int     # a sim. step when the peak occured
 ```
+
+Selecting GPU (for a `tensor` runner) is possible only by setting an env variable before executing 
+the Python code, e.g. `export CUDA_VISIBLE_DEVICES=3`
 
 ## Results reproducibility
 

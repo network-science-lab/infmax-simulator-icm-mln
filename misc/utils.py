@@ -7,12 +7,14 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import torch
 
 
 def set_seed(seed):
     """Fix seeds for reproducable experiments."""
     random.seed(seed)
     np.random.seed(seed)
+    torch.manual_seed(seed)
 
 
 @dataclass(frozen=True)
@@ -58,7 +60,7 @@ def extract_simulation_result(detailed_logs, net, actor):
         # update peaks
         if actorwise_log["active_actors"] > peak_infections_nb:
             peak_infections_nb = actorwise_log["active_actors"]
-            peak_iteration_nb = epoch_num + 1  # TODO we don't start counting from 0 :)
+            peak_iteration_nb = epoch_num
         
         # update nb of infected actors
         actors_infected_total = actors_infected_epoch
@@ -66,7 +68,7 @@ def extract_simulation_result(detailed_logs, net, actor):
     return SimulationResult(
         actor=actor.actor_id,
         simulation_length=len(detailed_logs) - 1,
-        exposed=actors_infected_total,  # TODO do we consider within this number the seed as well?
+        exposed=actors_infected_total,
         not_exposed=actors_nb - actors_infected_total,
         peak_infected=peak_infections_nb,
         peak_iteration=peak_iteration_nb
