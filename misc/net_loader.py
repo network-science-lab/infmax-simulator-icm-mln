@@ -172,7 +172,7 @@ def convert_to_torch(load_networks_func: Callable) -> Callable:
 @convert_to_torch
 def load_network(net_name: str) -> nd.MultilayerNetwork:
     if net_name == "fmri74":
-        return read_fmri74(network_dir=f"{DATASET_PREFIX}/CONTROL_fmt", binary=True, thresh=0.5)
+        return read_fmri74(network_dir=f"{DATASET_PREFIX}/CONTROL_fmt", binary=True, thresh=0.75)
     elif net_name == "arxiv_netscience_coauthorship":
         return get_arxiv_network()
     elif net_name == "arxiv_netscience_coauthorship_math.oc":
