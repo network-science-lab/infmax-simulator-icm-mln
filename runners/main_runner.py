@@ -5,13 +5,13 @@ from typing import Any, Callable
 
 import yaml
 
-from misc.utils import (
+from runners.utils import (
     get_current_time,
     get_diff_of_times,
     zip_detailed_logs,
 )
 from tqdm import tqdm
-from runners import step_utils, step_classic, step_tensor
+from runners import commons, step_classic, step_tensor
 
 
 def get_step_func(step_func_name: str) -> Callable:
@@ -25,7 +25,7 @@ def get_step_func(step_func_name: str) -> Callable:
 def run_experiments(config: dict[str, Any]) -> None:
 
     # get parameter space and experiment's hyperparams
-    p_space = step_utils.get_parameter_space(
+    p_space = commons.get_parameter_space(
         protocols=config["model"]["parameters"]["protocols"],
         p_values=config["model"]["parameters"]["p_values"],
         networks=config["networks"],
@@ -64,7 +64,7 @@ def run_experiments(config: dict[str, Any]) -> None:
                 out_dir=out_dir,
             )
         except BaseException as e:
-            case_descr = step_utils.get_case_name_base(
+            case_descr = commons.get_case_name_base(
                 investigated_case[0], investigated_case[1], investigated_case[2].name
             )
             print(f"\nExperiment failed for case: {case_descr}")
