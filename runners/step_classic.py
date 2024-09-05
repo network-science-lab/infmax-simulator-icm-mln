@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from misc.nd_model import FixedBudgetMICModel
+from _data_set.infmax_data_utils.models.nd_model import FixedBudgetMICModel
 from runners.utils import (
     extract_simulation_result,
     mean_repeated_results,

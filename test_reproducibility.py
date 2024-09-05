@@ -1,3 +1,5 @@
+"""E2E test for both runners to generate dataset."""
+
 import os
 from pathlib import Path
 
