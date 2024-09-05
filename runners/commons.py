@@ -4,7 +4,7 @@ from itertools import product
 from math import log10
 
 import network_diffusion as nd
-from _data_set.infmax_data_utils.loaders.net_loader import load_network
+from _data_set.nsl_data_utils.loaders.net_loader import load_network
 
 warnings.filterwarnings(action="ignore", category=FutureWarning)
 

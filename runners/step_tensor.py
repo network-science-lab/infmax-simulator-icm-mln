@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from _data_set.infmax_data_utils.models.torch_model import TorchMICModel, TorchMICSimulator
+from _data_set.nsl_data_utils.models.torch_model import TorchMICModel, TorchMICSimulator
 from runners.utils import (
     mean_repeated_results,
     save_magrinal_efficiences,
