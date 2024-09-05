@@ -4,8 +4,8 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from misc.utils import set_seed
 from runners import main_runner
+from runners.utils import set_seed
 
 
 @pytest.fixture

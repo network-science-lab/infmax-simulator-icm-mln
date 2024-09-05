@@ -7,17 +7,25 @@ A repository to generate dataset with marginal efficiency for each actor from th
 
 ## Configuration of the runtime
 
+First, initialise the enviornment:
+
 ```bash
 conda env create -f env/conda.yaml
 conda activate infmax-simulator-icm-mln
 ```
 
+Then, pull the submodule and install its code:
+
+```bash
+git submodule init && git submodule update
+pip install -e _dataset/infmax_data_utils
+```
+
 ## Data
 
-Dataset is stored in a separate rpository bounded with this project as a git submodule. Thus, to
-obtain it, execute: `git submodule init` and `git submodule update`. Then, you have to pull the data
-from the DVC remote. In order to access it, please sent a request to get  an access via  e-mail
-(michal.czuba@pwr.edu.pl). Then, simply execute in a shell:
+Dataset is stored in a separate repository bounded with this project as a git submodule. Thus, to
+obtain it you have to pull the data from the DVC remote. In order to access it, please sent a
+request to get  an access via  e-mail (michal.czuba@pwr.edu.pl). Then, simply execute in a shell:
 * `cd _data_set && dvc pull ns-data-sources/raw/multi_layer_networks/*.dvc && cd ..`
 * `cd _data_set && dvc pull ns-data-sources/spreading_potentials/multi_layer_networks/*.dvc && cd ..`
 
@@ -29,7 +37,6 @@ from the DVC remote. In order to access it, please sent a request to get  an acc
 ├── _test_data              -> examplary outputs of the dataset generator used in the E2E test
 ├── _output                 -> a directory where we recommend to save results
 ├── env                     -> a definition of the runtime environment
-├── misc                    -> miscellaneous scripts helping in simulations
 ├── runners                 -> scripts to execute experiments according to provided configs
 ├── README.md          
 ├── run_experiments.py      -> main entrypoint to trigger the pipeline
