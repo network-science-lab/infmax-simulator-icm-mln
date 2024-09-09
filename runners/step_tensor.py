@@ -2,14 +2,14 @@
 
 from pathlib import Path
 
-from misc.torch_model import TorchMICModel, TorchMICSimulator
-from misc.utils import (
+from _data_set.nsl_data_utils.models.torch_model import TorchMICModel, TorchMICSimulator
+from runners.utils import (
     mean_repeated_results,
     save_magrinal_efficiences,
     SimulationResult,
 )
 from tqdm import tqdm
-from runners import step_utils
+from runners import commons
 
 import network_diffusion as nd
 
@@ -39,7 +39,7 @@ def experiment_step(
 
             # update progress_bar
             p_bar.set_description_str(
-                step_utils.get_case_name_rich(
+                commons.get_case_name_rich(
                     protocol=protocol,
                     p=p,
                     net_name=net_name,
@@ -67,5 +67,5 @@ def experiment_step(
             marginal_efficiencies.extend(repeated_results)
 
     # save efficiences obtained for this case
-    investigated_case_file_path = out_dir / f"{step_utils.get_case_name_base(protocol, p, net_name)}.csv"
+    investigated_case_file_path = out_dir / f"{commons.get_case_name_base(protocol, p, net_name)}.csv"
     save_magrinal_efficiences(marginal_efficiencies, investigated_case_file_path)
