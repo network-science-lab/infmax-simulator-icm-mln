@@ -21,7 +21,10 @@ def get_parameter_space(
     nets = []
     for n in networks:
         print(f"Loading {n} network")
-        nets.append(Network(n, load_network(net_name=n, as_tensor=as_tensor)))
+        nets.extend(
+            Network(name=nname, graph=nnet)
+            for nname, nnet in load_network(net_name=n, as_tensor=as_tensor).items()
+        )
     return product(protocols, p_values, nets)
 
 

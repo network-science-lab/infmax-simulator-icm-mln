@@ -7,22 +7,22 @@ model:
     ]
 
 networks: [
-  # "arxiv",
-  # "aucs",
-  # "cannes",
-  # "ckm_physicians",
-  # "eu_transportation",
-  # "eu_transport_klm",
-  # "lazega",
-  # "er1",
-  # "er2",
-  # "er3",
-  # "er5",
-  # "sf1",
-  # "sf2",
-  # "sf3",
-  # "sf5",
-  # "timik1q2009",
+  "artificial_er",
+  "artificial_pa",
+  "artificial_small",
+  "arxiv_netscience_coauthorship",
+  "arxiv_netscience_coauthorship_math.oc",
+  "aucs",
+  "cannes",
+  "ckm_physicians",
+  "eu_transportation",
+  "eu_transport_klm",
+  "fmri74",
+  "l2_course_net_1",
+  "l2_course_net_2",
+  "l2_course_net_3",
+  "lazega",
+  "timik1q2009",
   "toy_network",
 ]
 
@@ -30,7 +30,7 @@ run:
   experiment_step: "tensor"
   repetitions: 30
   random_seed: 43
-  average_results: True
+  average_results: False
 
 logging:
   compress_to_zip: False
