@@ -4,14 +4,14 @@ from pathlib import Path
 from typing import Any, Callable
 
 import yaml
+from tqdm import tqdm
 
-from runners.utils import (
+from src.generators.utils import (
     get_current_time,
     get_diff_of_times,
     zip_detailed_logs,
 )
-from tqdm import tqdm
-from runners import commons, step_classic, step_tensor
+from src.generators import commons, step_classic, step_tensor
 
 
 def get_step_func(step_func_name: str) -> Callable:

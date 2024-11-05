@@ -36,16 +36,18 @@ request to get  an access via  e-mail (michal.czuba@pwr.edu.pl). Then, simply ex
 ├── _data_set               -> networks to compute actors' marginal efficiency for
 ├── _test_data              -> examplary outputs of the dataset generator used in the E2E test
 ├── _output                 -> a directory where we recommend to save results
-├── env                     -> a definition of the runtime environment
-├── runners                 -> scripts to execute experiments according to provided configs
+├── env                     -> a definition of the runtime environment             
+├── src
+│   ├── generators          -> scripts to generate SPs according to provided configs
+│   └── icm                 -> implementations of the ICM adapted to multilayer networks
 ├── README.md          
-├── run_experiments.py      -> main entrypoint to trigger the pipeline
+├── generate_sp.py          -> main entrypoint to trigger the pipeline which generate SPs
 └── test_reproducibility.py -> E2E test to prove that results can be repeated
 ```
 
 ## Running the pipeline
 
-To run experiments execute: `run_experiments.py` and provide proper CLI arguments, i.e. a path to 
+To run experiments execute: `generate_sp.py` and provide proper CLI arguments, i.e. a path to 
 the configuration file. See examples in `_config/examples` for inspirations. As a result, for each
 evaluated spreading case, a csv file will be obtained with a folllowing data regarding each actor of
 the network:
@@ -67,7 +69,7 @@ For instance:
 ```bash
 conda activate infmax-simulator-icm-mln
 export CUDA_VISIBLE_DEVICES=2
-python run_experiments.py _configs/example_tensor.yaml
+python generate_sp.py _configs/example_tensor.yaml
 ```
 
 ## Results reproducibility

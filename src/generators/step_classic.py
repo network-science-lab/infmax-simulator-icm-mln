@@ -2,17 +2,17 @@
 
 from pathlib import Path
 
-from _data_set.nsl_data_utils.models.nd_model import FixedBudgetMICModel
-from runners.utils import (
+import network_diffusion as nd
+from tqdm import tqdm
+
+from src.icm.nd_model import FixedBudgetMICModel
+from src.generators import commons
+from src.generators.utils import (
     extract_simulation_result,
     mean_repeated_results,
     save_magrinal_efficiences,
     SimulationResult,
 )
-from tqdm import tqdm
-from runners import commons
-
-import network_diffusion as nd
 
 
 def experiment_step(

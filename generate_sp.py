@@ -3,8 +3,8 @@
 import argparse
 import yaml
 
-from runners import main_runner
-from runners.utils import set_seed
+from src.generators import main_runner
+from src.utils import set_seed
 
 
 def parse_args(*args):
