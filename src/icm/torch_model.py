@@ -25,7 +25,6 @@ class TorchMICModel:
             self.protocol = self.protocol_OR
         else:
             raise ValueError("Only AND & OR value are allowed!")
-        pass
 
     @staticmethod
     def protocol_AND(S_raw: torch.Tensor, net: nd.MultilayerNetworkTorch) -> torch.Tensor:
