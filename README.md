@@ -38,6 +38,7 @@ request to get  an access via  e-mail (michal.czuba@pwr.edu.pl). Then, simply ex
 ├── _output                 -> a directory where we recommend to save results
 ├── env                     -> a definition of the runtime environment             
 ├── src
+│   ├── evaluators          -> scripts to evaluate performance of infmax methods
 │   ├── generators          -> scripts to generate SPs according to provided configs
 │   └── icm                 -> implementations of the ICM adapted to multilayer networks
 ├── README.md          

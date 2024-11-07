@@ -26,6 +26,7 @@ def _get_seeding_budget_for_network(
 
 
 class FixedBudgetMICModel(nd.models.MICModel):
+    """Multilayer Independent Cascade Model without GPU acceleration."""
     
     def __init__(
             self, seed_selector: nd.seeding.MockingActorSelector, protocol: str, probability: float

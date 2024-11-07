@@ -3,7 +3,7 @@
 import argparse
 import yaml
 
-from src.generators import main_runner
+from src.evaluators import main_evaluator
 from src.utils import set_seed
 
 
@@ -14,9 +14,10 @@ def parse_args(*args):
         help="Experiment config file.",
         nargs="?",
         type=str,
-        default="_configs/gen_sp_tensor.yaml",
+        default="_configs/eval_ssm.yaml",
     )
     return parser.parse_args(*args)
+
 
 
 if __name__ == "__main__":
@@ -30,4 +31,4 @@ if __name__ == "__main__":
         set_seed(config["run"]["random_seed"])
     print(f"Loaded config: {config}")
 
-    main_runner.run_experiments(config)
+    main_evaluator.run_evaluations(config)
