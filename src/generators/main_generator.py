@@ -12,27 +12,31 @@ from src.generators.utils import (
     zip_detailed_logs,
 )
 from src.generators import commons, step_classic, step_tensor
+from src.icm import nd_model, torch_model
 
 
-def get_step_func(step_func_name: str) -> Callable:
-    if step_func_name == "classic":
-        return step_classic
-    elif step_func_name == "tensor":
-        return step_tensor
-    raise ValueError(f"Incorrect name of step funciton {step_func_name}")
+def get_step_func(spreading_model_name: str) -> Callable:
+    if spreading_model_name == nd_model.FixedBudgetMICModel.__name__:
+        step_func = step_classic
+    elif spreading_model_name == torch_model.TorchMICModel.__name__:
+        step_func = step_tensor
+    else:
+        raise ValueError(f"Incorrect name of them model {spreading_model_name}")
+    print(f"Inferred step function as: {step_func.__name__}")
+    return step_func
 
 
 def run_experiments(config: dict[str, Any]) -> None:
 
     # get parameter space and experiment's hyperparams
+    step_func = get_step_func(config["spreading_model"]["name"])
     p_space = commons.get_parameter_space(
-        protocols=config["model"]["parameters"]["protocols"],
-        p_values=config["model"]["parameters"]["p_values"],
+        protocols=config["spreading_model"]["parameters"]["protocols"],
+        p_values=config["spreading_model"]["parameters"]["p_values"],
         networks=config["networks"],
-        as_tensor=True if config["run"]["experiment_step"] == "tensor" else False,
+        as_tensor=True if step_func == step_tensor else False,
     )
     repetitions = config["run"]["repetitions"]
-    step_func = get_step_func(config["run"]["experiment_step"])
 
     # prepare output directory and deterimne how to store results
     out_dir = Path(config["logging"]["out_dir"])

@@ -3,7 +3,8 @@
 import argparse
 import yaml
 
-from src.generators import main_runner
+from src.evaluators import main_evaluator
+from src.generators import main_generator
 from src.utils import set_seed
 
 
@@ -14,7 +15,8 @@ def parse_args(*args):
         help="Experiment config file.",
         nargs="?",
         type=str,
-        default="_configs/gen_sp_tensor.yaml",
+        default="_configs/eval_ssm.yaml",
+        # default="_configs/gen_sp_classic.yaml",
     )
     return parser.parse_args(*args)
 
@@ -22,12 +24,20 @@ def parse_args(*args):
 if __name__ == "__main__":
 
     args = parse_args()
-
     with open(args.config, "r", encoding="utf-8") as f:
         config = yaml.safe_load(f)
+    print(f"Loaded config: {config}")
+
     if random_seed := config["run"].get("random_seed"):
         print(f"Setting randomness seed as {random_seed}!")
         set_seed(config["run"]["random_seed"])
-    print(f"Loaded config: {config}")
+    
+    if (experiment_type := config["run"].get("experiment_type")) == "generate":
+        runner = main_generator
+    elif experiment_type == "evaluate":
+        runner = main_evaluator
+    else:
+        raise ValueError(f"Unknown experiment type {experiment_type}")
 
-    main_runner.run_experiments(config)
+    print(f"Inferred experiment type as: {experiment_type}")
+    runner.run_experiments(config)

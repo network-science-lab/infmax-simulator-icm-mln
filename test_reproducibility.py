@@ -6,24 +6,27 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from src.generators import main_runner
+from src.generators import main_generator
 from src.utils import set_seed
 
 
 @pytest.fixture
-def tcase_experiment_steps():
+def tcase_icm_types():
     return [
-        "classic",
-        "tensor",
+        "FixedBudgetMICModel",
+        "TorchMICModel",
     ]
 
 
 @pytest.fixture
 def tcase_config():
     return {
-        "model": {"parameters": {"protocols": ["OR", "AND"], "p_values": [0.9, 0.65, 0.1]}},
+        "spreading_model": {
+            "name": None,
+            "parameters": {"protocols": ["OR", "AND"], "p_values": [0.9, 0.65, 0.1]}
+        },
         "networks": ["toy_network"],
-        "run": {"repetitions": 3, "random_seed": 43, "average_results": False, "experiment_step": None},
+        "run": {"repetitions": 3, "random_seed": 43, "average_results": False},
         "logging": {"compress_to_zip": False, "out_dir": None},
     }
 
@@ -48,15 +51,15 @@ def compare_results(gt_dir: Path, test_dir: Path, csv_names: list[str], experime
         print(f"Test passed for {experiment_step}, {csv_name}")
 
 
-def test_e2e(tcase_experiment_steps, tcase_config, tcase_csv_names, tmpdir):
-    for experiment_step in tcase_experiment_steps:
-        tcase_config["run"]["experiment_step"] = experiment_step
+def test_e2e(tcase_icm_types, tcase_config, tcase_csv_names, tmpdir):
+    for icm_type in tcase_icm_types:
+        tcase_config["spreading_model"]["name"] = icm_type
         tcase_config["logging"]["out_dir"] = str(tmpdir)
         set_seed(tcase_config["run"]["random_seed"])
-        main_runner.run_experiments(tcase_config)
-        compare_results(Path("_test_data"), Path(tmpdir), tcase_csv_names, experiment_step)
+        main_generator.run_experiments(tcase_config)
+        compare_results(Path("_test_data"), Path(tmpdir), tcase_csv_names, icm_type)
 
 
 if __name__ == "__main__":
-    os.environ['CUDA_VISIBLE_DEVICES'] = ''
+    os.environ["CUDA_VISIBLE_DEVICES"] = ""
     pytest.main(["-vs", __file__])

@@ -1,3 +1,14 @@
+spreading_model:
+  name: torch
+  parameters:
+    protocols: ["OR"]
+    p_values: [0.5]
+
+networks: [
+  "ckm_physicians",
+  "toy_network",
+]
+
 infmax_model:
   name: "MultiNode2VecKMeans"
   parameters:
@@ -15,20 +26,8 @@ infmax_model:
       experiment_name: "test"
       visualise: False
 
-networks: [
-  "ckm_physicians",
-  "toy_network",
-]
-
-spreading_model:
-  name: torch
-  parameters:
-    protocols: ["OR"]
-    p_values: [0.5]
-    n_repetitions: 30
-    n_steps: 10000
-
 run:
+  experiment_type: "evaluate"
   repetitions: 30
   random_seed: 43
   average_results: True

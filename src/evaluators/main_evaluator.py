@@ -15,7 +15,7 @@ from src.generators.utils import (
 from src.evaluators.evaluate_seed_set import evaluate_seed_set
 
 
-def run_evaluations(config: dict[str, Any]) -> None:
+def run_experiments(config: dict[str, Any]) -> None:
     print(config)
     p_space = commons.get_parameter_space(
         protocols=config["spreading_model"]["parameters"]["protocols"],

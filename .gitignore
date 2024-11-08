@@ -1,5 +1,5 @@
 **/__pycache__
 **/.DS_Store
-_output_classic
-_output_tensor
+_output_generator
+_output_evaluator
 .vscode
