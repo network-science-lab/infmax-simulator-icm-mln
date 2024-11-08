@@ -1,36 +1,54 @@
 spreading_model:
-  name: torch
+  name: "TorchMICModel"
   parameters:
     protocols: ["OR"]
-    p_values: [0.5]
+    p_values: [0.25, 0.5, 0.75]
 
 networks: [
-  "ckm_physicians",
+  "aucs",
   "toy_network",
 ]
 
-infmax_model:
-  name: "MultiNode2VecKMeans"
-  parameters:
-    rng_seed: 43
-    multi_node2vec:
-      d: 2 # "auto"
-      window_size: 10
-      n_samples: 1
-      thresh: 0.5
-      pvals: 1
-      qvals: 0.5
-      rvals: 0.25
-    k_means:
-      nb_seeds: 4
-      experiment_name: "test"
-      visualise: False
+infmax_models:
+  - name: "MultiNode2VecKMeans"
+    parameters:
+      rng_seed: "auto"
+      multi_node2vec:
+        d: 2 # "auto"
+        window_size: 10
+        n_samples: 1
+        thresh: 0.5
+        pvals: 1
+        qvals: 0.5
+        rvals: 0.25
+      k_means:
+        nb_seeds: 4  # TODO
+        experiment_name: "test"
+        visualise: False
+  # - name: "dddd"
+  - name: "MultiNode2VecKMeansAuto"
+    parameters:
+      rng_seed: "auto"
+      multi_node2vec:
+        d: "auto"
+        window_size: 10
+        n_samples: 1
+        thresh: 0.5
+        pvals: 1
+        qvals: 0.5
+        rvals: 0.25
+      k_means:
+        nb_seeds: 1  # TODO
+        max_nb_clusters: 10
+        experiment_name: "test"
+        visualise: False
+
 
 run:
   experiment_type: "evaluate"
   repetitions: 30
   random_seed: 43
-  average_results: True
+  average_results: False
 
 logging:
   compress_to_zip: False

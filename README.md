@@ -1,6 +1,7 @@
 # Inf. Max. Simulator for Multilayer Networks under ICM 
 
-A repository to generate dataset with marginal efficiency for each actor from the evaluated network.
+A repository to generate dataset with marginal efficiency for each actor from the evaluated network
+and evaluete various influence maximisation methods.
 
 * Authors: Piotr Bródka, Michał Czuba, Adam Piróg, Mateusz Stolarski
 * Affiliation: WUST, Wrocław, Lower Silesia, Poland
@@ -32,7 +33,7 @@ request to get  an access via  e-mail (michal.czuba@pwr.edu.pl). Then, simply ex
 ## Structure of the repository
 ```
 .
-├── _configs                -> def. of the spreading regimes under which do computations
+├── _configs                -> eample configuration files to trigger the pipeline
 ├── _data_set               -> networks to compute actors' marginal efficiency for
 ├── _test_data              -> examplary outputs of the dataset generator used in the E2E test
 ├── _output                 -> a directory where we recommend to save results
@@ -42,16 +43,16 @@ request to get  an access via  e-mail (michal.czuba@pwr.edu.pl). Then, simply ex
 │   ├── generators          -> scripts to generate SPs according to provided configs
 │   └── icm                 -> implementations of the ICM adapted to multilayer networks
 ├── README.md          
-├── generate_sp.py          -> main entrypoint to trigger the pipeline which generate SPs
+├── run_experiments.py      -> main entrypoint to trigger the pipeline
 └── test_reproducibility.py -> E2E test to prove that results can be repeated
 ```
 
 ## Running the pipeline
 
-To run experiments execute: `generate_sp.py` and provide proper CLI arguments, i.e. a path to 
-the configuration file. See examples in `_config/examples` for inspirations. As a result, for each
-evaluated spreading case, a csv file will be obtained with a folllowing data regarding each actor of
-the network:
+To run experiments execute: `run_experiments.py` and provide proper CLI arguments, i.e. a path to 
+the configuration file. See examples in `_configs` for inspirations. The pipeline has two modes
+defined under `run:experiment_type`. The first one (`"generate"`), for each evaluated case of ICM,
+produces a csv file a folllowing data regarding each actor of the network:
 
 ```python
 actor: int              # actor's id
@@ -61,6 +62,9 @@ not_exposed: int        # nb. of not infected actors
 peak_infected: int      # maximal nb. of infected actors in a single sim. step
 peak_iteration: int     # a sim. step when the peak occured
 ```
+
+The second one (`"evaluate"`) serves as an evaluation pipeline for various seed selection methods 
+which are defined in the study.  # TODO - complete this section.
 
 Selecting GPU (for a `tensor` runner) is possible only by setting an env variable before executing 
 the Python code, e.g. `export CUDA_VISIBLE_DEVICES=3`
