@@ -41,7 +41,11 @@ def run_experiments(config: dict[str, Any]) -> None:
     repetitions = config["run"]["repetitions"]
 
     # initialise influence maximisation models
-    infmax_models = loader.load_infmax_models(config["infmax_models"], config["run"]["random_seed"])
+    infmax_models = loader.load_infmax_models(
+        config=config["infmax_models"],
+        random_seed=config["run"]["random_seed"],
+        nb_seeds=config["run"]["nb_seeds"],
+    )
 
     # # prepare output directory and deterimne how to store results
     out_dir = Path(config["logging"]["out_dir"])
@@ -65,6 +69,7 @@ def run_experiments(config: dict[str, Any]) -> None:
         for ifm_name, ifm_obj in infmax_models.items():
             try:
                 seed_set = ifm_obj(investigated_case[2].graph)
+                print(f"Seed set: {seed_set}")
                 partial_result = step_func(
                     protocol=investigated_case[0],
                     p=investigated_case[1],
@@ -106,5 +111,4 @@ def concatenate_results(investigated_case_results: list[pd.DataFrame]) -> pd.Dat
 # TODO: add GT seed selector
 # TODO: add add voterank
 # TODO: add trajectory of the diffusion
-# TODO: modify config so that number of seeds is set up globally
 # TODO: save git sha in the config

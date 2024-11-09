@@ -14,7 +14,7 @@ infmax_models:
     parameters:
       rng_seed: "auto"
       multi_node2vec:
-        d: 2 # "auto"
+        d: "auto"
         window_size: 10
         n_samples: 1
         thresh: 0.5
@@ -22,10 +22,9 @@ infmax_models:
         qvals: 0.5
         rvals: 0.25
       k_means:
-        nb_seeds: 4  # TODO
-        experiment_name: "test"
+        nb_seeds: "auto"
+        experiment_name: "My Experiment"
         visualise: False
-  # - name: "dddd"
   - name: "MultiNode2VecKMeansAuto"
     parameters:
       rng_seed: "auto"
@@ -38,18 +37,18 @@ infmax_models:
         qvals: 0.5
         rvals: 0.25
       k_means:
-        nb_seeds: 1  # TODO
+        nb_seeds: "auto"
         max_nb_clusters: 10
-        experiment_name: "test"
+        experiment_name: "My Experiment"
         visualise: False
-
 
 run:
   experiment_type: "evaluate"
+  nb_seeds: 3
   repetitions: 30
   random_seed: 43
   average_results: False
 
 logging:
   compress_to_zip: False
-  out_dir: "./_output_classic"
+  out_dir: "./_output_evaluator"
