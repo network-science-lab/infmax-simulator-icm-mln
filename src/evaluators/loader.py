@@ -1,3 +1,4 @@
+"""Loader for influence maximisations methods."""
 
 from typing import Any, Callable
 

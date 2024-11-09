@@ -1,39 +1,26 @@
 """Main runner of the evaluation pipeline."""
 
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 import yaml
 from tqdm import tqdm
 
-from src.generators import commons
-from src.generators.utils import (
+from src.evaluators import evaluate_seed_set, loader, utils
+from src.utils import (
     get_current_time,
     get_diff_of_times,
-    save_magrinal_efficiences,
-    zip_detailed_logs,
+    get_parameter_space,
+    get_recent_git_sha,
+    zip_detailed_logs
 )
-from src.evaluators import evaluate_seed_set, loader
-from src.icm import nd_model, torch_model
-from src.utils import get_recent_git_sha
-
-
-def get_step_func(spreading_model_name: str) -> Callable:
-    if spreading_model_name == nd_model.FixedBudgetMICModel.__name__:
-        raise NotImplementedError(f"Pipeline for {spreading_model_name} is not yet ready!")
-    elif spreading_model_name == torch_model.TorchMICModel.__name__:
-        step_func = evaluate_seed_set
-    else:
-        raise ValueError(f"Incorrect name of them model {spreading_model_name}")
-    print(f"Inferred step function as: {step_func.__name__}")
-    return step_func
 
 
 def run_experiments(config: dict[str, Any]) -> None:
 
     # get parameter space and experiment's hyperparams
-    step_func = get_step_func(config["spreading_model"]["name"])
-    p_space = commons.get_parameter_space(
+    step_func = utils.get_step_func(config["spreading_model"]["name"])
+    p_space = get_parameter_space(
         protocols=config["spreading_model"]["parameters"]["protocols"],
         p_values=config["spreading_model"]["parameters"]["p_values"],
         networks=config["networks"],
@@ -61,7 +48,7 @@ def run_experiments(config: dict[str, Any]) -> None:
 
     # get a start time
     start_time = get_current_time()
-    print(f"Experiments started at {start_time}")
+    print(f"Evaluations started at {start_time}")
 
     # main loop
     p_bar = tqdm(list(p_space), desc="", leave=False, colour="green")
@@ -88,7 +75,7 @@ def run_experiments(config: dict[str, Any]) -> None:
                 investigated_case[1],
                 investigated_case[2].name,
             )
-            print(f"\nExperiment failed for case: {case_descr}")
+            print(f"\nEvaluation failed for case: {case_descr}")
             raise e
 
     # save global logs and config
@@ -96,8 +83,8 @@ def run_experiments(config: dict[str, Any]) -> None:
         zip_detailed_logs([out_dir], rm_logged_dirs=True)
 
     finish_time = get_current_time()
-    print(f"Experiments finished at {finish_time}")
-    print(f"Experiments lasted {get_diff_of_times(start_time, finish_time)} minutes")
+    print(f"Evaluations finished at {finish_time}")
+    print(f"Evaluations lasted {get_diff_of_times(start_time, finish_time)} minutes")
 
 
 

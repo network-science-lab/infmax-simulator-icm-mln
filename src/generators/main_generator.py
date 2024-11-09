@@ -1,4 +1,4 @@
-"""Main runner of the simulator."""
+"""Main runner of the simulation pipeline."""
 
 from pathlib import Path
 from typing import Any, Callable
@@ -6,14 +6,15 @@ from typing import Any, Callable
 import yaml
 from tqdm import tqdm
 
-from src.generators.utils import (
-    get_current_time,
-    get_diff_of_times,
-    zip_detailed_logs,
-)
 from src.generators import commons, step_classic, step_tensor
 from src.icm import nd_model, torch_model
-from src.utils import get_recent_git_sha
+from src.utils import (
+    get_current_time,
+    get_diff_of_times,
+    get_parameter_space,
+    get_recent_git_sha,
+    zip_detailed_logs,
+)
 
 
 def get_step_func(spreading_model_name: str) -> Callable:
@@ -31,7 +32,7 @@ def run_experiments(config: dict[str, Any]) -> None:
 
     # get parameter space and experiment's hyperparams
     step_func = get_step_func(config["spreading_model"]["name"])
-    p_space = commons.get_parameter_space(
+    p_space = get_parameter_space(
         protocols=config["spreading_model"]["parameters"]["protocols"],
         p_values=config["spreading_model"]["parameters"]["p_values"],
         networks=config["networks"],

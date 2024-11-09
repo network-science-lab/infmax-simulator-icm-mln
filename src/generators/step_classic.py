@@ -1,4 +1,4 @@
-"""Main runner of the simulator."""
+"""Single simulation step implemented with `networkx`."""
 
 from pathlib import Path
 
@@ -10,9 +10,9 @@ from src.generators import commons
 from src.generators.utils import (
     extract_simulation_result,
     mean_simulation_results,
-    save_magrinal_efficiences,
     SimulationResult,
 )
+from src.utils import export_dataclasses
 
 
 def experiment_step(
@@ -78,4 +78,4 @@ def experiment_step(
 
     # save efficiences obtained for this case
     investigated_case_file_path = out_dir / f"{commons.get_case_name_base(protocol, p, net_name)}.csv"
-    save_magrinal_efficiences(marginal_efficiencies, investigated_case_file_path)
+    export_dataclasses(marginal_efficiencies, investigated_case_file_path)

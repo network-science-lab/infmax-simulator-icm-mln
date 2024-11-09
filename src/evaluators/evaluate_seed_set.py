@@ -1,34 +1,20 @@
 """Functions to help in evaluating performance of a given seed set."""
-import sys
+
+from pathlib import Path
+from typing import Literal
 
 from tqdm import tqdm
 
-from src.utils import compute_gain
-sys.path.append("/Users/michal/Development/infmax-simulator-icm-mln")
-
-from typing import Any, Literal
-
-import network_diffusion as nd
-import pandas as pd
-from _data_set.nsl_data_utils.loaders.net_loader import load_network
-from _data_set.nsl_data_utils.loaders.sp_loader import get_gt_data, load_sp
-
-from src.icm.torch_model import TorchMICModel, TorchMICSimulator
+from src.evaluators.utils import EvaluationResult, mean_evaluation_results
 from src.generators import commons
-from src.generators.utils import (
-    mean_evaluation_results,
-    save_magrinal_efficiences,
-    SimulationResult,
-    EvaluationResult,
-    
-)
-from pathlib import Path
+from src.icm.torch_model import TorchMICModel, TorchMICSimulator
+from src.utils import Network, compute_gain, export_dataclasses
 
 
 def evaluation_step(
     protocol: Literal["OR", "AND"],
     p: float,
-    net: commons.Network,
+    net: Network,
     seed_sets: dict[str, set[str]],
     repetitions_nb: int,
     average_results: bool,
@@ -81,23 +67,4 @@ def evaluation_step(
     
     # save efficiences obtained for this case
     investigated_case_file_path = out_dir / f"{commons.get_case_name_base(protocol, p, f"{net.type}_{net.name}")}.csv"
-    save_magrinal_efficiences(evaluation_results, investigated_case_file_path)
-
-
-
-if __name__ == "__main__":
-
-    from _data_set.nsl_data_utils.loaders.constants import *
-
-    net_name = LAZEGA
-    proto = OR
-    p = 0.25
-    n_steps = 10000
-    budget = 5
-    n_repetitions = 30
-
-    net = load_network(net_name, as_tensor=True)
-    sp = load_sp(net_name)
-    seed_set = get_gt_data(sp[net_name], proto, p, budget)
-    raw_results = evaluation_step(net[net_name], seed_set, proto, p, n_steps, n_repetitions)
-    print("Performance of given seed set:\n", raw_results.mean())
+    export_dataclasses(evaluation_results, investigated_case_file_path)
