@@ -16,3 +16,9 @@ def set_rng_seed(seed):
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
+
+
+def compute_gain(seed_nb: int, exposed_nb: int, total_actors: int) -> float:
+    max_available_gain = total_actors - seed_nb
+    obtained_gain = exposed_nb - seed_nb
+    return 100 * obtained_gain / max_available_gain

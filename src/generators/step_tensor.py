@@ -8,7 +8,7 @@ from tqdm import tqdm
 from src.icm.torch_model import TorchMICModel, TorchMICSimulator
 from src.generators import commons
 from src.generators.utils import (
-    mean_repeated_results,
+    mean_simulation_results,
     save_magrinal_efficiences,
     SimulationResult,
 )
@@ -57,12 +57,19 @@ def experiment_step(
             logs = experiment.perform_propagation()
 
             # compute boost that current actor provides
-            simulation_result = SimulationResult(actor=actor_name, **logs)
+            simulation_result = SimulationResult(
+                actor=actor_name,
+                simulation_length=logs["simulation_length"],
+                exposed=logs["exposed"],
+                not_exposed=logs["not_exposed"],
+                peak_infected=logs["peak_infected"],
+                peak_iteration=logs["peak_iteration"],
+            )
             repeated_results.append(simulation_result)
         
         # get mean value for each result
         if average_results:
-            marginal_efficiencies.append(mean_repeated_results(repeated_results))
+            marginal_efficiencies.append(mean_simulation_results(repeated_results))
         else:
             marginal_efficiencies.extend(repeated_results)
 

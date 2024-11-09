@@ -192,6 +192,7 @@ class TorchMICSimulator:
         not_exposed = None
         peak_infected = 1
         peak_iteration = 0
+        expositions_rec = []
 
         S_i = self.create_states_tensor(self.net, self.seed_set)
         # if self.debug: print(f"Step: 0, actor-wise states: {self.count_states(S_i)}")
@@ -213,6 +214,8 @@ class TorchMICSimulator:
                 not_exposed = step_result.get(0, 0)
                 break
 
+            expositions_rec.append(step_result.get(1, 0))
+
             S_i = S_j
 
         return {
@@ -221,4 +224,5 @@ class TorchMICSimulator:
             "not_exposed": not_exposed,
             "peak_infected": peak_infected,
             "peak_iteration": peak_iteration,
+            "expositions_rec": expositions_rec,
         }

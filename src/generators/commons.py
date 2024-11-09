@@ -12,6 +12,7 @@ warnings.filterwarnings(action="ignore", category=FutureWarning)
 @dataclass(frozen=True)
 class Network:
     name: str
+    type: str # this field has been added after generation of the dataset with spreading potentials!
     graph: nd.MultilayerNetwork | nd.MultilayerNetworkTorch
 
 
@@ -22,9 +23,7 @@ def get_parameter_space(
     for net_type in networks:
         print(f"Loading {net_type} network")
         for net_name, net_graph in load_network(net_name=net_type, as_tensor=as_tensor).items():
-            if net_name != net_type:
-                net_name = f"{net_type}_{net_name}"
-            nets.append(Network(name=net_name, graph=net_graph))
+            nets.append(Network(name=net_name, type=net_type, graph=net_graph))
     return product(protocols, p_values, nets)
 
 

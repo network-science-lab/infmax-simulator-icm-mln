@@ -9,7 +9,7 @@ from src.icm.nd_model import FixedBudgetMICModel
 from src.generators import commons
 from src.generators.utils import (
     extract_simulation_result,
-    mean_repeated_results,
+    mean_simulation_results,
     save_magrinal_efficiences,
     SimulationResult,
 )
@@ -72,7 +72,7 @@ def experiment_step(
         
         # get mean value for each result
         if average_results:
-            marginal_efficiencies.append(mean_repeated_results(repeated_results))
+            marginal_efficiencies.append(mean_simulation_results(repeated_results))
         else:
             marginal_efficiencies.extend(repeated_results)
 
