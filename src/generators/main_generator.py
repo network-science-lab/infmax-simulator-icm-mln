@@ -13,6 +13,7 @@ from src.generators.utils import (
 )
 from src.generators import commons, step_classic, step_tensor
 from src.icm import nd_model, torch_model
+from src.utils import get_recent_git_sha
 
 
 def get_step_func(spreading_model_name: str) -> Callable:
@@ -44,7 +45,8 @@ def run_experiments(config: dict[str, Any]) -> None:
     compress_to_zip = config["logging"]["compress_to_zip"]
     average_results = config["run"]["average_results"]
 
-    # save config
+    # save the config
+    config["git_sha"] = get_recent_git_sha()
     with open(out_dir / "config.yaml", "w", encoding="utf-8") as f:
         yaml.dump(config, f)
 

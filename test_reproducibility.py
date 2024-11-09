@@ -7,7 +7,7 @@ import pandas as pd
 import pytest
 
 from src.generators import main_generator
-from src.utils import set_seed
+from src.utils import set_rng_seed
 
 
 @pytest.fixture
@@ -55,7 +55,7 @@ def test_e2e(tcase_icm_types, tcase_config, tcase_csv_names, tmpdir):
     for icm_type in tcase_icm_types:
         tcase_config["spreading_model"]["name"] = icm_type
         tcase_config["logging"]["out_dir"] = str(tmpdir)
-        set_seed(tcase_config["run"]["random_seed"])
+        set_rng_seed(tcase_config["run"]["random_seed"])
         main_generator.run_experiments(tcase_config)
         compare_results(Path("_test_data"), Path(tmpdir), tcase_csv_names, icm_type)
 

@@ -5,7 +5,7 @@ import yaml
 
 from src.evaluators import main_evaluator
 from src.generators import main_generator
-from src.utils import set_seed
+from src.utils import set_rng_seed
 
 
 def parse_args(*args):
@@ -30,7 +30,7 @@ if __name__ == "__main__":
 
     if random_seed := config["run"].get("random_seed"):
         print(f"Setting randomness seed as {random_seed}!")
-        set_seed(config["run"]["random_seed"])
+        set_rng_seed(config["run"]["random_seed"])
     
     if (experiment_type := config["run"].get("experiment_type")) == "generate":
         runner = main_generator
