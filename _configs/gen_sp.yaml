@@ -1,6 +1,6 @@
 spreading_model:
-  name: "FixedBudgetMICModel"
-  # name: "TorchMICModel"
+  # name: "FixedBudgetMICModel"
+  name: "TorchMICModel"
   parameters:
     protocols: ["AND", "OR"]
     p_values: [
@@ -32,7 +32,7 @@ run:
   experiment_type: "generate"
   repetitions: 30
   random_seed: 43
-  average_results: True
+  average_results: False
 
 logging:
   compress_to_zip: False

@@ -5,14 +5,14 @@ from pathlib import Path
 import network_diffusion as nd
 from tqdm import tqdm
 
+from src import os_utils, sim_utils
 from src.icm.nd_model import FixedBudgetMICModel
-from src.generators import commons
 from src.generators.utils import (
-    extract_simulation_result,
-    mean_simulation_results,
     SimulationResult,
+    extract_simulation_result,
+    get_ranking,
+    mean_simulation_results,
 )
-from src.utils import export_dataclasses
 
 
 def experiment_step(
@@ -33,7 +33,7 @@ def experiment_step(
     for actor_idx, actor in enumerate(actors):
 
         # initialise model with "ranking" that prioritises current actor
-        apriori_ranking = commons.get_ranking(actor, actors)
+        apriori_ranking = get_ranking(actor, actors)
         micm = FixedBudgetMICModel(
             seed_selector=apriori_ranking,
             protocol=protocol,
@@ -46,7 +46,7 @@ def experiment_step(
 
             # update progress_bar
             p_bar.set_description_str(
-                commons.get_case_name_rich(
+                sim_utils.get_case_name_rich(
                     protocol=protocol,
                     p=p,
                     net_name=net_name,
@@ -77,5 +77,5 @@ def experiment_step(
             marginal_efficiencies.extend(repeated_results)
 
     # save efficiences obtained for this case
-    investigated_case_file_path = out_dir / f"{commons.get_case_name_base(protocol, p, net_name)}.csv"
-    export_dataclasses(marginal_efficiencies, investigated_case_file_path)
+    out_path = out_dir / f"{sim_utils.get_case_name_base(protocol, p, net_name)}.csv"
+    os_utils.export_dataclasses(marginal_efficiencies, out_path)

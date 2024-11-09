@@ -3,23 +3,19 @@
 from pathlib import Path
 from typing import Literal
 
-from tqdm import tqdm
-
+from src import os_utils, sim_utils
 from src.evaluators.utils import EvaluationResult, mean_evaluation_results
-from src.generators import commons
 from src.icm.torch_model import TorchMICModel, TorchMICSimulator
-from src.utils import Network, compute_gain, export_dataclasses
 
 
 def evaluation_step(
     protocol: Literal["OR", "AND"],
     p: float,
-    net: Network,
+    net: sim_utils.Network,
     seed_sets: dict[str, set[str]],
     repetitions_nb: int,
     average_results: bool,
-    case_idx: int,
-    p_bar: tqdm,
+    case_name: int,
     out_dir: Path,
 ) -> list[EvaluationResult]:
     """Run multilayer ICM on given seed set and model's parameters."""
@@ -43,12 +39,17 @@ def evaluation_step(
                 seed_set=seed_set,
             )
             logs = simulator.perform_propagation()
+            gain = sim_utils.compute_gain(
+                seed_nb=len(seed_set),
+                exposed_nb=logs["exposed"],
+                total_actors=logs["exposed"] + logs["not_exposed"],
+            )
 
             # compute boost that current seed set provides
             simulation_result = EvaluationResult(
                 infmax_model=infmax_name,
                 seed_set=";".join(seed_set),
-                gain=compute_gain(len(seed_set), logs["exposed"], logs["exposed"] + logs["not_exposed"]),
+                gain=gain,
                 simulation_length=logs["simulation_length"],
                 exposed=logs["exposed"],
                 not_exposed=logs["not_exposed"],
@@ -66,5 +67,5 @@ def evaluation_step(
             evaluation_results.extend(repeated_results)
     
     # save efficiences obtained for this case
-    investigated_case_file_path = out_dir / f"{commons.get_case_name_base(protocol, p, f"{net.type}_{net.name}")}.csv"
-    export_dataclasses(evaluation_results, investigated_case_file_path)
+    out_path = out_dir / f"{case_name}.csv"
+    os_utils.export_dataclasses(evaluation_results, out_path)

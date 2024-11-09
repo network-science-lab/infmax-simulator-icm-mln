@@ -5,20 +5,6 @@ from dataclasses import dataclass, asdict
 import numpy as np
 import pandas as pd
 
-from src.evaluators import evaluate_seed_set
-from src.icm import nd_model, torch_model
-
-
-def get_step_func(spreading_model_name: str) -> evaluate_seed_set:
-    if spreading_model_name == nd_model.FixedBudgetMICModel.__name__:
-        raise NotImplementedError(f"Pipeline for {spreading_model_name} is not yet ready!")
-    elif spreading_model_name == torch_model.TorchMICModel.__name__:
-        step_func = evaluate_seed_set
-    else:
-        raise ValueError(f"Incorrect name of them model {spreading_model_name}")
-    print(f"Inferred step function as: {step_func.__name__}")
-    return step_func
-
 
 @dataclass(frozen=True)
 class EvaluationResult:

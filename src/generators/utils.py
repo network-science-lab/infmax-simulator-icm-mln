@@ -1,9 +1,14 @@
-"""blabla."""
+"""Helpers for both generators."""
 
 from dataclasses import dataclass, asdict
-from pathlib import Path
 
+import network_diffusion as nd
 import pandas as pd
+
+
+def get_ranking(actor: nd.MLNetworkActor, actors: list[nd.MLNetworkActor]) -> nd.seeding.MockingActorSelector:
+    ranking_list = [actor, *set(actors).difference({actor})]
+    return nd.seeding.MockingActorSelector(ranking_list)
 
 
 @dataclass(frozen=True)

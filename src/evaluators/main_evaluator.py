@@ -1,30 +1,36 @@
 """Main runner of the evaluation pipeline."""
 
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 import yaml
 from tqdm import tqdm
 
-from src.evaluators import evaluate_seed_set, loader, utils
-from src.utils import (
-    get_current_time,
-    get_diff_of_times,
-    get_parameter_space,
-    get_recent_git_sha,
-    zip_detailed_logs
-)
+from src import os_utils, sim_utils
+from src.evaluators import loader, step_eval
+from src.icm import nd_model, torch_model
+
+
+def get_step_func(spreading_model_name: str) -> Callable:
+    if spreading_model_name == nd_model.FixedBudgetMICModel.__name__:
+        raise NotImplementedError(f"Pipeline for {spreading_model_name} is not yet ready!")
+    elif spreading_model_name == torch_model.TorchMICModel.__name__:
+        step_func = step_eval
+    else:
+        raise ValueError(f"Incorrect name of them model {spreading_model_name}")
+    print(f"Inferred step function as: {step_func.__name__}")
+    return step_func
 
 
 def run_experiments(config: dict[str, Any]) -> None:
 
     # get parameter space and experiment's hyperparams
-    step_func = utils.get_step_func(config["spreading_model"]["name"])
-    p_space = get_parameter_space(
+    step_func = get_step_func(config["spreading_model"]["name"])
+    p_space = sim_utils.get_parameter_space(
         protocols=config["spreading_model"]["parameters"]["protocols"],
         p_values=config["spreading_model"]["parameters"]["p_values"],
         networks=config["networks"],
-        as_tensor=True if step_func == evaluate_seed_set else False,
+        as_tensor=True if step_func == step_eval else False,
     )
     repetitions = config["run"]["repetitions"]
 
@@ -42,17 +48,23 @@ def run_experiments(config: dict[str, Any]) -> None:
     average_results = config["run"]["average_results"]
 
     # save the config
-    config["git_sha"] = get_recent_git_sha()
+    config["git_sha"] = os_utils.get_recent_git_sha()
     with open(out_dir / "config.yaml", "w", encoding="utf-8") as f:
         yaml.dump(config, f)
 
     # get a start time
-    start_time = get_current_time()
+    start_time = os_utils.get_current_time()
     print(f"Evaluations started at {start_time}")
 
     # main loop
     p_bar = tqdm(list(p_space), desc="", leave=False, colour="green")
     for idx, investigated_case in enumerate(p_bar):
+        case_descr = sim_utils.get_case_name_base(
+                investigated_case[0],
+                investigated_case[1],
+                f"{investigated_case[2].type}_{investigated_case[2].name}",
+            )
+        p_bar.set_description_str(f"{idx}/{len(p_bar)}-{case_descr}")
         try:
             seed_sets = {
                 ifm_name: ifm_obj(investigated_case[2].graph)
@@ -65,27 +77,20 @@ def run_experiments(config: dict[str, Any]) -> None:
                 seed_sets=seed_sets,
                 repetitions_nb=repetitions,
                 average_results=average_results,
-                case_idx=idx,
-                p_bar=None,
+                case_name=case_descr,
                 out_dir=out_dir,
             )
         except BaseException as e:
-            case_descr = commons.get_case_name_base(
-                investigated_case[0],
-                investigated_case[1],
-                investigated_case[2].name,
-            )
             print(f"\nEvaluation failed for case: {case_descr}")
             raise e
 
     # save global logs and config
     if compress_to_zip:
-        zip_detailed_logs([out_dir], rm_logged_dirs=True)
+        os_utils.zip_detailed_logs([out_dir], rm_logged_dirs=True)
 
-    finish_time = get_current_time()
+    finish_time = os_utils.get_current_time()
     print(f"Evaluations finished at {finish_time}")
-    print(f"Evaluations lasted {get_diff_of_times(start_time, finish_time)} minutes")
-
+    print(f"Evaluations lasted {os_utils.get_diff_of_times(start_time, finish_time)} minutes")
 
 
 # TODO: add repetetitive selecting seed set

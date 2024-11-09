@@ -6,15 +6,9 @@ from typing import Any, Callable
 import yaml
 from tqdm import tqdm
 
-from src.generators import commons, step_classic, step_tensor
+from src import os_utils, sim_utils
+from src.generators import step_classic, step_tensor
 from src.icm import nd_model, torch_model
-from src.utils import (
-    get_current_time,
-    get_diff_of_times,
-    get_parameter_space,
-    get_recent_git_sha,
-    zip_detailed_logs,
-)
 
 
 def get_step_func(spreading_model_name: str) -> Callable:
@@ -32,7 +26,7 @@ def run_experiments(config: dict[str, Any]) -> None:
 
     # get parameter space and experiment's hyperparams
     step_func = get_step_func(config["spreading_model"]["name"])
-    p_space = get_parameter_space(
+    p_space = sim_utils.get_parameter_space(
         protocols=config["spreading_model"]["parameters"]["protocols"],
         p_values=config["spreading_model"]["parameters"]["p_values"],
         networks=config["networks"],
@@ -47,12 +41,12 @@ def run_experiments(config: dict[str, Any]) -> None:
     average_results = config["run"]["average_results"]
 
     # save the config
-    config["git_sha"] = get_recent_git_sha()
+    config["git_sha"] = os_utils.get_recent_git_sha()
     with open(out_dir / "config.yaml", "w", encoding="utf-8") as f:
         yaml.dump(config, f)
 
     # get a start time
-    start_time = get_current_time()
+    start_time = os_utils.get_current_time()
     print(f"Experiments started at {start_time}")
 
     # main loop
@@ -71,7 +65,7 @@ def run_experiments(config: dict[str, Any]) -> None:
                 out_dir=out_dir,
             )
         except BaseException as e:
-            case_descr = commons.get_case_name_base(
+            case_descr = sim_utils.get_case_name_base(
                 investigated_case[0], investigated_case[1], investigated_case[2].name
             )
             print(f"\nExperiment failed for case: {case_descr}")
@@ -79,8 +73,8 @@ def run_experiments(config: dict[str, Any]) -> None:
 
     # save global logs and config
     if compress_to_zip:
-        zip_detailed_logs([out_dir], rm_logged_dirs=True)
+        os_utils.zip_detailed_logs([out_dir], rm_logged_dirs=True)
 
-    finish_time = get_current_time()
+    finish_time = os_utils.get_current_time()
     print(f"Experiments finished at {finish_time}")
-    print(f"Experiments lasted {get_diff_of_times(start_time, finish_time)} minutes")
+    print(f"Experiments lasted {os_utils.get_diff_of_times(start_time, finish_time)} minutes")

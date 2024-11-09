@@ -1,3 +1,5 @@
+"""`networkx`-based Multilayer Independent Cascade Model."""
+
 import network_diffusion as nd
 
 

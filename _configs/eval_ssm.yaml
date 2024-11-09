@@ -44,7 +44,7 @@ infmax_models:
 
 run:
   experiment_type: "evaluate"
-  nb_seeds: 3
+  nb_seeds: 1
   repetitions: 30
   random_seed: 43
   average_results: False

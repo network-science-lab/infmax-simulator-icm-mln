@@ -1,3 +1,5 @@
+"""`torch`-based Multilayer Independent Cascade Model."""
+
 from typing import Any
 
 import torch

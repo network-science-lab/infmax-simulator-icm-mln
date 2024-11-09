@@ -5,7 +5,7 @@ import yaml
 
 from src.evaluators import main_evaluator
 from src.generators import main_generator
-from src.utils import set_rng_seed
+from src.os_utils import set_rng_seed
 
 
 def parse_args(*args):
@@ -16,7 +16,7 @@ def parse_args(*args):
         nargs="?",
         type=str,
         default="_configs/eval_ssm.yaml",
-        # default="_configs/gen_sp_classic.yaml",
+        # default="_configs/gen_sp.yaml",
     )
     return parser.parse_args(*args)
 

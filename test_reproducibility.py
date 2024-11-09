@@ -7,7 +7,7 @@ import pandas as pd
 import pytest
 
 from src.generators import main_generator
-from src.utils import set_rng_seed
+from src.os_utils import set_rng_seed
 
 
 @pytest.fixture
