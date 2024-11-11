@@ -13,7 +13,8 @@ def evaluation_step(
     p: float,
     net: sim_utils.Network,
     seed_sets: dict[str, set[str]],
-    repetitions_nb: int,
+    repetitions_diffusion: int,
+    repetitions_infmax: int,
     average_results: bool,
     case_name: int,
     out_dir: Path,
@@ -29,7 +30,7 @@ def evaluation_step(
 
         # repeat the simulation to get mean results
         repeated_results: list[EvaluationResult] = []
-        for rep in range(repetitions_nb):
+        for rep in range(repetitions_diffusion):
 
             # run experiment on a deep copy of the network!
             simulator = TorchMICSimulator(

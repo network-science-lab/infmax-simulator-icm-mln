@@ -32,7 +32,7 @@ def run_experiments(config: dict[str, Any]) -> None:
         networks=config["networks"],
         as_tensor=True if step_func == step_tensor else False,
     )
-    repetitions = config["run"]["repetitions"]
+    repetitions = config["run"]["nb_repetitions"]["diffusion"]
 
     # prepare output directory and deterimne how to store results
     out_dir = Path(config["logging"]["out_dir"])

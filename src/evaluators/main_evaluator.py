@@ -32,13 +32,13 @@ def run_experiments(config: dict[str, Any]) -> None:
         networks=config["networks"],
         as_tensor=True if step_func == step_eval else False,
     )
-    repetitions = config["run"]["repetitions"]
+    repetitions_diffusion = config["run"]["nb_repetitions"]["diffusion"]
 
     # initialise influence maximisation models
     infmax_models = loader.load_infmax_models(
         config=config["infmax_models"],
-        random_seed=config["run"]["random_seed"],
-        nb_seeds=config["run"]["nb_seeds"],
+        random_seed=config["run"]["rng_seed"],
+        nb_seeds=config["run"]["nb_diffusion_seeds"],
     )
 
     # prepare output directory and deterimne how to store results
@@ -75,7 +75,8 @@ def run_experiments(config: dict[str, Any]) -> None:
                 p=investigated_case[1],
                 net=investigated_case[2],
                 seed_sets=seed_sets,
-                repetitions_nb=repetitions,
+                repetitions_diffusion=repetitions_diffusion,
+                repetitions_infmax=1,
                 average_results=average_results,
                 case_name=case_descr,
                 out_dir=out_dir,
@@ -93,7 +94,6 @@ def run_experiments(config: dict[str, Any]) -> None:
     print(f"Evaluations lasted {os_utils.get_diff_of_times(start_time, finish_time)} minutes")
 
 
-# TODO: add repetetitive selecting seed set
 # TODO: add GT seed selector
 # TODO: add add voterank
 # TODO: supress logging from 3-rd party SSMs
