@@ -33,6 +33,7 @@ def run_experiments(config: dict[str, Any]) -> None:
         as_tensor=True if step_func == step_eval else False,
     )
     repetitions_diffusion = config["run"]["nb_repetitions"]["diffusion"]
+    repetitions_stochastic = config["run"]["nb_repetitions"]["stochastic_infmax"]
 
     # initialise influence maximisation models
     infmax_models = loader.load_infmax_models(
@@ -66,17 +67,17 @@ def run_experiments(config: dict[str, Any]) -> None:
             )
         p_bar.set_description_str(f"{idx}/{len(p_bar)}-{case_descr}")
         try:
-            seed_sets = {
-                ifm_name: ifm_obj(investigated_case[2].graph)
-                for ifm_name, ifm_obj in infmax_models.items()
-            }
+            seed_sets = loader.get_seed_sets(
+                infmax_models,
+                investigated_case[2].graph, 
+                repetitions_stochastic,
+            )
             step_func.evaluation_step(
                 protocol=investigated_case[0],
                 p=investigated_case[1],
                 net=investigated_case[2],
                 seed_sets=seed_sets,
                 repetitions_diffusion=repetitions_diffusion,
-                repetitions_infmax=1,
                 average_results=average_results,
                 case_name=case_descr,
                 out_dir=out_dir,

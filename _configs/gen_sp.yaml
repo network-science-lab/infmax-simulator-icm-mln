@@ -1,6 +1,6 @@
 spreading_model:
-  name: "FixedBudgetMICModel"
-  # name: "TorchMICModel"
+  # name: "FixedBudgetMICModel"
+  name: "TorchMICModel"
   parameters:
     protocols: ["AND", "OR"]
     p_values: [
