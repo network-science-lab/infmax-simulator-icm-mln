@@ -10,6 +10,10 @@ networks: [
 ]
 
 infmax_models:
+  # - name: "GroundTruth"
+  #   parameters:
+  #     average_protocol: True
+  #     average_p_value: True
   - name: "MultiNode2VecKMeans"
     parameters:
       rng_seed: "auto"
