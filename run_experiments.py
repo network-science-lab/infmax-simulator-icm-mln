@@ -1,4 +1,4 @@
-# TODO: change prints to logs
+# TODO: change prints to logs (consider using hydra)
 
 import argparse
 import yaml

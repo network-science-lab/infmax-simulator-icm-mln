@@ -1,4 +1,4 @@
-"""blabla."""
+"""Evaluator's utilities."""
 
 from dataclasses import dataclass, asdict
 
