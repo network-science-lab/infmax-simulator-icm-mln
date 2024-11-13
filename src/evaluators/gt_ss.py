@@ -1,7 +1,9 @@
 """Ground Truth seed selector."""
 
+from random import shuffle
 from typing import Literal
 
+import network_diffusion as nd
 import pandas as pd
 
 from _data_set.nsl_data_utils.loaders.constants import (
@@ -65,3 +67,14 @@ class GroundTruth:
         protocol = None if self.average_protocol else protocol
         p = None if self.average_p_value else p
         return self.get_top_k(sp_raw=raw_sp, budget=self.nb_seeds, protocol=protocol, p=p)
+
+
+class RandomChoice:
+
+    def __init__(self, nb_seeds: int) -> None:
+        self.nb_seeds = nb_seeds
+    
+    def __call__(self, network: nd.MultilayerNetworkTorch, **kwargs) -> list[str]:
+        actors = list(network.actors_map.keys())
+        shuffle(actors)
+        return actors[:self.nb_seeds]
