@@ -1,10 +1,5 @@
 **/__pycache__
 **/.DS_Store
-_data_set/arxiv_netscience_coauthorship
-_data_set/cannes_2013_social
-_data_set/small_artificial
-_data_set/small_real
-_data_set/timik1q2009
-_output_classic
-_output_tensor
+_output_generator
+_output_evaluator
 .vscode

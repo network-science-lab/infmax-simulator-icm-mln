@@ -1,17 +1,16 @@
-"""Main runner of the simulator."""
+"""Single simulation step implemented with `torch`."""
 
 from pathlib import Path
 
-from _data_set.nsl_data_utils.models.torch_model import TorchMICModel, TorchMICSimulator
-from runners.utils import (
-    mean_repeated_results,
-    save_magrinal_efficiences,
-    SimulationResult,
-)
-from tqdm import tqdm
-from runners import commons
-
 import network_diffusion as nd
+from tqdm import tqdm
+
+from src import os_utils, sim_utils
+from src.icm.torch_model import TorchMICModel, TorchMICSimulator
+from src.generators.utils import(
+        SimulationResult,
+        mean_simulation_results,
+)
 
 
 def experiment_step(
@@ -39,7 +38,7 @@ def experiment_step(
 
             # update progress_bar
             p_bar.set_description_str(
-                commons.get_case_name_rich(
+                sim_utils.get_case_name_rich(
                     protocol=protocol,
                     p=p,
                     net_name=net_name,
@@ -53,19 +52,31 @@ def experiment_step(
             )
 
             # run experiment on a deep copy of the network!
-            experiment = TorchMICSimulator(model=micm, net=net, n_steps=len(net.actors_map) * 2, seed_set={actor_name})
+            experiment = TorchMICSimulator(
+                model=micm,
+                net=net,
+                n_steps=len(net.actors_map) * 2,
+                seed_set={actor_name},
+            )
             logs = experiment.perform_propagation()
 
             # compute boost that current actor provides
-            simulation_result = SimulationResult(actor=actor_name, **logs)
+            simulation_result = SimulationResult(
+                actor=actor_name,
+                simulation_length=logs["simulation_length"],
+                exposed=logs["exposed"],
+                not_exposed=logs["not_exposed"],
+                peak_infected=logs["peak_infected"],
+                peak_iteration=logs["peak_iteration"],
+            )
             repeated_results.append(simulation_result)
         
         # get mean value for each result
         if average_results:
-            marginal_efficiencies.append(mean_repeated_results(repeated_results))
+            marginal_efficiencies.append(mean_simulation_results(repeated_results))
         else:
             marginal_efficiencies.extend(repeated_results)
 
     # save efficiences obtained for this case
-    investigated_case_file_path = out_dir / f"{commons.get_case_name_base(protocol, p, net_name)}.csv"
-    save_magrinal_efficiences(marginal_efficiencies, investigated_case_file_path)
+    out_path = out_dir / f"{sim_utils.get_case_name_base(protocol, p, net_name)}.csv"
+    os_utils.export_dataclasses(marginal_efficiencies, out_path)

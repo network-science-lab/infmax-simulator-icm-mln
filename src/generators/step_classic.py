@@ -1,18 +1,18 @@
-"""Main runner of the simulator."""
+"""Single simulation step implemented with `networkx`."""
 
 from pathlib import Path
 
-from _data_set.nsl_data_utils.models.nd_model import FixedBudgetMICModel
-from runners.utils import (
-    extract_simulation_result,
-    mean_repeated_results,
-    save_magrinal_efficiences,
-    SimulationResult,
-)
-from tqdm import tqdm
-from runners import commons
-
 import network_diffusion as nd
+from tqdm import tqdm
+
+from src import os_utils, sim_utils
+from src.icm.nd_model import FixedBudgetMICModel
+from src.generators.utils import (
+    SimulationResult,
+    extract_simulation_result,
+    get_ranking,
+    mean_simulation_results,
+)
 
 
 def experiment_step(
@@ -33,7 +33,7 @@ def experiment_step(
     for actor_idx, actor in enumerate(actors):
 
         # initialise model with "ranking" that prioritises current actor
-        apriori_ranking = commons.get_ranking(actor, actors)
+        apriori_ranking = get_ranking(actor, actors)
         micm = FixedBudgetMICModel(
             seed_selector=apriori_ranking,
             protocol=protocol,
@@ -46,7 +46,7 @@ def experiment_step(
 
             # update progress_bar
             p_bar.set_description_str(
-                commons.get_case_name_rich(
+                sim_utils.get_case_name_rich(
                     protocol=protocol,
                     p=p,
                     net_name=net_name,
@@ -72,10 +72,10 @@ def experiment_step(
         
         # get mean value for each result
         if average_results:
-            marginal_efficiencies.append(mean_repeated_results(repeated_results))
+            marginal_efficiencies.append(mean_simulation_results(repeated_results))
         else:
             marginal_efficiencies.extend(repeated_results)
 
     # save efficiences obtained for this case
-    investigated_case_file_path = out_dir / f"{commons.get_case_name_base(protocol, p, net_name)}.csv"
-    save_magrinal_efficiences(marginal_efficiencies, investigated_case_file_path)
+    out_path = out_dir / f"{sim_utils.get_case_name_base(protocol, p, net_name)}.csv"
+    os_utils.export_dataclasses(marginal_efficiencies, out_path)

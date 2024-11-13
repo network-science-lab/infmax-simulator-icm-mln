@@ -1,20 +1,14 @@
+"""Helpers for both generators."""
+
 from dataclasses import dataclass, asdict
-import datetime
-import random
-import shutil
 
-from pathlib import Path
-
-import numpy as np
+import network_diffusion as nd
 import pandas as pd
-import torch
 
 
-def set_seed(seed):
-    """Fix seeds for reproducable experiments."""
-    random.seed(seed)
-    np.random.seed(seed)
-    torch.manual_seed(seed)
+def get_ranking(actor: nd.MLNetworkActor, actors: list[nd.MLNetworkActor]) -> nd.seeding.MockingActorSelector:
+    ranking_list = [actor, *set(actors).difference({actor})]
+    return nd.seeding.MockingActorSelector(ranking_list)
 
 
 @dataclass(frozen=True)
@@ -75,40 +69,11 @@ def extract_simulation_result(detailed_logs, net, actor):
     )
 
 
-def mean_repeated_results(repeated_results: list[SimulationResult]) -> SimulationResult:
+def mean_simulation_results(repeated_results: list[SimulationResult]) -> SimulationResult:
     rr_dict_all = [asdict(rr) for rr in repeated_results]
     rr_df_all = pd.DataFrame(rr_dict_all)
     rr_dict_mean = rr_df_all.groupby("actor").mean().reset_index().iloc[0].round(3).to_dict()
     return SimulationResult(**rr_dict_mean)
-
-
-def save_magrinal_efficiences(marginal_efficiencies: list[SimulationResult], out_path: Path) -> None:
-    me_dict_all = [asdict(me) for me in marginal_efficiencies]
-    pd.DataFrame(me_dict_all).to_csv(out_path, index=False)
-
-
-def get_current_time():
-    now = datetime.datetime.now()
-    return now.strftime("%Y-%m-%d %H:%M:%S")
-
-
-def get_diff_of_times(strftime_1, strftime_2):
-    fmt = "%Y-%m-%d %H:%M:%S"
-    t_1 = datetime.datetime.strptime(strftime_1, fmt)
-    t_2 = datetime.datetime.strptime(strftime_2, fmt)
-    return t_2 - t_1
-
-
-def zip_detailed_logs(logged_dirs: list[Path], rm_logged_dirs: bool = True) -> None:
-    if len(logged_dirs) == 0:
-        print("No directories provided to create archive from.")
-        return
-    for dir_path in logged_dirs:
-        shutil.make_archive(logged_dirs[0].parent / "_output", "zip", root_dir=str(dir_path))
-    if rm_logged_dirs:
-        for dir_path in logged_dirs:
-            shutil.rmtree(dir_path)
-    print(f"Compressed detailed logs.")
 
 
 def nodewise_to_actorwise_epochlog(nodewise_epochlog, actors_nb):
