@@ -31,10 +31,7 @@ def load_infmax_model(config: dict[str, Any], random_seed: int, nb_seeds: int) -
 
 
 def if_stochastic(infmax_model: Callable) -> bool:
-    match infmax_model.__class__.__name__:
-        case "MultiNode2VecKMeans":
-            return True
-        case "MultiNode2VecKMeansAuto":
+    if infmax_model.__class__.__name__ in {"MultiNode2VecKMeans", "MultiNode2VecKMeansAuto"}:
             return True
     return False
 
@@ -47,7 +44,7 @@ def get_seed_sets(
     """Obtain seed sets for a given infmax model on a given network and if needed repeat it."""
     seed_sets = []
     for ifm_name, ifm_obj in infmax_models.items():
-        repetitions_infmax=repetitions_diffusion if if_stochastic(ifm_obj) else 1
+        repetitions_infmax = repetitions_diffusion if if_stochastic(ifm_obj) else 1
         partial_seed_sets = [
             SeedSet(method_name=ifm_name, repetition_nb=i, seeds=ifm_obj(net))
             for i in range(repetitions_infmax)
