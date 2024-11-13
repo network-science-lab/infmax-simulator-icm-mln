@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Literal
 
 from src import os_utils, sim_utils
+from src.evaluators.loader import SeedSet
 from src.evaluators.utils import EvaluationResult, mean_evaluation_results
 from src.icm.torch_model import TorchMICModel, TorchMICSimulator
 
@@ -12,8 +13,8 @@ def evaluation_step(
     protocol: Literal["OR", "AND"],
     p: float,
     net: sim_utils.Network,
-    seed_sets: dict[str, set[str]],
-    repetitions_nb: int,
+    seed_sets: list[SeedSet],
+    repetitions_diffusion: int,
     average_results: bool,
     case_name: int,
     out_dir: Path,
@@ -22,33 +23,33 @@ def evaluation_step(
     evaluation_results = []
 
     # iterate through provided seed sets and check their influencial power
-    for infmax_name, seed_set in seed_sets.items():
+    for seed_set in seed_sets:
 
         # initialise ICM
         micm = TorchMICModel(protocol=protocol, probability=p)
 
         # repeat the simulation to get mean results
         repeated_results: list[EvaluationResult] = []
-        for rep in range(repetitions_nb):
+        for rep in range(repetitions_diffusion):
 
             # run experiment on a deep copy of the network!
             simulator = TorchMICSimulator(
                 model=micm,
                 net=net.graph,
                 n_steps=len(net.graph.actors_map) * 2,
-                seed_set=seed_set,
+                seed_set=seed_set.seeds,
             )
             logs = simulator.perform_propagation()
             gain = sim_utils.compute_gain(
-                seed_nb=len(seed_set),
+                seed_nb=len(seed_set.seeds),
                 exposed_nb=logs["exposed"],
                 total_actors=logs["exposed"] + logs["not_exposed"],
             )
 
             # compute boost that current seed set provides
             simulation_result = EvaluationResult(
-                infmax_model=infmax_name,
-                seed_set=";".join(seed_set),
+                infmax_model=seed_set.method_name,
+                seed_set=";".join(seed_set.seeds),
                 gain=gain,
                 simulation_length=logs["simulation_length"],
                 exposed=logs["exposed"],
@@ -56,7 +57,6 @@ def evaluation_step(
                 peak_infected=logs["peak_infected"],
                 peak_iteration=logs["peak_iteration"],
                 expositions_rec=";".join([str(_) for _ in logs["expositions_rec"]]),
-
             )
             repeated_results.append(simulation_result)
     

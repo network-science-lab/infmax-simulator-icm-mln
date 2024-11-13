@@ -44,10 +44,12 @@ infmax_models:
 
 run:
   experiment_type: "evaluate"
-  nb_seeds: 1
-  repetitions: 30
-  random_seed: 43
-  average_results: False
+  nb_diffusion_seeds: 1
+  nb_repetitions:
+    diffusion: 30
+    stochastic_infmax: 2
+  rng_seed: 43
+  average_results: True
 
 logging:
   compress_to_zip: False

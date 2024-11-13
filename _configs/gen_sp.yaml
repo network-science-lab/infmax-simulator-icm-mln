@@ -30,8 +30,9 @@ networks: [
 
 run:
   experiment_type: "generate"
-  repetitions: 30
-  random_seed: 43
+  nb_repetitions:
+    diffusion: 30
+  rng_seed: 43
   average_results: False
 
 logging:

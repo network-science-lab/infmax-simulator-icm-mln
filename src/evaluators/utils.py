@@ -23,7 +23,7 @@ def mean_evaluation_results(repeated_results: list[EvaluationResult]) -> Evaluat
     rr_dict_all = [asdict(rr) for rr in repeated_results]
     rr_df_all = pd.DataFrame(rr_dict_all)
     rr_dict_mean = rr_df_all.drop("expositions_rec", axis=1).groupby(
-        ["infmax_model", "seed_ids"]
+        ["infmax_model", "seed_set"]
     ).mean().reset_index().iloc[0].round(3).to_dict()
     exp_recs_list = rr_df_all["expositions_rec"].map(lambda x: [int(xx) for xx in x.split(";")])
     exp_recs_padded = np.zeros([len(exp_recs_list), max([len(er) for er in exp_recs_list])])

@@ -26,7 +26,7 @@ def tcase_config():
             "parameters": {"protocols": ["OR", "AND"], "p_values": [0.9, 0.65, 0.1]}
         },
         "networks": ["toy_network"],
-        "run": {"repetitions": 3, "random_seed": 43, "average_results": False},
+        "run": {"nb_repetitions": {"diffusion": 3}, "rng_seed": 43, "average_results": False},
         "logging": {"compress_to_zip": False, "out_dir": None},
     }
 
@@ -55,7 +55,7 @@ def test_e2e(tcase_icm_types, tcase_config, tcase_csv_names, tmpdir):
     for icm_type in tcase_icm_types:
         tcase_config["spreading_model"]["name"] = icm_type
         tcase_config["logging"]["out_dir"] = str(tmpdir)
-        set_rng_seed(tcase_config["run"]["random_seed"])
+        set_rng_seed(tcase_config["run"]["rng_seed"])
         main_generator.run_experiments(tcase_config)
         compare_results(Path("_test_data"), Path(tmpdir), tcase_csv_names, icm_type)
 

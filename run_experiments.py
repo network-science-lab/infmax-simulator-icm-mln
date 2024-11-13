@@ -30,7 +30,7 @@ if __name__ == "__main__":
 
     if random_seed := config["run"].get("random_seed"):
         print(f"Setting randomness seed as {random_seed}!")
-        set_rng_seed(config["run"]["random_seed"])
+        set_rng_seed(config["run"]["rng_seed"])
     
     if (experiment_type := config["run"].get("experiment_type")) == "generate":
         runner = main_generator
