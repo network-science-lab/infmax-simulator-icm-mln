@@ -64,7 +64,7 @@ def run_experiments(config: dict[str, Any]) -> None:
         case_descr = sim_utils.get_case_name_base(
                 investigated_case[0],
                 investigated_case[1],
-                f"{investigated_case[2].type}_{investigated_case[2].name}",
+                f"{investigated_case[2].type}-{investigated_case[2].name}",
             )
         p_bar.set_description_str(f"{idx}/{len(p_bar)}-{case_descr}")
         try:

@@ -35,22 +35,20 @@ def load_infmax_model(
     random_seed: int,
     nb_seeds: int,
 ) -> Any:
-    if config_infmax["name"] in {"MultiNode2VecKMeans", "MultiNode2VecKMeansAuto"}:
+    if config_infmax["class"] in {"MultiNode2VecKMeans", "MultiNode2VecKMeansAuto"}:
         from multi_node2vec_kmeans.loader import load_model
         if config_infmax["parameters"]["rng_seed"] == "auto":
             config_infmax["parameters"]["rng_seed"] = random_seed
         if config_infmax["parameters"]["k_means"]["nb_seeds"] == "auto":
             config_infmax["parameters"]["k_means"]["nb_seeds"] = nb_seeds
         return load_model({"model": config_infmax})
-    elif config_infmax["name"] in "GroundTruth":
+    elif config_infmax["class"] in "GroundTruth":
         return GroundTruth(
-            config_icm=config_icm,
             nb_seeds=nb_seeds,
             average_protocol=config_infmax["parameters"]["average_protocol"],
             average_p_value=config_infmax["parameters"]["average_p_value"],
         )
-    else:
-        return lambda x: "dupa"  # TODO: add here GT loader
+    raise ValueError(f"Unknown infmax model class: {config_infmax['class']}!")
 
 
 def if_stochastic(infmax_model: Callable) -> bool:
@@ -74,7 +72,13 @@ def get_seed_sets(
             SeedSet(
                 method_name=ifm_name,
                 repetition_nb=i,
-                seeds=ifm_obj(network=net.graph, name=net.name, protocol=protocol, p=p),
+                seeds=ifm_obj(
+                    network=net.graph,
+                    net_name=net.name,
+                    net_type=net.type,
+                    protocol=protocol,
+                    p=p,
+                ),
             )
             for i in range(repetitions_infmax)
         ]
