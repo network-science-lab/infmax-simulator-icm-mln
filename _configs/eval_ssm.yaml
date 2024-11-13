@@ -25,6 +25,10 @@ networks: [
 ]
 
 infmax_models:
+  - name: "RandomChoice"
+    class: "RandomChoice"
+    parameters:
+      nb_seeds: "auto"
   - name: "GroundTruth"
     class: "GroundTruth"
     parameters:
