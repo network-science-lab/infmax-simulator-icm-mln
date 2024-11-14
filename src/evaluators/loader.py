@@ -3,9 +3,7 @@
 from dataclasses import dataclass
 from typing import Any, Callable
 
-import network_diffusion as nd
-
-from src.evaluators.gt_ss import GroundTruth, RandomChoice
+from src.evaluators.infmax_methods import GroundTruth, RandomChoice
 from src.sim_utils import Network
 
 
@@ -73,7 +71,8 @@ def load_infmax_model(
 
 
 def if_stochastic(infmax_model: Callable) -> bool:
-    if infmax_model.__class__.__name__ in {"MultiNode2VecKMeans", "MultiNode2VecKMeansAuto"}:
+    stochastic_models = {"MultiNode2VecKMeans", "MultiNode2VecKMeansAuto", "RandomChoice"}
+    if infmax_model.__class__.__name__ in stochastic_models:
             return True
     return False
 
