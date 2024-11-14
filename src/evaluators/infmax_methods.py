@@ -19,9 +19,9 @@ class CentralityChoice:
         "degree",
         "betweenness",
         "closeness",
-        "core_number", # TODO consider changing to "k-sh-m"
+        "core_number",
         "neighbourhood_size",
-        "voterank", # TODO consider changinh name "v-rnk-m"
+        "voterank",
     ]
 
     def __init__(self, nb_seeds: int, centrality_name: str):
@@ -31,11 +31,9 @@ class CentralityChoice:
             raise ValueError("Unknown centrality name {self.centrality_name}!")
     
     def __call__(self, net_type: str, net_name: str, **kwargs) -> list[str]:
-        centrs_arr = load_centralities(network_name=net_name, network_type=net_type)
-        centr_idx = self.centralities.index(self.centrality_name)
-        centr_arr = centrs_arr[:, centr_idx]
-        actors_idxs = centr_arr.argsort()[-1 * self.nb_seeds: ]
-        return actors_idxs
+        centrs_df = load_centralities(network_name=net_name, network_type=net_type)
+        centr_df = centrs_df[self.centrality_name].sort_values(ascending=False)
+        return list(centr_df[:self.nb_seeds].index)
 
 
 class GroundTruth:
