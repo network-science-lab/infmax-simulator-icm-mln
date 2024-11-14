@@ -4,15 +4,15 @@ spreading_model:
     protocols: ["OR"]
     p_values: [0.05, 0.10, 0.15, 0.20]
   # parameters:
-  #   protocols: ["OR"]
-  #   p_values: [0.05, 0.10, 0.15, 0.20]
+  #   protocols: ["AND"]
+  #   p_values: [0.80, 0.85, 0.90, 0.95]
 
 networks: [
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### train/eval split
-  "artificial_er",
-  "artificial_pa",
-  "l2_course_net_1",
-  "l2_course_net_2",
+  # "artificial_er",
+  # "artificial_pa",
+  # "l2_course_net_1",
+  # "l2_course_net_2",
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### test split
   "artificial_small",
   "arxiv_netscience_coauthorship",
@@ -79,39 +79,39 @@ infmax_models:
     parameters:
       nb_seeds: "auto"
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### multi-node2vec-k-means
-  - name: "mn2v_km"
-    class: "MultiNode2VecKMeans"  # TODO: verify whether remove it at all
-    parameters:
-      rng_seed: "auto"
-      multi_node2vec:
-        d: "auto"
-        window_size: 10
-        n_samples: 1
-        thresh: 0.5
-        pvals: 1
-        qvals: 0.5
-        rvals: 0.25
-      k_means:
-        nb_seeds: "auto"
-        experiment_name: ""
-        visualise: False
-  - name: "mn2v_km_auto"
-    class: "MultiNode2VecKMeansAuto"
-    parameters:
-      rng_seed: "auto"
-      multi_node2vec:
-        d: "auto"
-        window_size: 10
-        n_samples: 1
-        thresh: 0.5
-        pvals: 1
-        qvals: 0.5
-        rvals: 0.25
-      k_means:
-        nb_seeds: "auto"
-        max_nb_clusters: 10  # TODO: try to parametrise it w.r.t. the network size
-        experiment_name: ""
-        visualise: False
+  # - name: "mn2v_km"
+  #   class: "MultiNode2VecKMeans"  # TODO: verify whether remove it at all
+  #   parameters:
+  #     rng_seed: "auto"
+  #     multi_node2vec:
+  #       d: "auto"
+  #       window_size: 10
+  #       n_samples: 1
+  #       thresh: 0.5
+  #       pvals: 1
+  #       qvals: 0.5
+  #       rvals: 0.25
+  #     k_means:
+  #       nb_seeds: "auto"
+  #       experiment_name: ""
+  #       visualise: False
+  # - name: "mn2v_km_auto"
+  #   class: "MultiNode2VecKMeansAuto"
+  #   parameters:
+  #     rng_seed: "auto"
+  #     multi_node2vec:
+  #       d: "auto"
+  #       window_size: 10
+  #       n_samples: 1
+  #       thresh: 0.5
+  #       pvals: 1
+  #       qvals: 0.5
+  #       rvals: 0.25
+  #     k_means:
+  #       nb_seeds: "auto"
+  #       max_nb_clusters: 10  # TODO: try to parametrise it w.r.t. the network size
+  #       experiment_name: ""
+  #       visualise: False
 
 run:
   experiment_type: "evaluate"
