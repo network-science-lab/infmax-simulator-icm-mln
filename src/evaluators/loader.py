@@ -47,6 +47,7 @@ def load_infmax_model(
             config_infmax["parameters"]["rng_seed"] = random_seed
         if config_infmax["parameters"]["k_means"]["nb_seeds"] == "auto":
             config_infmax["parameters"]["k_means"]["nb_seeds"] = nb_seeds
+        config_infmax["name"] = config_infmax["class"]
         return load_model({"model": config_infmax})
     elif config_infmax["class"] == "GBIM":
         from gbim_nsl_adaptation.loader import load_model

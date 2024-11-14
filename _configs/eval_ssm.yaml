@@ -2,81 +2,83 @@ spreading_model:
   name: "TorchMICModel"
   parameters:
     protocols: ["OR"]
-    p_values: [0.25, 0.5, 0.75]
+    p_values: [0.05, 0.10, 0.15, 0.20]
+  # parameters:
+  #   protocols: ["OR"]
+  #   p_values: [0.05, 0.10, 0.15, 0.20]
 
 networks: [
-  # "artificial_er",
-  # "artificial_pa",
-  # "artificial_small",
-  # "arxiv_netscience_coauthorship",
-  # "arxiv_netscience_coauthorship_math.oc",
+  # ##### ##### ##### ##### ##### ##### ##### ##### ##### train/eval split
+  "artificial_er",
+  "artificial_pa",
+  "l2_course_net_1",
+  "l2_course_net_2",
+  # ##### ##### ##### ##### ##### ##### ##### ##### ##### test split
+  "artificial_small",
+  "arxiv_netscience_coauthorship",
   "aucs",
-  # "cannes",
   "ckm_physicians",
-  # "eu_transportation",
-  # "eu_transport_klm",
-  # "fmri74",
-  # "l2_course_net_1",
-  # "l2_course_net_2",
-  # "l2_course_net_3",
-  # "lazega",
-  # "timik1q2009",
-  "toy_network",
+  "eu_transportation",
+  "l2_course_net_3",
+  "lazega",
+  "timik1q2009",
+  # ##### ##### ##### ##### ##### ##### ##### ##### ##### not used at all
+  # "arxiv_netscience_coauthorship_math.oc",  # single layer network
+  # "cannes",  # we don't have centralities computed yet
+  # "eu_transport_klm",  # single layer network
+  # "fmri74",  # super edge case - 74 layers
+  # "toy_network",  # super small network - use only for code validation
 ]
 
 infmax_models:
-  - name: "CentralityChoice"
+  # ##### ##### ##### ##### ##### ##### ##### ##### ##### centrality based
+  - name: "degree"
+    class: "CentralityChoice"
+    parameters:
+      nb_seeds: "auto"
+      centrality: "degree"
+  - name: "betweenness"
+    class: "CentralityChoice"
+    parameters:
+      nb_seeds: "auto"
+      centrality: "betweenness"
+  - name: "closeness"
+    class: "CentralityChoice"
+    parameters:
+      nb_seeds: "auto"
+      centrality: "closeness"
+  - name: "core_number"
+    class: "CentralityChoice"
+    parameters:
+      nb_seeds: "auto"
+      centrality: "core_number"
+  - name: "neighbourhood_size"
+    class: "CentralityChoice"
+    parameters:
+      nb_seeds: "auto"
+      centrality: "neighbourhood_size"
+  - name: "voterank"
     class: "CentralityChoice"
     parameters:
       nb_seeds: "auto"
       centrality: "voterank"
-  - name: "GroundTruth"
+  # ##### ##### ##### ##### ##### ##### ##### ##### ##### ground truth
+  - name: "gt_absoulute"
     class: "GroundTruth"
     parameters:
-      average_protocol: True  # a.k.a. delta (D)
+      average_protocol: True
       average_p_value: True
-  - name: "GroundTruthAvgD"
+  - name: "gt_avg_proto"
     class: "GroundTruth"
     parameters:
       average_protocol: False
       average_p_value: True
-  - name: "RandomChoice"
+  # ##### ##### ##### ##### ##### ##### ##### ##### ##### random
+  - name: "random_choice"
     class: "RandomChoice"
     parameters:
       nb_seeds: "auto"
-  # - name: "MultiNode2VecKMeans"
-  #   class: "MultiNode2VecKMeans"
-  #   parameters:
-  #     rng_seed: "auto"
-  #     multi_node2vec:
-  #       d: "auto"
-  #       window_size: 10
-  #       n_samples: 1
-  #       thresh: 0.5
-  #       pvals: 1
-  #       qvals: 0.5
-  #       rvals: 0.25
-  #     k_means:
-  #       nb_seeds: "auto"
-  #       experiment_name: "My Experiment"
-  #       visualise: False
-  # - name: "MultiNode2VecKMeansAuto"
-  #   class: "MultiNode2VecKMeansAuto"
-  #   parameters:
-  #     rng_seed: "auto"
-  #     multi_node2vec:
-  #       d: "auto"
-  #       window_size: 10
-  #       n_samples: 1
-  #       thresh: 0.5
-  #       pvals: 1
-  #       qvals: 0.5
-  #       rvals: 0.25
-  #     k_means:
-  #       nb_seeds: "auto"
-  #       max_nb_clusters: 10
-  #       experiment_name: "My Experiment"
-  #       visualise: False
+  # ##### ##### ##### ##### ##### ##### ##### ##### ##### GBIM
   - name: "GBIM"
     class: "GBIM"
     parameters:
@@ -90,6 +92,25 @@ infmax_models:
         simulate_times: 10
       executor:
         epochs: 300
+  # ##### ##### ##### ##### ##### ##### ##### ##### ##### multi-node2vec-k-means
+  - name: "mn2v_km"
+    class: "MultiNode2VecKMeansAuto"
+    parameters:
+      rng_seed: "auto"
+      multi_node2vec:
+        d: "auto"
+        window_size: 10
+        n_samples: 1
+        thresh: 0.5
+        pvals: 1
+        qvals: 0.5
+        rvals: 0.25
+      k_means:
+        nb_seeds: "auto"
+        max_nb_clusters: "auto"
+        centrality_criterium: "centroid"
+        experiment_name: ""
+        visualise: False
 
 run:
   experiment_type: "evaluate"
