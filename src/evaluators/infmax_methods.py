@@ -10,6 +10,32 @@ from _data_set.nsl_data_utils.loaders.constants import (
     ACTOR, EXPOSED, NETWORK, P, PEAK_INFECTED, PEAK_ITERATION, PROTOCOL, SIMULATION_LENGTH
 )
 from _data_set.nsl_data_utils.loaders.sp_loader import load_sp, _get_sp, _sort_csv_paths
+from _data_set.nsl_data_utils.loaders.centrality_loader import load_centralities
+
+
+class CentralityChoice:
+
+    centralities = [
+        "degree",
+        "betweenness",
+        "closeness",
+        "core_number", # TODO consider changing to "k-sh-m"
+        "neighbourhood_size",
+        "voterank", # TODO consider changinh name "v-rnk-m"
+    ]
+
+    def __init__(self, nb_seeds: int, centrality_name: str):
+        self.nb_seeds = nb_seeds
+        self.centrality_name = centrality_name
+        if self.centrality_name not in self.centralities:
+            raise ValueError("Unknown centrality name {self.centrality_name}!")
+    
+    def __call__(self, net_type: str, net_name: str, **kwargs) -> list[str]:
+        centrs_arr = load_centralities(network_name=net_name, network_type=net_type)
+        centr_idx = self.centralities.index(self.centrality_name)
+        centr_arr = centrs_arr[:, centr_idx]
+        actors_idxs = centr_arr.argsort()[-1 * self.nb_seeds: ]
+        return actors_idxs
 
 
 class GroundTruth:
