@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 from typing import Any, Callable
 
-from src.evaluators.infmax_methods import GroundTruth, RandomChoice
+from src.evaluators.infmax_methods import CentralityChoice, GroundTruth, RandomChoice
 from src.sim_utils import Network
 
 
@@ -57,6 +57,11 @@ def load_infmax_model(
         if config_infmax["parameters"]["common"]["nb_seeds"] == "auto":
             config_infmax["parameters"]["common"]["nb_seeds"] = nb_seeds
         return load_model({"model": config_infmax})
+    elif config_infmax["class"] == "CentralityChoice":
+        return CentralityChoice(
+            nb_seeds=nb_seeds,
+            centrality_name=config_infmax["parameters"]["centrality"],
+        )
     elif config_infmax["class"] == "GroundTruth":
         return GroundTruth(
             nb_seeds=nb_seeds,
