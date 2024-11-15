@@ -5,12 +5,38 @@ spreading_model:
     p_values: [0.25, 0.5, 0.75]
 
 networks: [
+  # "artificial_er",
+  # "artificial_pa",
+  # "artificial_small",
+  # "arxiv_netscience_coauthorship",
+  # "arxiv_netscience_coauthorship_math.oc",
   "aucs",
+  # "cannes",
+  # "ckm_physicians",
+  # "eu_transportation",
+  # "eu_transport_klm",
+  # "fmri74",
+  "l2_course_net_1",
+  # "l2_course_net_2",
+  # "l2_course_net_3",
+  # "lazega",
+  # "timik1q2009",
   "toy_network",
 ]
 
 infmax_models:
+  - name: "GroundTruth"
+    class: "GroundTruth"
+    parameters:
+      average_protocol: True  # a.k.a. delta (D)
+      average_p_value: True
+  - name: "GroundTruthAvgD"
+    class: "GroundTruth"
+    parameters:
+      average_protocol: False
+      average_p_value: True
   - name: "MultiNode2VecKMeans"
+    class: "MultiNode2VecKMeans"
     parameters:
       rng_seed: "auto"
       multi_node2vec:
@@ -26,6 +52,7 @@ infmax_models:
         experiment_name: "My Experiment"
         visualise: False
   - name: "MultiNode2VecKMeansAuto"
+    class: "MultiNode2VecKMeansAuto"
     parameters:
       rng_seed: "auto"
       multi_node2vec:
