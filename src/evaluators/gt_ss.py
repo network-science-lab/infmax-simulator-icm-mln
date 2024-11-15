@@ -18,7 +18,12 @@ class GroundTruth:
         self.average_p_value = average_p_value
     
     @staticmethod
-    def get_top_k(sp_raw: pd.DataFrame, protocol: str | None, p: float | None, budget: int) -> list[str]:
+    def get_top_k(
+        sp_raw: pd.DataFrame,
+        protocol: str | None,
+        p: float | None,
+        budget: int
+    ) -> list[str]:
         """
         Get actors that performed the best in given spreading contitions.
 
@@ -44,7 +49,14 @@ class GroundTruth:
         )
         return sp_mean.iloc[:budget][ACTOR].tolist()
 
-    def __call__(self, net_type: str, net_name: str, protocol: Literal["OR", "AND"], p: float, **kwargs):
+    def __call__(
+            self,
+            net_type: str,
+            net_name: str,
+            protocol: Literal["OR", "AND"],
+            p: float,
+            **kwargs,
+    ) -> list[str]:
         if net_type == net_name:
             raw_sp = load_sp(net_name=net_type)[net_name]
         else:
