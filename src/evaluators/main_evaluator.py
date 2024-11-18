@@ -37,7 +37,8 @@ def run_experiments(config: dict[str, Any]) -> None:
 
     # initialise influence maximisation models
     infmax_models = loader.load_infmax_models(
-        config=config["infmax_models"],
+        config_infmax=config["infmax_models"],
+        config_icm=config["spreading_model"],
         random_seed=config["run"]["rng_seed"],
         nb_seeds=config["run"]["nb_diffusion_seeds"],
     )
@@ -63,14 +64,16 @@ def run_experiments(config: dict[str, Any]) -> None:
         case_descr = sim_utils.get_case_name_base(
                 investigated_case[0],
                 investigated_case[1],
-                f"{investigated_case[2].type}_{investigated_case[2].name}",
+                f"{investigated_case[2].type}-{investigated_case[2].name}",
             )
         p_bar.set_description_str(f"{idx}/{len(p_bar)}-{case_descr}")
         try:
             seed_sets = loader.get_seed_sets(
-                infmax_models,
-                investigated_case[2].graph, 
-                repetitions_stochastic,
+                infmax_models=infmax_models,
+                net=investigated_case[2], 
+                repetitions_diffusion=repetitions_stochastic,
+                protocol=investigated_case[0],
+                p=investigated_case[1],
             )
             step_func.evaluation_step(
                 protocol=investigated_case[0],
@@ -94,7 +97,6 @@ def run_experiments(config: dict[str, Any]) -> None:
     print(f"Evaluations finished at {finish_time}")
     print(f"Evaluations lasted {os_utils.get_diff_of_times(start_time, finish_time)} minutes")
 
-
-# TODO: add GT seed selector
 # TODO: add add voterank
 # TODO: supress logging from 3-rd party SSMs
+# TODO: add random
