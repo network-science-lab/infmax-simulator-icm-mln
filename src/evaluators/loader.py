@@ -42,6 +42,9 @@ def load_infmax_model(
         if config_infmax["parameters"]["k_means"]["nb_seeds"] == "auto":
             config_infmax["parameters"]["k_means"]["nb_seeds"] = nb_seeds
         return load_model({"model": config_infmax})
+    elif config_infmax["class"] in "GBIM":
+        from gbim_nsl_adaptation.loader import load_model
+        return load_model({"model": config_infmax})
     elif config_infmax["class"] in "GroundTruth":
         return GroundTruth(
             nb_seeds=nb_seeds,

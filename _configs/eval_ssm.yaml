@@ -68,6 +68,19 @@ infmax_models:
         max_nb_clusters: 10
         experiment_name: "My Experiment"
         visualise: False
+  - name: "GBIM"
+    class: "GBIM"
+    parameters:
+      rng_seed: 43
+      device: cpu
+      common:
+        nb_seeds: 5
+        graphsample: 1000
+      datasample:
+        sample_num: 1000
+        simulate_times: 10
+      executor:
+        epochs: 300
 
 run:
   experiment_type: "evaluate"
