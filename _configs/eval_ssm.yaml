@@ -71,10 +71,10 @@ infmax_models:
   - name: "GBIM"
     class: "GBIM"
     parameters:
-      rng_seed: 43
-      device: cpu
+      rng_seed: auto
+      device: auto
       common:
-        nb_seeds: 5
+        nb_seeds: auto
         graphsample: 1000
       datasample:
         sample_num: 1000
@@ -90,6 +90,7 @@ run:
     stochastic_infmax: 2
   rng_seed: 43
   average_results: True
+  device: cpu
 
 logging:
   compress_to_zip: False

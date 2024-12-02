@@ -22,9 +22,16 @@ def load_infmax_models(
     config_icm: dict[str, Any],
     random_seed: int,
     nb_seeds: int,
+    device: str,
 ) -> dict[str, Callable]:
     return {
-        m_config["name"]: load_infmax_model(m_config, config_icm, random_seed, nb_seeds)
+        m_config["name"]: load_infmax_model(
+            config_infmax=m_config,
+            config_icm=config_icm,
+            random_seed=random_seed,
+            nb_seeds=nb_seeds,
+            device=device,
+        )
         for m_config in config_infmax
     }
 
@@ -34,6 +41,7 @@ def load_infmax_model(
     config_icm: dict[str, Any],
     random_seed: int,
     nb_seeds: int,
+    device: str,
 ) -> Any:
     if config_infmax["class"] in {"MultiNode2VecKMeans", "MultiNode2VecKMeansAuto"}:
         from multi_node2vec_kmeans.loader import load_model
@@ -44,6 +52,13 @@ def load_infmax_model(
         return load_model({"model": config_infmax})
     elif config_infmax["class"] in "GBIM":
         from gbim_nsl_adaptation.loader import load_model
+        if config_infmax["parameters"]["rng_seed"] == "auto":
+            config_infmax["parameters"]["rng_seed"] = random_seed
+        if config_infmax["parameters"]["device"] == "auto":
+            config_infmax["parameters"]["device"] = device
+        if config_infmax["parameters"]["common"]["nb_seeds"] == "auto":
+            config_infmax["parameters"]["common"]["nb_seeds"] = nb_seeds
+
         return load_model({"model": config_infmax})
     elif config_infmax["class"] in "GroundTruth":
         return GroundTruth(
