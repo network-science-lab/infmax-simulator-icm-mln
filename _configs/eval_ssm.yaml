@@ -11,15 +11,13 @@ networks: [
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### train/eval split
   # "artificial_er",
   # "artificial_pa",
-  # "l2_course_net_1",
-  # "l2_course_net_2",
+  # "artificial_small",
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### test split
-  "artificial_small",
   "arxiv_netscience_coauthorship",
   "aucs",
   "ckm_physicians",
   "eu_transportation",
-  "l2_course_net_3",
+  "l2_course_net_1",
   "lazega",
   "timik1q2009",
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### not used at all
@@ -66,9 +64,9 @@ infmax_models:
   - name: "gt_absoulute"
     class: "GroundTruth"
     parameters:
-      average_protocol: True
-      average_p_value: True
-  - name: "gt_avg_proto"
+      average_protocol: False
+      average_p_value: False
+  - name: "gt_avg_p"
     class: "GroundTruth"
     parameters:
       average_protocol: False
@@ -117,9 +115,9 @@ run:
   nb_diffusion_seeds: 1
   nb_repetitions:
     diffusion: 30
-    stochastic_infmax: 2
+    stochastic_infmax: 30
   rng_seed: 43
-  average_results: True
+  average_results: False
   device: cpu
 
 logging:
