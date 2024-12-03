@@ -19,7 +19,7 @@ Then, pull the submodule with data loaders and install its code:
 
 ```bash
 git submodule init && git submodule update
-pip install -e _dataset/infmax_data_utils
+pip install -e _data_set
 ```
 
 A final step is to install wrappers for influence-maximisation methods into the conda environment.

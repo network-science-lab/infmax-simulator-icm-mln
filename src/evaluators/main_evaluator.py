@@ -41,6 +41,7 @@ def run_experiments(config: dict[str, Any]) -> None:
         config_icm=config["spreading_model"],
         random_seed=config["run"]["rng_seed"],
         nb_seeds=config["run"]["nb_diffusion_seeds"],
+        device=config["run"]["device"],
     )
 
     # prepare output directory and deterimne how to store results
