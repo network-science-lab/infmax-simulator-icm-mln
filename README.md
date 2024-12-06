@@ -33,6 +33,7 @@ obtain it you have to pull the data from the DVC remote. In order to access it, 
 request to get  an access via  e-mail (michal.czuba@pwr.edu.pl). Then, simply execute in a shell:
 * `cd _data_set && dvc pull nsl_data_sources/raw/multi_layer_networks/*.dvc && cd ..`
 * `cd _data_set && dvc pull nsl_data_sources/spreading_potentials/multi_layer_networks/*.dvc && cd ..`
+* `cd _data_set && dvc pull nsl_data_sources/centralities/multi_layer_networks/*.dvc && cd ..`
 
 ## Structure of the repository
 ```

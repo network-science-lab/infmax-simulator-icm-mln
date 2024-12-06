@@ -3,9 +3,7 @@
 from dataclasses import dataclass
 from typing import Any, Callable
 
-import network_diffusion as nd
-
-from src.evaluators.gt_ss import GroundTruth
+from src.evaluators.infmax_methods import CentralityChoice, GroundTruth, RandomChoice
 from src.sim_utils import Network
 
 
@@ -49,8 +47,9 @@ def load_infmax_model(
             config_infmax["parameters"]["rng_seed"] = random_seed
         if config_infmax["parameters"]["k_means"]["nb_seeds"] == "auto":
             config_infmax["parameters"]["k_means"]["nb_seeds"] = nb_seeds
+        config_infmax["name"] = config_infmax["class"]
         return load_model({"model": config_infmax})
-    elif config_infmax["class"] in "GBIM":
+    elif config_infmax["class"] == "GBIM":
         from gbim_nsl_adaptation.loader import load_model
         if config_infmax["parameters"]["rng_seed"] == "auto":
             config_infmax["parameters"]["rng_seed"] = random_seed
@@ -58,19 +57,28 @@ def load_infmax_model(
             config_infmax["parameters"]["device"] = device
         if config_infmax["parameters"]["common"]["nb_seeds"] == "auto":
             config_infmax["parameters"]["common"]["nb_seeds"] = nb_seeds
-
         return load_model({"model": config_infmax})
-    elif config_infmax["class"] in "GroundTruth":
+    elif config_infmax["class"] == "CentralityChoice":
+        return CentralityChoice(
+            nb_seeds=nb_seeds,
+            centrality_name=config_infmax["parameters"]["centrality"],
+        )
+    elif config_infmax["class"] == "GroundTruth":
         return GroundTruth(
             nb_seeds=nb_seeds,
             average_protocol=config_infmax["parameters"]["average_protocol"],
             average_p_value=config_infmax["parameters"]["average_p_value"],
         )
+    elif config_infmax["class"] == "RandomChoice":
+        if config_infmax["parameters"]["nb_seeds"] == "auto":
+            config_infmax["parameters"]["nb_seeds"] = nb_seeds
+        return RandomChoice(nb_seeds=nb_seeds)
     raise ValueError(f"Unknown infmax model class: {config_infmax['class']}!")
 
 
 def if_stochastic(infmax_model: Callable) -> bool:
-    if infmax_model.__class__.__name__ in {"MultiNode2VecKMeans", "MultiNode2VecKMeansAuto"}:
+    stochastic_models = {"MultiNode2VecKMeans", "MultiNode2VecKMeansAuto", "RandomChoice"}
+    if infmax_model.__class__.__name__ in stochastic_models:
             return True
     return False
 
