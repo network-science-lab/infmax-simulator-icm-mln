@@ -1,4 +1,5 @@
 # TODO: change prints to logs (consider using hydra)
+# TODO: change p_value in the config as it may be confusing
 
 import argparse
 import yaml
