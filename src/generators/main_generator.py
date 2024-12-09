@@ -56,8 +56,7 @@ def run_experiments(config: dict[str, Any]) -> None:
             step_func.experiment_step(
                 protocol=investigated_case[0],
                 p=investigated_case[1],
-                net_name=investigated_case[2].name,
-                net=investigated_case[2].graph,
+                net=investigated_case[2],
                 repetitions_nb=repetitions,
                 average_results=average_results,
                 case_idx=idx,
