@@ -18,15 +18,14 @@ from src.generators.utils import (
 def experiment_step(
     protocol: str,
     p: float,
-    net_name: str,
-    net: nd.MultilayerNetwork,
+    net: sim_utils.Network,
     repetitions_nb: int,
     average_results: bool,
     case_idx: int,
     p_bar: tqdm,
     out_dir: Path,
 ) -> None:
-    actors = net.get_actors()
+    actors = net.graph.get_actors()
     marginal_efficiencies = []
 
     # iterate through all available actors and check their influencial power
@@ -49,7 +48,7 @@ def experiment_step(
                 sim_utils.get_case_name_rich(
                     protocol=protocol,
                     p=p,
-                    net_name=net_name,
+                    net_name=net.name,
                     case_idx=case_idx,
                     cases_nb=len(p_bar),
                     actor_idx=actor_idx,
@@ -60,14 +59,14 @@ def experiment_step(
             )
 
             # run experiment on a deep copy of the network!
-            experiment = nd.Simulator(model=micm, network=net.copy())
+            experiment = nd.Simulator(model=micm, network=net.graph.copy())
             logs = experiment.perform_propagation(
                 n_epochs=len(actors) * 2,  # this value is an "overkill"
                 patience=1,
             )
 
             # compute boost that current actor provides
-            simulation_result = extract_simulation_result(logs.get_detailed_logs(), net, actor)
+            simulation_result = extract_simulation_result(logs.get_detailed_logs(), net.graph, actor)
             repeated_results.append(simulation_result)
         
         # get mean value for each result
@@ -77,5 +76,8 @@ def experiment_step(
             marginal_efficiencies.extend(repeated_results)
 
     # save efficiences obtained for this case
-    out_path = out_dir / f"{sim_utils.get_case_name_base(protocol, p, net_name)}.csv"
+    if net.name != net.type:
+        out_dir = out_dir / net.type
+    out_dir.mkdir(exist_ok=True, parents=True)
+    out_path = out_dir / f"{sim_utils.get_case_name_base(protocol, p, net.name)}.csv"
     os_utils.export_dataclasses(marginal_efficiencies, out_path)
