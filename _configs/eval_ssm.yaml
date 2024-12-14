@@ -90,6 +90,19 @@ infmax_models:
         simulate_times: 10
       executor:
         epochs: 300
+  # ##### ##### ##### ##### ##### ##### ##### ##### ##### deepim
+  - name: "DeepIM"
+    class: "DeepIM"
+    parameters:
+      rng_seed: auto
+      device: auto
+      dataset_percentage_budget: 5
+      common:
+        nb_seeds: auto
+        nb_layer_seeds: 4
+      executor:
+        train_epochs: 600
+        y_hat_epochs: 300
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### multi-node2vec-k-means
   - name: "mn2v_km"
     class: "MultiNode2VecKMeansAuto"

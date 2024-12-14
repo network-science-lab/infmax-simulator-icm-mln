@@ -59,6 +59,16 @@ def load_infmax_model(
             config_infmax["parameters"]["common"]["nb_seeds"] = nb_seeds
         config_infmax["name"] = config_infmax["class"]
         return load_model({"model": config_infmax})
+    elif config_infmax["class"] == "DeepIM":
+        from deepim_nsl_adaptation.loader import load_model
+        if config_infmax["parameters"]["rng_seed"] == "auto":
+            config_infmax["parameters"]["rng_seed"] = random_seed
+        if config_infmax["parameters"]["device"] == "auto":
+            config_infmax["parameters"]["device"] = device
+        if config_infmax["parameters"]["common"]["nb_seeds"] == "auto":
+            config_infmax["parameters"]["common"]["nb_seeds"] = nb_seeds
+        config_infmax["name"] = config_infmax["class"]
+        return load_model({"model": config_infmax})
     elif config_infmax["class"] == "CentralityChoice":
         return CentralityChoice(
             nb_seeds=nb_seeds,
