@@ -11,13 +11,13 @@ networks: [
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### train/eval split
   # "artificial_er-*",
   # "artificial_pa-*",
-  # "artificial_small-*",
+  "artificial_small-*",
   # # ##### ##### ##### ##### ##### ##### ##### ##### ##### test split
   # "arxiv_netscience_coauthorship-arxiv_netscience_coauthorship",
-  "aucs",
-  "ckm_physicians",
+  # "aucs",
+  # "ckm_physicians",
   # "eu_transportation-eu_transportation",
-  # "l2_course-l2_course_net_1",
+  "l2_course-l2_course_net_1",
   # "lazega",
   # "timik1q2009",
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### not used at all
@@ -77,38 +77,38 @@ infmax_models:
     parameters:
       nb_seeds: "auto"
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### GBIM
-  - name: "GBIM"
-    class: "GBIM"
-    parameters:
-      rng_seed: auto
-      device: auto
-      common:
-        nb_seeds: auto
-        graphsample: 1000
-      datasample:
-        sample_num: 1000
-        simulate_times: 10
-      executor:
-        epochs: 300
+  # - name: "GBIM"
+  #   class: "GBIM"
+  #   parameters:
+  #     rng_seed: auto
+  #     device: auto
+  #     common:
+  #       nb_seeds: auto
+  #       graphsample: 1000
+  #     datasample:
+  #       sample_num: 1000
+  #       simulate_times: 10
+  #     executor:
+  #       epochs: 300
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### multi-node2vec-k-means
-  - name: "mn2v_km"
-    class: "MultiNode2VecKMeansAuto"
-    parameters:
-      rng_seed: "auto"
-      multi_node2vec:
-        d: "auto"
-        window_size: 10
-        n_samples: 1
-        thresh: 0.5
-        pvals: 1
-        qvals: 0.5
-        rvals: 0.25
-      k_means:
-        nb_seeds: "auto"
-        max_nb_clusters: "auto"
-        centrality_criterium: "centroid"
-        experiment_name: ""
-        visualise: False
+  # - name: "mn2v_km"
+  #   class: "MultiNode2VecKMeansAuto"
+  #   parameters:
+  #     rng_seed: "auto"
+  #     multi_node2vec:
+  #       d: "auto"
+  #       window_size: 10
+  #       n_samples: 1
+  #       thresh: 0.5
+  #       pvals: 1
+  #       qvals: 0.5
+  #       rvals: 0.25
+  #     k_means:
+  #       nb_seeds: "auto"
+  #       max_nb_clusters: "auto"
+  #       centrality_criterium: "centroid"
+  #       experiment_name: ""
+  #       visualise: False
 
 run:
   experiment_type: "evaluate"

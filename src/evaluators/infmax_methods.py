@@ -9,9 +9,8 @@ import pandas as pd
 from _data_set.nsl_data_utils.loaders.constants import (
     ACTOR, AND, EXPOSED, NETWORK, OR, P, PEAK_INFECTED, PEAK_ITERATION, PROTOCOL, SIMULATION_LENGTH
 )
-from _data_set.nsl_data_utils.loaders.sp_loader import load_sp, _get_sp, _sort_csv_paths
-from _data_set.nsl_data_utils.loaders.centrality_loader import load_centralities
-
+from _data_set.nsl_data_utils.loaders.sp_loader import load_sp_paths, load_sp
+from _data_set.nsl_data_utils.loaders.centrality_loader import load_centralities_path, load_centralities
 
 class CentralityChoice:
 
@@ -31,7 +30,8 @@ class CentralityChoice:
             raise ValueError("Unknown centrality name {self.centrality_name}!")
     
     def __call__(self, net_type: str, net_name: str, **kwargs) -> list[str]:
-        centrs_df = load_centralities(network_name=net_name, network_type=net_type)
+        centr_dir = load_centralities_path(network_type=net_type, network_name=net_name)
+        centrs_df = load_centralities(csv_path=centr_dir)
         centr_df = centrs_df[self.centrality_name].sort_values(ascending=False)
         return list(centr_df[:self.nb_seeds].index)
 
@@ -80,11 +80,8 @@ class GroundTruth:
             **kwargs,
     ) -> list[str]:
         assert p in self._VALID_ICM_PARAMS[protocol], "Eval. feasible only on narrow range of p!"
-        if net_type == net_name:
-            raw_sp = load_sp(net_name=net_type)[net_name]
-        else:
-            csv_paths = _sort_csv_paths(f"{net_type}/*.csv")
-            raw_sp = _get_sp(csv_paths[net_name])
+        sp_paths = load_sp_paths(net_type=net_type, net_name=net_name)
+        raw_sp = load_sp(csv_paths=sp_paths)
         protocol = [OR, AND] if self.average_protocol else [protocol]
         p = [p_val for proto in protocol for p_val in self._VALID_ICM_PARAMS[proto]] \
             if self.average_p_value else [p]
