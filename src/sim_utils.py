@@ -1,22 +1,28 @@
 """Helpers related with simulations."""
 
+import re
 import warnings
-
 from dataclasses import dataclass
 from itertools import product
 from math import log10
 
 import network_diffusion as nd
-from _data_set.nsl_data_utils.loaders.net_loader import load_network
+from tqdm import tqdm
+
+from _data_set.nsl_data_utils.loaders.net_loader import load_network, load_net_names
 
 warnings.filterwarnings(action="ignore", category=FutureWarning)
 
 
 @dataclass(frozen=True)
 class Network:
-    name: str
-    type: str # this field has been added after generation of the dataset with spreading potentials!
-    graph: nd.MultilayerNetwork | nd.MultilayerNetworkTorch
+    n_type: str # this field has been added after generation of the dataset with spreading potentials!
+    n_name: str
+    n_graph: nd.MultilayerNetwork | nd.MultilayerNetworkTorch
+
+    @classmethod
+    def from_str(cls, n_type: str, n_name: str, as_tensor: bool) -> "Network":
+        return cls(n_type, n_name, load_network(n_type, n_name, as_tensor=as_tensor))
 
 
 def compute_gain(seed_nb: int, exposed_nb: int, total_actors: int) -> float:
@@ -25,14 +31,26 @@ def compute_gain(seed_nb: int, exposed_nb: int, total_actors: int) -> float:
     return 100 * obtained_gain / max_available_gain
 
 
+def parse_network_config(type_name: str) -> tuple[str, list[str]]:
+    """Obtain network name for given string from the configuraiton file."""
+    pattern = r"^([^-]+)(?:-(.*))?$"
+    match = re.match(pattern, type_name)
+    if match.group(2) == "*":  # a wildcard - return all possible names
+        return match.group(1), load_net_names(match.group(1))
+    elif match.group(2) is None:  # no name provided, hence network's type is network's name 
+        return match.group(1), [match.group(1)]
+    return match.group(1), [match.group(2)]  # by default name is anything after dash
+
+
 def get_parameter_space(
     protocols: list[str], p_values: list[float], networks: list[str], as_tensor: bool
 ) -> product:
     nets = []
     for net_type in networks:
-        print(f"Loading {net_type} network")
-        for net_name, net_graph in load_network(net_name=net_type, as_tensor=as_tensor).items():
-            nets.append(Network(name=net_name, type=net_type, graph=net_graph))
+        net_type, net_names = parse_network_config(net_type)
+        print(f"Loading {net_type} networks")
+        for net_name in tqdm(net_names):
+            nets.append(Network.from_str(n_type=net_type, n_name=net_name, as_tensor=as_tensor))
     return product(protocols, p_values, nets)
 
 
