@@ -11,13 +11,13 @@ networks: [
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### train/eval split
   # "artificial_er-*",
   # "artificial_pa-*",
-  # "artificial_small-*",
+  "artificial_small-*",
   # # ##### ##### ##### ##### ##### ##### ##### ##### ##### test split
   # "arxiv_netscience_coauthorship-arxiv_netscience_coauthorship",
-  "aucs",
-  "ckm_physicians",
+  # "aucs",
+  # "ckm_physicians",
   # "eu_transportation-eu_transportation",
-  # "l2_course-l2_course_net_1",
+  "l2_course-l2_course_net_1",
   # "lazega",
   # "timik1q2009",
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### not used at all
