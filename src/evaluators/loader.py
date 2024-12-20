@@ -65,8 +65,8 @@ def load_infmax_model(
             config_infmax["parameters"]["rng_seed"] = random_seed
         if config_infmax["parameters"]["device"] == "auto":
             config_infmax["parameters"]["device"] = device
-        if config_infmax["parameters"]["common"]["nb_seeds"] == "auto":
-            config_infmax["parameters"]["common"]["nb_seeds"] = nb_seeds
+        if config_infmax["parameters"]["common"]["nb_pred_actos"] == "auto":
+            config_infmax["parameters"]["common"]["nb_pred_actos"] = nb_seeds
         config_infmax["name"] = config_infmax["class"]
         return load_model({"model": config_infmax})
     elif config_infmax["class"] == "CentralityChoice":

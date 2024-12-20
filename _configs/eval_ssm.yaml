@@ -77,7 +77,7 @@ infmax_models:
     parameters:
       nb_seeds: "auto"
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### GBIM
-  - name: "GBIM"
+  - name: "gbim"
     class: "GBIM"
     parameters:
       rng_seed: auto
@@ -91,18 +91,19 @@ infmax_models:
       executor:
         epochs: 300
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### deepim
-  - name: "DeepIM"
+  - name: "deep_im"
     class: "DeepIM"
     parameters:
       rng_seed: auto
       device: auto
-      dataset_percentage_budget: 5
+      seeding_budget: 5
       common:
-        nb_seeds: auto
-        nb_layer_seeds: 4
+        nb_pred_actos: auto
+        nb_pred_nodes: 4
       executor:
         train_epochs: 600
         y_hat_epochs: 300
+        patience: 5
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### multi-node2vec-k-means
   - name: "mn2v_km"
     class: "MultiNode2VecKMeansAuto"
