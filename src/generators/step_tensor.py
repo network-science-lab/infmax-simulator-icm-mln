@@ -21,11 +21,12 @@ def experiment_step(
     case_idx: int,
     p_bar: tqdm,
     out_dir: Path,
+    device: str,
 ) -> None:
     marginal_efficiencies = []
 
     # iterate through all available actors and check their influencial power
-    for actor_name, actor_idx in net.graph.actors_map.items():
+    for actor_name, actor_idx in net.n_graph.actors_map.items():
 
         # initialise model with "ranking" that prioritises current actor
         micm = TorchMICModel(protocol=protocol, probability=p)
@@ -39,11 +40,11 @@ def experiment_step(
                 sim_utils.get_case_name_rich(
                     protocol=protocol,
                     p=p,
-                    net_name=net.name,
+                    net_name=f"{net.n_type}-{net.n_name}" if net.n_type != net.n_name else net.n_name,
                     case_idx=case_idx,
                     cases_nb=len(p_bar),
                     actor_idx=actor_idx,
-                    actors_nb=len(net.graph.actors_map),
+                    actors_nb=len(net.n_graph.actors_map),
                     rep_idx=rep,
                     reps_nb=repetitions_nb
                 )
@@ -52,9 +53,10 @@ def experiment_step(
             # run experiment on a deep copy of the network!
             experiment = TorchMICSimulator(
                 model=micm,
-                net=net.graph,
-                n_steps=len(net.graph.actors_map) * 2,
+                net=net.n_graph,
+                n_steps=len(net.n_graph.actors_map) * 2,
                 seed_set={actor_name},
+                device=device,
             )
             logs = experiment.perform_propagation()
 
@@ -76,8 +78,8 @@ def experiment_step(
             marginal_efficiencies.extend(repeated_results)
 
     # save efficiences obtained for this case
-    if net.name != net.type:
-        out_dir = out_dir / net.type
+    if net.n_name != net.n_type:
+        out_dir = out_dir / net.n_type
     out_dir.mkdir(exist_ok=True, parents=True)
-    out_path = out_dir / f"{sim_utils.get_case_name_base(protocol, p, net.name)}.csv"
+    out_path = out_dir / f"{sim_utils.get_case_name_base(protocol, p, net.n_name)}.csv"
     os_utils.export_dataclasses(marginal_efficiencies, out_path)

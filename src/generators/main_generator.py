@@ -33,6 +33,7 @@ def run_experiments(config: dict[str, Any]) -> None:
         as_tensor=True if step_func == step_tensor else False,
     )
     repetitions = config["run"]["nb_repetitions"]["diffusion"]
+    device = config["run"]["device"]
 
     # prepare output directory and deterimne how to store results
     out_dir = Path(config["logging"]["out_dir"])
@@ -62,6 +63,7 @@ def run_experiments(config: dict[str, Any]) -> None:
                 case_idx=idx,
                 p_bar=p_bar,
                 out_dir=out_dir,
+                device=device,
             )
         except BaseException as e:
             case_descr = sim_utils.get_case_name_base(

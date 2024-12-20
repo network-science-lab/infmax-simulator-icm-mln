@@ -8,24 +8,23 @@ spreading_model:
       0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95, 1.0
     ]
 
+# format <network type>-<network name>. network type can be replaced by:
+# a wildcard "*" to load all networks belonging to given type (e.g. "artificial_er-*"")
+# or even skipped if in given network type has only one graph (e.g. "aucs")
 networks: [
-  # "artificial_er",
-  # "artificial_pa",
-  # "artificial_small",
-  # "arxiv_netscience_coauthorship",
-  # "arxiv_netscience_coauthorship_math.oc",
-  # "aucs",
-  # "cannes",
-  "ckm_physicians",
-  # "eu_transportation",
-  # "eu_transport_klm",
-  # "fmri74",
-  # "l2_course_net_1",
-  # "l2_course_net_2",
-  # "l2_course_net_3",
-  # "lazega",
-  # "timik1q2009",
-  "toy_network",
+  # "artificial_er-*",  # 100 networks
+  # "artificial_pa-*",  # 100 networks
+  # "artificial_small-*",  # 8 networks
+  # "arxiv_netscience_coauthorship-*", # two networks: arxiv_netscience_coauthorship<._math.oc>
+  # "aucs",  # 1 network
+  # "cannes",  # 1 network
+  # "ckm_physicians",  # 1 network
+  # "eu_transportation-*",  # 2 networks: eu_transport<ation|_klm>
+  # "fmri74",  # 1 network
+  # "l2_course-*",  # 3 networks: l2_course<_net_1|_net_2|_net_3>, do not require DVC
+  # "lazega",  # 1 network
+  # "timik1q2009",  # 1 network
+  "toy_network",  # 1 network, does not require DVC
 ]
 
 run:
@@ -34,6 +33,7 @@ run:
     diffusion: 30
   rng_seed: 43
   average_results: False
+  device: "cuda:0"  # or "cpu"
 
 logging:
   compress_to_zip: False

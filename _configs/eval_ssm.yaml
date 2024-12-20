@@ -9,23 +9,23 @@ spreading_model:
 
 networks: [
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### train/eval split
-  # "artificial_er",
-  # "artificial_pa",
-  # "artificial_small",
-  # ##### ##### ##### ##### ##### ##### ##### ##### ##### test split
-  "arxiv_netscience_coauthorship",
-  "aucs",
-  "ckm_physicians",
-  "eu_transportation",
-  "l2_course_net_1",
-  "lazega",
-  "timik1q2009",
+  # "artificial_er-*",
+  # "artificial_pa-*",
+  "artificial_small-*",
+  # # ##### ##### ##### ##### ##### ##### ##### ##### ##### test split
+  # "arxiv_netscience_coauthorship-arxiv_netscience_coauthorship",
+  # "aucs",
+  # "ckm_physicians",
+  # "eu_transportation-eu_transportation",
+  "l2_course-l2_course_net_1",
+  # "lazega",
+  # "timik1q2009",
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### not used at all
-  # "arxiv_netscience_coauthorship_math.oc",  # single layer network
-  # "cannes",  # we don't have centralities computed yet
-  # "eu_transport_klm",  # single layer network
-  # "fmri74",  # super edge case - 74 layers
-  # "toy_network",  # super small network - use only for code validation
+  # "arxiv_netscience_coauthorship-arxiv_netscience_coauthorship_math.oc",
+  # "cannes",
+  # "eu_transportation-eu_transport_klm",
+  # "fmri74",
+  # "toy_network",
 ]
 
 infmax_models:

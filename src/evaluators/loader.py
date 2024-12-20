@@ -110,9 +110,9 @@ def get_seed_sets(
                 method_name=ifm_name,
                 repetition_nb=i,
                 seeds=ifm_obj(
-                    network=net.graph,
-                    net_name=net.name,
-                    net_type=net.type,
+                    network=net.n_graph,
+                    net_name=net.n_name,
+                    net_type=net.n_type,
                     protocol=protocol,
                     p=p,
                 ),

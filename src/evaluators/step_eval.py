@@ -18,6 +18,7 @@ def evaluation_step(
     average_results: bool,
     case_name: int,
     out_dir: Path,
+    device: str,
 ) -> list[EvaluationResult]:
     """Run multilayer ICM on given seed set and model's parameters."""
     evaluation_results = []
@@ -35,9 +36,10 @@ def evaluation_step(
             # run experiment on a deep copy of the network!
             simulator = TorchMICSimulator(
                 model=micm,
-                net=net.graph,
-                n_steps=len(net.graph.actors_map) * 2,
+                net=net.n_graph,
+                n_steps=len(net.n_graph.actors_map) * 2,
                 seed_set=seed_set.seeds,
+                device=device,
             )
             logs = simulator.perform_propagation()
             gain = sim_utils.compute_gain(

@@ -34,6 +34,7 @@ def run_experiments(config: dict[str, Any]) -> None:
     )
     repetitions_diffusion = config["run"]["nb_repetitions"]["diffusion"]
     repetitions_stochastic = config["run"]["nb_repetitions"]["stochastic_infmax"]
+    device = config["run"]["device"]
 
     # initialise influence maximisation models
     infmax_models = loader.load_infmax_models(
@@ -41,7 +42,7 @@ def run_experiments(config: dict[str, Any]) -> None:
         config_icm=config["spreading_model"],
         random_seed=config["run"]["rng_seed"],
         nb_seeds=config["run"]["nb_diffusion_seeds"],
-        device=config["run"]["device"],
+        device=device,
     )
 
     # prepare output directory and deterimne how to store results
@@ -65,7 +66,7 @@ def run_experiments(config: dict[str, Any]) -> None:
         case_descr = sim_utils.get_case_name_base(
                 investigated_case[0],
                 investigated_case[1],
-                f"{investigated_case[2].type}-{investigated_case[2].name}",
+                f"{investigated_case[2].n_type}-{investigated_case[2].n_name}",
             )
         p_bar.set_description_str(f"{idx}/{len(p_bar)}-{case_descr}")
         try:
@@ -85,6 +86,7 @@ def run_experiments(config: dict[str, Any]) -> None:
                 average_results=average_results,
                 case_name=case_descr,
                 out_dir=out_dir,
+                device=device,
             )
         except BaseException as e:
             print(f"\nEvaluation failed for case: {case_descr}")
