@@ -174,7 +174,7 @@ class TorchMICSimulator:
         if device.startswith("cuda:"):
             device_idx = int(device.split(":")[1])
             device_idx_max = torch.cuda.device_count() - 1
-            if device_idx >= device_idx_max:
+            if device_idx > device_idx_max:
                 raise ValueError(f"Device index '{device_idx}' out of range [0; {device_idx_max}]!")
 
     def create_states_tensor(self, net: nd.MultilayerNetworkTorch, seed_set: set[Any]) -> torch.Tensor:
