@@ -26,7 +26,12 @@ def tcase_config():
             "parameters": {"protocols": ["OR", "AND"], "p_values": [0.9, 0.65, 0.1]}
         },
         "networks": ["toy_network"],
-        "run": {"nb_repetitions": {"diffusion": 3}, "rng_seed": 43, "average_results": False},
+        "run": {
+            "nb_repetitions": {"diffusion": 3},
+            "rng_seed": 43,
+            "average_results": False,
+            "device": "cpu",
+        },
         "logging": {"compress_to_zip": False, "out_dir": None},
     }
 

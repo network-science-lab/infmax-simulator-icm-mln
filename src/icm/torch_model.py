@@ -137,6 +137,7 @@ class TorchMICSimulator:
         net: nd.MultilayerNetworkTorch,
         n_steps: int,
         seed_set: set[Any],
+        device: str,
         debug: bool = False
     ) -> None:
         """
@@ -150,6 +151,31 @@ class TorchMICSimulator:
         self.n_steps = n_steps
         self.seed_set = seed_set
         self.debug = debug
+        self.device = device
+        self.validate_device(device)
+        net.device = self.device
+    
+    @staticmethod
+    def validate_device(device: str) -> None:
+        """
+        Validate if the given device is available in PyTorch.
+
+        :param device: The device to validate, e.g., "cpu", "cuda", "cuda:0".
+        :raises ValueError: If the device is not available.
+        """
+        try:
+            torch.device(device)
+        except RuntimeError as e:
+            raise ValueError(f"Invalid device specification: {device}") from e
+
+        if device.startswith("cuda") and not torch.cuda.is_available():
+            raise ValueError(f"CUDA is not available on this machine!")
+
+        if device.startswith("cuda:"):
+            device_idx = int(device.split(":")[1])
+            device_idx_max = torch.cuda.device_count() - 1
+            if device_idx >= device_idx_max:
+                raise ValueError(f"Device index '{device_idx}' out of range [0; {device_idx_max}]!")
 
     def create_states_tensor(self, net: nd.MultilayerNetworkTorch, seed_set: set[Any]) -> torch.Tensor:
         """

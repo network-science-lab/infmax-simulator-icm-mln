@@ -21,6 +21,7 @@ def experiment_step(
     case_idx: int,
     p_bar: tqdm,
     out_dir: Path,
+    device: str,
 ) -> None:
     marginal_efficiencies = []
 
@@ -55,6 +56,7 @@ def experiment_step(
                 net=net.n_graph,
                 n_steps=len(net.n_graph.actors_map) * 2,
                 seed_set={actor_name},
+                device=device,
             )
             logs = experiment.perform_propagation()
 

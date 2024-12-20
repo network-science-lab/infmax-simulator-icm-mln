@@ -33,6 +33,7 @@ run:
     diffusion: 30
   rng_seed: 43
   average_results: False
+  device: "cuda:0"  # or "cpu"
 
 logging:
   compress_to_zip: False
