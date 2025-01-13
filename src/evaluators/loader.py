@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 from typing import Any, Callable
 
-from src.evaluators.infmax_methods import CentralityChoice, GroundTruth, RandomChoice
+from src.evaluators.infmax_methods import CentralityChoice, GroundTruth, RandomChoice, DFChoice
 from src.sim_utils import Network
 
 
@@ -65,10 +65,12 @@ def load_infmax_model(
             config_infmax["parameters"]["rng_seed"] = random_seed
         if config_infmax["parameters"]["device"] == "auto":
             config_infmax["parameters"]["device"] = device
-        if config_infmax["parameters"]["common"]["nb_pred_actos"] == "auto":
-            config_infmax["parameters"]["common"]["nb_pred_actos"] = nb_seeds
+        if config_infmax["parameters"]["common"]["nb_seeds"] == "auto":
+            config_infmax["parameters"]["common"]["nb_seeds"] = nb_seeds
         config_infmax["name"] = config_infmax["class"]
         return load_model({"model": config_infmax})
+    elif config_infmax["class"] == "DFChoice":
+        return DFChoice(result_dir=config_infmax["parameters"]["result_dir"])
     elif config_infmax["class"] == "CentralityChoice":
         return CentralityChoice(
             nb_seeds=nb_seeds,

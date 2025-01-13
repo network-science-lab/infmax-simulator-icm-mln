@@ -5,12 +5,25 @@ from typing import Literal
 
 import network_diffusion as nd
 import pandas as pd
+from pathlib import Path
 
 from _data_set.nsl_data_utils.loaders.constants import (
     ACTOR, AND, EXPOSED, NETWORK, OR, P, PEAK_INFECTED, PEAK_ITERATION, PROTOCOL, SIMULATION_LENGTH
 )
 from _data_set.nsl_data_utils.loaders.sp_loader import load_sp_paths, load_sp
 from _data_set.nsl_data_utils.loaders.centrality_loader import load_centralities_path, load_centralities
+
+class DFChoice:
+    def __init__(self, result_dir: str) -> None:
+        self._result_dir = result_dir
+
+    def __call__(self, net_type: str, net_name: str, **kwargs) -> list[str]:
+        csv_path = Path(f'{self._result_dir}/{net_type}_{net_name}.csv')
+        if not csv_path.exists():
+            raise ValueError(f'There is no {net_type}_{net_name}.csv in {self._result_dir}')
+        result = pd.read_csv(csv_path, index_col=0)
+        return [str(i) for i in result.index.tolist()]
+
 
 class CentralityChoice:
 

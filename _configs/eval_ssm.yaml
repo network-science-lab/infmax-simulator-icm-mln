@@ -74,8 +74,12 @@ infmax_models:
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### random
   - name: "random_choice"
     class: "RandomChoice"
+    nb_seeds: "auto"
+  # ##### ##### ##### ##### ##### ##### ##### ##### ##### df choice
+  - name: "ssnet"
+    class: "DFChoice"
     parameters:
-      nb_seeds: "auto"
+      result_dir: ""
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### GBIM
   - name: "gbim"
     class: "GBIM"
