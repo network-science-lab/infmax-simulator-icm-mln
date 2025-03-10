@@ -67,7 +67,7 @@ def run_experiments(config: dict[str, Any]) -> None:
             )
         except BaseException as e:
             case_descr = sim_utils.get_case_name_base(
-                investigated_case[0], investigated_case[1], investigated_case[2].name
+                investigated_case[0], investigated_case[1], investigated_case[2].n_type
             )
             print(f"\nExperiment failed for case: {case_descr}")
             raise e
