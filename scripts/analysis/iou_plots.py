@@ -189,15 +189,19 @@ def main(results_path: Path, out_path: Path) -> None:
                     avg_accs[protocol][p] = {}
                 if avg_accs[protocol][p].get(im_name):
                     raise ValueError(f"{im_name} already in parsed results!")
-                avg_accs[protocol][p][im_name] = acc_avg # {"acc": acc_avg, "auc": auc_avg}
+                avg_accs[protocol][p][im_name] = {"acc": acc_avg, "auc": auc_avg}
 
     # draw average curves for each infmax method on a single canvas
     print("plotting average curves")
     for protocol, p_dict in avg_accs.items():
         for p, pp_dict in p_dict.items():
-            # for im_name, im_dict in pp_dict.items():
-            fig, _, _ = plot_accs(accs=pp_dict, plot_avg=False)
-            fig.suptitle(f"im_name: {im_name}, protocol: {protocol}, p: {p}")
+            # convert dict so that curves are inserted according to AuC (to sort legend on plots)
+            sorted_dict = {
+                k: v["acc"] for
+                k, v in sorted(pp_dict.items(), key=lambda item: item[1]["auc"], reverse=True)
+            }
+            fig, _, _ = plot_accs(accs=sorted_dict, plot_avg=False)
+            fig.suptitle(f"averaged AuC, protocol: {protocol}, p: {p}")
             fig.tight_layout()
             fig.savefig(pdf, format="pdf")
             plt.close(fig)
