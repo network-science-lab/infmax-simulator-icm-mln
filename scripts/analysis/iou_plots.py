@@ -11,7 +11,6 @@ import numpy as np
 import scipy.interpolate
 from matplotlib.backends.backend_pdf import PdfPages
 from matplotlib.figure import Figure
-from scipy.signal import resample
 
 
 def load_json_data(json_path: Path) -> dict[str, Any]:
@@ -51,7 +50,7 @@ def cummulated_acc(arr_y: list[Any], arr_yhat: list[list[Any]]) -> np.array:
     """Compute IoU for cufoofs from 0% to 100% of actors."""
     assert all([len(arr_y) == len(ayh) for ayh in arr_yhat])
     accs = []
-    cutoffs = np.linspace(1, len(arr_y), len(arr_y), dtype=int)
+    cutoffs = np.linspace(1, len(arr_y), len(arr_y) if len(arr_y) <= 1000 else 1000 , dtype=int)
     for cutoff in cutoffs:
         cutoff_acc = acc(arr_y=arr_y, arr_yhat=arr_yhat, cutoff=cutoff)
         accs.append(cutoff_acc)
@@ -90,9 +89,6 @@ def plot_accs(accs: dict[str, list[float]],  plot_avg: bool = True) -> Figure:
     acc_yhats = []
     for name, acc_yhat in accs.items():
         auc_yhat = np.trapezoid(acc_yhat, get_cutoffs_fract(len(acc_yhat)))
-        # if len(acc_yhat) > 1000:
-        #     acc_yhat = resample(acc_yhat, 1000)
-        #     print("downsampled!")
         ax.plot(
             get_cutoffs_fract(len(acc_yhat)),
             acc_yhat,
@@ -148,8 +144,6 @@ def main(results_path: Path, out_path: Path) -> None:
                 case_name = im_result["net_type"]
             else:
                 case_name = f"{im_result["net_type"]}_{im_result["net_name"]}"
-            if im_result["net_type"] in  {"timik1q2009", "arxiv_netscience_coauthorship"}:
-                continue
             print(f"computing curve for {im_name}, {im_result['protocol']}, {im_result['p']}, {case_name}")
             
             # obtain cumulated accuracy of seed sets
