@@ -72,7 +72,7 @@ def run_experiments(config: dict[str, Any]) -> None:
             except BaseException as e:
                 print(f"\nEvaluation failed for case: {case_descr}")
                 raise e
-            
+
             ifm_results.append(
                 {
                     "net_type": inv_net.n_type,
