@@ -19,13 +19,13 @@ networks: [
   # "artificial_pa-*",
   # "artificial_small-*",
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### test split
-  # "arxiv_netscience_coauthorship-arxiv_netscience_coauthorship",
+  "arxiv_netscience_coauthorship-arxiv_netscience_coauthorship",
   "aucs",
   "ckm_physicians",
-  # "eu_transportation-eu_transportation",
-  # "l2_course-l2_course_net_1",
-  # "lazega",
-  # "timik1q2009",
+  "eu_transportation-eu_transportation",
+  "l2_course-l2_course_net_1",
+  "lazega",
+  "timik1q2009",
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### not used at all
   # "arxiv_netscience_coauthorship-arxiv_netscience_coauthorship_math.oc",
   # "cannes",
