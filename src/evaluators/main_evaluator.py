@@ -40,7 +40,7 @@ def run_experiments(config: dict[str, Any]) -> None:
     infmax_models = loader.load_infmax_models(
         config_infmax=config["infmax_models"],
         config_icm=config["spreading_model"],
-        random_seed=config["run"]["rng_seed"],
+        rng_seed=config["run"]["rng_seed"],
         nb_seeds=config["run"]["nb_diffusion_seeds"],
         device=device,
     )
@@ -100,6 +100,5 @@ def run_experiments(config: dict[str, Any]) -> None:
     print(f"Evaluations finished at {finish_time}")
     print(f"Evaluations lasted {os_utils.get_diff_of_times(start_time, finish_time)} minutes")
 
-# TODO: add add voterank
+
 # TODO: supress logging from 3-rd party SSMs
-# TODO: add random

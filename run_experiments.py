@@ -4,7 +4,7 @@
 import argparse
 import yaml
 
-from src.evaluators import main_evaluator
+from src.evaluators import main_evaluator, gt_evaluator
 from src.generators import main_generator
 from src.os_utils import set_rng_seed
 
@@ -16,8 +16,9 @@ def parse_args(*args):
         help="Experiment config file.",
         nargs="?",
         type=str,
+        default="_configs/eval_gt.yaml",
         # default="_configs/eval_ssm.yaml",
-        default="_configs/gen_sp.yaml",
+        # default="_configs/gen_sp.yaml",
     )
     return parser.parse_args(*args)
 
@@ -37,6 +38,8 @@ if __name__ == "__main__":
         runner = main_generator
     elif experiment_type == "evaluate":
         runner = main_evaluator
+    elif experiment_type == "evaluate_gt":
+        runner = gt_evaluator
     else:
         raise ValueError(f"Unknown experiment type {experiment_type}")
 
