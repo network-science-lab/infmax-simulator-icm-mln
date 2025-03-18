@@ -1,10 +1,12 @@
-"""Ground Truth seed selector."""
+"""Classess aimed to select seeds for further evaluation."""
 
+import os
+import tempfile
 from abc import ABC
-from dataclasses import dataclass
 from random import shuffle
 from typing import Literal
 
+import neptune
 import network_diffusion as nd
 import pandas as pd
 
@@ -13,24 +15,12 @@ from _data_set.nsl_data_utils.loaders.constants import (
 )
 from _data_set.nsl_data_utils.loaders.sp_loader import load_sp_paths, load_sp
 from _data_set.nsl_data_utils.loaders.centrality_loader import load_centralities_path, load_centralities
+from src.evaluators.utils import SPScore
 
 
 class BaseChoice(ABC):
 
     is_stochastic: bool = None
-
-
-# class DFChoice(BaseChoice):
-
-#     def __init__(self, result_dir: str) -> None:
-#         self._result_dir = result_dir
-
-#     def __call__(self, net_type: str, net_name: str, **kwargs) -> list[str]:
-#         csv_path = Path(f'{self._result_dir}/{net_type}_{net_name}.csv')
-#         if not csv_path.exists():
-#             raise ValueError(f'There is no {net_type}_{net_name}.csv in {self._result_dir}')
-#         result = pd.read_csv(csv_path, index_col=0)
-#         return [str(i) for i in result.index.tolist()]
 
 
 class CentralityChoice(BaseChoice):
@@ -55,27 +45,6 @@ class CentralityChoice(BaseChoice):
         centrs_df = load_centralities(csv_path=centr_dir)
         centr_df = centrs_df[self.centrality_name].sort_values(ascending=False)
         return list(centr_df[:nb_seeds].index)
-
-
-@dataclass
-class SPScore:
-    """A simple class to compute Spreading Potential Score."""
-
-    exposed_weight: int
-    simulation_length_weight: int
-    peak_infected_weight: int
-    peak_iteration_weight: int
-
-    def __call__(self, sp: pd.DataFrame) -> pd.Series:
-        for col in  [EXPOSED, SIMULATION_LENGTH, PEAK_INFECTED, PEAK_ITERATION]:
-            sp[col] /= sp[col].max()
-        sp["score"] = (
-            sp[EXPOSED] * self.exposed_weight +  # maximise
-            (1 - sp[SIMULATION_LENGTH]) * self.simulation_length_weight +  # minimise
-            sp[PEAK_INFECTED] * self.peak_infected_weight  +  # maximise
-            (1 - sp[PEAK_ITERATION]) * self.peak_iteration_weight  # minimise
-        )
-        return sp.sort_values(by="score", ascending=False)["score"]
 
 
 class GroundTruth(BaseChoice):
@@ -160,3 +129,49 @@ class RandomChoice(BaseChoice):
         actors = list(network.actors_map.keys())
         shuffle(actors)
         return actors[:nb_seeds]
+
+
+class NeptuneDownloader(BaseChoice):
+    """A class to fetch rankings from neptune.ai."""
+
+    is_stochastic = False
+
+    def __init__(
+        self,
+        project: str,
+        run: str,
+        exposed_weight: int,
+        simulation_length_weight: int,
+        peak_infected_weight: int,
+        peak_iteration_weight: int,
+    ) -> None:
+        self.session = neptune.init_run(
+            api_token=os.getenv(key="NEPTUNE_API_KEY", default=neptune.ANONYMOUS_API_TOKEN),
+            project=project,
+            with_id=run,
+        )
+        self.weights = {
+            EXPOSED: exposed_weight,
+            SIMULATION_LENGTH: simulation_length_weight,
+            PEAK_INFECTED: peak_infected_weight,
+            PEAK_ITERATION: peak_iteration_weight,
+        }
+
+    @staticmethod
+    def _load_csv(csv_path: str) -> pd.DataFrame:
+        df = pd.read_csv(csv_path, index_col=0)
+        df.index.name = ACTOR
+        return df
+
+    def __call__(self, net_type: str, net_name: str, nb_seeds: int, **kwargs) -> list[str]:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = f"{temp_dir}/predicted_sp.csv"
+            self.session[f"evaluation/{net_type}/{net_name}"].download(destination=temp_path)
+            df = self._load_csv(csv_path=temp_path)
+        sp_score = SPScore(
+            exposed_weight=self.weights[EXPOSED],
+            simulation_length_weight=self.weights[SIMULATION_LENGTH],
+            peak_infected_weight=self.weights[PEAK_INFECTED],
+            peak_iteration_weight=self.weights[PEAK_ITERATION],
+        )(df)
+        return sp_score.iloc[:nb_seeds].index.tolist()

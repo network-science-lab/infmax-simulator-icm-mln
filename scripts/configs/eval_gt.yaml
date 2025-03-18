@@ -14,7 +14,7 @@ spreading_model:
     p_values: [-1]  # standalone OR [0.05, 0.10, 0.15, 0.20], AND [0.80, 0.85, 0.90, 0.95]
 
 spreading_potential_score:
-    exposed_weight: 4
+    exposed_weight: 6
     simulation_length_weight: 1
     peak_infected_weight: 1
     peak_iteration_weight: 1
@@ -69,6 +69,12 @@ infmax_models:
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### random
   - name: "random_choice"
     class: "RandomChoice"
+  # ##### ##### ##### ##### ##### ##### ##### ##### ##### our GNNs
+  - name: "742"
+    class: "NeptuneDownloader"
+    parameters:
+      project: infmax/infmax-gnn
+      run: IN-742
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### GBIM
   # - name: "gbim"
   #   class: "GBIM"  # TODO: integrate this method!

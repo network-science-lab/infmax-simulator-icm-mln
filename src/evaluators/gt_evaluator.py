@@ -28,12 +28,9 @@ def run_experiments(config: dict[str, Any]) -> None:
     infmax_models = loader.load_infmax_models(
         config_infmax=[
             *config["infmax_models"],
-            {
-                "name": "ground_truth",
-                "class": GroundTruth.__name__,
-                "parameters": config["spreading_potential_score"],
-            }
+            {"name": "ground_truth", "class": GroundTruth.__name__},
         ],
+        config_sp=config["spreading_potential_score"],
         rng_seed=config["run"]["rng_seed"],
         device=config["run"]["device"],
     )
@@ -69,8 +66,8 @@ def run_experiments(config: dict[str, Any]) -> None:
                 for _ in range(repetitions_stochastic if ifm_obj.is_stochastic else 1):
                     repetition_seeds = ifm_obj(
                         network=inv_net.n_graph,
-                        net_name=inv_net.n_name,
                         net_type=inv_net.n_type,
+                        net_name=inv_net.n_name,
                         protocol=inv_proto,
                         p=inv_p,
                         nb_seeds=len(inv_net.n_graph.actors_map),

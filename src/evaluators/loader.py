@@ -1,9 +1,15 @@
 """Loader for influence maximisations methods."""
 
 from dataclasses import dataclass
-from typing import Any, Callable
+from typing import Any
 
-from src.evaluators.infmax_methods import BaseChoice, CentralityChoice, GroundTruth, RandomChoice # , DFChoice
+from src.evaluators.infmax_methods import (
+    BaseChoice,
+    CentralityChoice,
+    GroundTruth,
+    RandomChoice,
+    NeptuneDownloader,
+)
 from src.sim_utils import Network
 
 
@@ -17,12 +23,14 @@ class SeedSet:
 
 def load_infmax_models(
     config_infmax: dict[str, Any],
+    config_sp: dict[str, int],
     rng_seed: int,
     device: str,
-) -> dict[str, Callable]:
+) -> dict[str, BaseChoice]:
     return {
         m_config["name"]: load_infmax_model(
             config_infmax=m_config,
+            config_sp=config_sp,
             rng_seed=rng_seed,
             device=device,
         )
@@ -32,6 +40,7 @@ def load_infmax_models(
 
 def load_infmax_model(
     config_infmax: dict[str, Any],
+    config_sp: dict[str, int],
     rng_seed: int,
     device: str,
 ) -> Any:
@@ -57,14 +66,14 @@ def load_infmax_model(
             config_infmax["parameters"]["device"] = device
         config_infmax["name"] = config_infmax["class"]
         return load_model({"model": config_infmax})
-    # elif config_infmax["class"] == "DFChoice":
-    #     return DFChoice(result_dir=config_infmax["parameters"]["result_dir"])
     elif config_infmax["class"] == "CentralityChoice":
         return CentralityChoice(centrality_name=config_infmax["parameters"]["centrality"])
     elif config_infmax["class"] == "GroundTruth":
-        return GroundTruth(**config_infmax["parameters"])
+        return GroundTruth(**config_sp)
     elif config_infmax["class"] == "RandomChoice":
         return RandomChoice()
+    elif config_infmax["class"] == "NeptuneDownloader":
+        return NeptuneDownloader(**config_infmax["parameters"], **config_sp)
     raise ValueError(f"Unknown infmax model class: {config_infmax['class']}!")
 
 

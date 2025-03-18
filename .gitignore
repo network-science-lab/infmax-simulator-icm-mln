@@ -3,5 +3,7 @@
 _output_generator
 _output_evaluator
 .vscode
+.neptune
 data
+env/variables.env
 src.egg-info

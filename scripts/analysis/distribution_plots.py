@@ -20,8 +20,8 @@ from src.evaluators.infmax_methods import (
     SIMULATION_LENGTH,
     load_sp,
     load_sp_paths,
-    SPScore,
 )
+from src.evaluators.utils import SPScore
 
 
 valid_icm_params = {
@@ -110,8 +110,7 @@ def main(results_path: Path, out_path: Path, score_weights: dict[str, int]) -> N
 
 
 if __name__ == "__main__":
-    run_id = "20250317153249"
-    # run_id = "20250317194630"
+    run_id = "20250318172858"
     results_path = Path(f"data/iou_curves/{run_id}")
     out_path = Path(f"data/iou_curves/{run_id}/distributions.pdf")
     score_weights= {

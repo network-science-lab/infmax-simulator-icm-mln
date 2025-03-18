@@ -5,6 +5,10 @@ from dataclasses import dataclass, asdict
 import numpy as np
 import pandas as pd
 
+from _data_set.nsl_data_utils.loaders.constants import (
+    EXPOSED, PEAK_INFECTED, PEAK_ITERATION, SIMULATION_LENGTH
+)
+
 
 @dataclass(frozen=True)
 class EvaluationResult:
@@ -32,3 +36,24 @@ def mean_evaluation_results(repeated_results: list[EvaluationResult]) -> Evaluat
     exp_recs_mean = np.mean(exp_recs_padded, axis=0).round(3)
     rr_dict_mean["expositions_rec"] = ";".join(exp_recs_mean.astype(str).tolist())
     return EvaluationResult(**rr_dict_mean)
+
+
+@dataclass
+class SPScore:
+    """A simple class to compute Spreading Potential Score."""
+
+    exposed_weight: int
+    simulation_length_weight: int
+    peak_infected_weight: int
+    peak_iteration_weight: int
+
+    def __call__(self, sp: pd.DataFrame) -> pd.Series:
+        for col in  [EXPOSED, SIMULATION_LENGTH, PEAK_INFECTED, PEAK_ITERATION]:
+            sp[col] /= sp[col].max()
+        sp["score"] = (
+            sp[EXPOSED] * self.exposed_weight +  # maximise
+            (1 - sp[SIMULATION_LENGTH]) * self.simulation_length_weight +  # minimise
+            sp[PEAK_INFECTED] * self.peak_infected_weight  +  # maximise
+            (1 - sp[PEAK_ITERATION]) * self.peak_iteration_weight  # minimise
+        )
+        return sp.sort_values(by="score", ascending=False)["score"]
