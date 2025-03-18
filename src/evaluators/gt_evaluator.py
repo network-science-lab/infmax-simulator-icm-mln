@@ -26,7 +26,14 @@ def run_experiments(config: dict[str, Any]) -> None:
 
     # initialise influence maximisation models
     infmax_models = loader.load_infmax_models(
-        config_infmax=[*config["infmax_models"], {"name": "ground_truth", "class": GroundTruth.__name__}],
+        config_infmax=[
+            *config["infmax_models"],
+            {
+                "name": "ground_truth",
+                "class": GroundTruth.__name__,
+                "parameters": config["spreading_potential_score"],
+            }
+        ],
         rng_seed=config["run"]["rng_seed"],
         device=config["run"]["device"],
     )

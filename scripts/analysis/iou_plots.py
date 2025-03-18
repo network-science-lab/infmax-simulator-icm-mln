@@ -210,6 +210,8 @@ def main(results_path: Path, out_path: Path) -> None:
 
 
 if __name__ == "__main__":
-    results_path = Path("data/iou_curves/20250317194630")
-    out_path = Path("data/iou_curves/20250317194630/plots.pdf")
+    run_id = "20250318113140"
+    # run_id = "20250317194630"
+    results_path = Path(f"data/iou_curves/{run_id}")
+    out_path = Path(f"data/iou_curves/{run_id}/comparison.pdf")
     main(results_path=results_path, out_path=out_path)

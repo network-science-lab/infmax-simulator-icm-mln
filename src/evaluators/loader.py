@@ -62,7 +62,7 @@ def load_infmax_model(
     elif config_infmax["class"] == "CentralityChoice":
         return CentralityChoice(centrality_name=config_infmax["parameters"]["centrality"])
     elif config_infmax["class"] == "GroundTruth":
-        return GroundTruth()
+        return GroundTruth(**config_infmax["parameters"])
     elif config_infmax["class"] == "RandomChoice":
         return RandomChoice()
     raise ValueError(f"Unknown infmax model class: {config_infmax['class']}!")

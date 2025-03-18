@@ -16,9 +16,9 @@ def parse_args(*args):
         help="Experiment config file.",
         nargs="?",
         type=str,
-        default="_configs/eval_gt.yaml",
-        # default="_configs/eval_ssm.yaml",
-        # default="_configs/gen_sp.yaml",
+        default="scripts/configs/eval_gt.yaml",
+        # default="scripts/configs/eval_ssm.yaml",
+        # default="scripts/configs/gen_sp.yaml",
     )
     return parser.parse_args(*args)
 

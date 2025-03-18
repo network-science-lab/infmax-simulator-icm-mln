@@ -87,6 +87,20 @@ class GroundTruth(BaseChoice):
         "WILDCARDS": {-1.},
     }
 
+    def __init__(
+        self, 
+        exposed_weight: int,
+        simulation_length_weight: int,
+        peak_infected_weight: int,
+        peak_iteration_weight: int,
+    ) -> None:
+        self.weights = {
+            EXPOSED: exposed_weight,
+            SIMULATION_LENGTH: simulation_length_weight,
+            PEAK_INFECTED: peak_infected_weight,
+            PEAK_ITERATION: peak_iteration_weight,
+        }
+
     @staticmethod
     def get_top_k(
         sp_raw: pd.DataFrame,
@@ -122,7 +136,6 @@ class GroundTruth(BaseChoice):
             protocol: Literal["OR", "AND"],
             p: float,  # -1 is a wildcard to get avg SP for all feasible p under a given protocol
             nb_seeds: int,
-            weights: dict[str, int],
             **kwargs,
     ) -> list[str]:
         assert p in self.valid_icm_params[protocol] or p in self.valid_icm_params["WILDCARDS"], \
@@ -130,7 +143,13 @@ class GroundTruth(BaseChoice):
         sp_paths = load_sp_paths(net_type=net_type, net_name=net_name)
         raw_sp = load_sp(csv_paths=sp_paths)
         p = [p_val for p_val in self.valid_icm_params[protocol]] if p == -1. else [p]
-        return self.get_top_k(sp_raw=raw_sp, nb_seeds=nb_seeds, protocol=protocol, p=p)
+        return self.get_top_k(
+            sp_raw=raw_sp,
+            nb_seeds=nb_seeds,
+            protocol=protocol,
+            p=p,
+            weights=self.weights,
+        )
 
 
 class RandomChoice(BaseChoice):
