@@ -22,6 +22,7 @@ from src.evaluators.infmax_methods import (
     load_sp_paths,
 )
 from src.evaluators.utils import SPScore
+from src.sim_utils import parse_network_config
 
 
 valid_icm_params = {
@@ -31,19 +32,21 @@ valid_icm_params = {
 }
 
 
+def parse_network_regexes(network_regexes: list[str]) -> list[tuple[str, str]]:
+    networks = []
+    for network_regex in network_regexes:
+        print(network_regex)
+        net_type, net_names = parse_network_config(network_regex)
+        for net_name in net_names:
+            networks.append((net_type, net_name))
+    return networks
+
+
 def read_config(config_path: Path) -> tuple[list[tuple[str, str]], tuple[str], tuple[float]]:
     """Read configuration file to obtain networks."""
     with open(config_path, "r") as file:
         config =  yaml.safe_load(file)
-    parsed_networks = []
-    for cc in config["networks"]:
-        ccs = cc.split("-")
-        if len(ccs) == 1:
-            parsed_networks.append((ccs[0], ccs[0]))
-        elif len(ccs) == 2:
-            parsed_networks.append(ccs)
-        else:
-            raise ValueError("Malfunction in network parsing!")
+    parsed_networks = parse_network_regexes(config["networks"])
     return (
         parsed_networks,
         config["spreading_model"]["parameters"]["protocols"],
@@ -110,7 +113,8 @@ def main(results_path: Path, out_path: Path, score_weights: dict[str, int]) -> N
 
 
 if __name__ == "__main__":
-    run_id = "20250318172858"
+    run_id = "20250318142231"
+    # run_id = "20250318113642"
     results_path = Path(f"data/iou_curves/{run_id}")
     out_path = Path(f"data/iou_curves/{run_id}/distributions.pdf")
     score_weights= {
