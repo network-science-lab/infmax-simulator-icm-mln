@@ -4,3 +4,4 @@ _output_generator
 _output_evaluator
 .vscode
 data
+src.egg-info

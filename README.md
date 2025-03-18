@@ -22,6 +22,12 @@ git submodule init && git submodule update
 pip install -e _data_set
 ```
 
+To use scripts which produce analysis, install the source code:
+
+```bash
+pip install -e .
+```
+
 A final step is to install wrappers for influence-maximisation methods into the conda environment.
 We recommend to link it in editable mode, so after you clone particular method just install it with
 `pip install -e ../path/to/infmax/method`.
@@ -35,7 +41,7 @@ request to get  an access via  e-mail (michal.czuba@pwr.edu.pl). Then, simply ex
 * `cd _data_set && dvc pull nsl_data_sources/spreading_potentials/multi_layer_networks/*.dvc && cd ..`
 * `cd _data_set && dvc pull nsl_data_sources/centralities/multi_layer_networks/*.dvc && cd ..`
 
-## Structure of the repository
+## Structure of the repository TODO: update!
 ```
 .
 ├── _configs                -> eample configuration files to trigger the pipeline

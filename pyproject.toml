@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools~=69.5.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "src"
+version = "2.8.0"
+description = "Inf. Max. Simulator for Multilayer Networks under ICM"
+requires-python = ">=3.12"
+authors = [
+    {name = "Piotr Bródka", email="piotr.brodka@pwr.edu.pl"},
+    {name = "Michał Czuba", email="michal.czuba@pwr.edu.pl"},
+    {name = "Adam Piróg", email="an.e@ma.il"},
+    {name = "Mateusz Stolarski", email="mateusz.stolarski@pwr.edu.pl"},
+]
+readme = "README.md"
+license = {file = "LICENSE"}
+dynamic = ["dependencies"]
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["env/requirements.txt"]}
+
+[tool.setuptools.packages.find]
+exclude = ["*tests*"]
