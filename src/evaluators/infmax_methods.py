@@ -161,6 +161,7 @@ class NeptuneDownloader(BaseChoice):
     def _load_csv(csv_path: str) -> pd.DataFrame:
         df = pd.read_csv(csv_path, index_col=0)
         df.index.name = ACTOR
+        df.index = df.index.astype(str)
         return df
 
     def __call__(self, net_type: str, net_name: str, nb_seeds: int, **kwargs) -> list[str]:
