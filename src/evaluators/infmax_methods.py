@@ -10,11 +10,11 @@ import neptune
 import network_diffusion as nd
 import pandas as pd
 
-from _data_set.nsl_data_utils.loaders.constants import (
+from nsl_data_utils.loaders.constants import (
     ACTOR, AND, EXPOSED, NETWORK, OR, P, PEAK_INFECTED, PEAK_ITERATION, PROTOCOL, SIMULATION_LENGTH
 )
-from _data_set.nsl_data_utils.loaders.sp_loader import load_sp_paths, load_sp
-from _data_set.nsl_data_utils.loaders.centrality_loader import load_centralities_path, load_centralities
+from nsl_data_utils.loaders.sp_loader import load_sp_paths, load_sp
+from nsl_data_utils.loaders.centrality_loader import load_centralities_path, load_centralities
 from src.evaluators.utils import SPScore
 
 

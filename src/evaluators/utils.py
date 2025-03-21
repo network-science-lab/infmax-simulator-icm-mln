@@ -5,7 +5,7 @@ from dataclasses import dataclass, asdict
 import numpy as np
 import pandas as pd
 
-from _data_set.nsl_data_utils.loaders.constants import (
+from nsl_data_utils.loaders.constants import (
     EXPOSED, PEAK_INFECTED, PEAK_ITERATION, SIMULATION_LENGTH
 )
 

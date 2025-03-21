@@ -6,7 +6,7 @@ run:
   device: cpu
 
 logging:
-  out_dir: "./data/iou_curves"
+  out_dir: "example_results/iou_curves"
 
 spreading_model:
   parameters:

@@ -19,7 +19,7 @@ Then, pull the submodule with data loaders and install its code:
 
 ```bash
 git submodule init && git submodule update
-pip install -e _data_set
+pip install -e data/nslds
 ```
 
 To use scripts that produce analysis, install the source code:
@@ -39,9 +39,9 @@ it, you must pull the data from the DVC remote. To access it, please send a requ
 (michal.czuba@pwr.edu.pl). Then, simply execute the following commands in a shell:
 
 ```bash
-cd _data_set && dvc pull nsl_data_sources/raw/multi_layer_networks/*.dvc && cd ..
-cd _data_set && dvc pull nsl_data_sources/spreading_potentials/multi_layer_networks/*.dvc && cd ..
-cd _data_set && dvc pull nsl_data_sources/centralities/multi_layer_networks/*.dvc && cd ..
+cd data/nslds && dvc pull nsl_data_sources/raw/multi_layer_networks/*.dvc && cd ..
+cd data/nslds && dvc pull nsl_data_sources/spreading_potentials/multi_layer_networks/*.dvc && cd ..
+cd data/nslds && dvc pull nsl_data_sources/centralities/multi_layer_networks/*.dvc && cd ..
 ```
 
 ## Structure of the repository TODO - update it!
@@ -49,9 +49,9 @@ cd _data_set && dvc pull nsl_data_sources/centralities/multi_layer_networks/*.dv
 ```bash
 .
 ├── README.md 
-├── _data_set                -> networks to compute actors' marginal efficiency for
 ├── data                     -> use DVC to fetch this folder
 │   ├── iou_curves           -> results of the evaluation
+│   ├── nslds                -> data set with aux. library providing loaders
 │   ├── networks             -> real networks used in experiments
 │   └── test                 -> data used in the E2E test
 ├── env                      -> definition of the runtime environment
