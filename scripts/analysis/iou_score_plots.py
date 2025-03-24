@@ -45,7 +45,7 @@ def acc(arr_y: list[Any], arr_yhat: list[list[Any]], cutoff: int, df_sps: pd.Dat
     return res_acc
 
 
-def cummulated_acc(arr_y: list[Any], arr_yhat: list[list[Any]], df_sps: pd.Series) -> np.array:
+def cummulated_acc(arr_y: list[Any], arr_yhat: list[list[Any]], df_sps: pd.Series) -> np.ndarray:
     """Compute IoU for cufoofs from 0% to 100% of actors."""
     assert all([len(arr_y) == len(ayh) for ayh in arr_yhat])
     assert np.all((df_sps.to_numpy()[1:] - df_sps.to_numpy()[:-1]) <= 0), "GT is not monotonic!"
@@ -160,7 +160,7 @@ def main(results_path: Path, out_path: Path) -> None:
 
 
 if __name__ == "__main__":
-    run_id = "20250324144648"
+    run_id = "20250324174559"
     results_path = Path(f"data/iou_curves/{run_id}")
     out_path = Path(f"data/iou_curves/{run_id}/comparison_score.pdf")
     main(results_path=results_path, out_path=out_path)

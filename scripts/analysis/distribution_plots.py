@@ -113,8 +113,7 @@ def main(results_path: Path, out_path: Path, score_weights: dict[str, int]) -> N
 
 
 if __name__ == "__main__":
-    run_id = "20250318142231"
-    # run_id = "20250318113642"
+    run_id = "20250324173316"
     results_path = Path(f"data/iou_curves/{run_id}")
     out_path = Path(f"data/iou_curves/{run_id}/distributions.pdf")
     score_weights= {

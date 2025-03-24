@@ -102,11 +102,11 @@ def plot_accs(accs: dict[str, list[float]],  xlbl: str, ylbl: str, plot_avg: boo
         acc_avg = average_curves(acc_yhats)
         cutoffs_avg = get_cutoffs_fract(len(acc_avg))
         auc_avg = np.trapezoid(acc_avg, cutoffs_avg)
-        ax.plot(cutoffs_avg, acc_avg, label=f"acc avg, {round(auc_avg, 3)}", color="green")
+        ax.plot(cutoffs_avg, acc_avg, label=f"avg, {round(auc_avg, 3)}", color="green")
 
     cutoffs_rand = get_cutoffs_fract(100)
     auc_rand = np.trapezoid(cutoffs_rand, cutoffs_rand)
-    ax.plot(cutoffs_rand, cutoffs_rand, "--", label=f"acc rand, {round(auc_rand, 3)}", color="red")
+    ax.plot(cutoffs_rand, cutoffs_rand, "--", label=f"x=y, {round(auc_rand, 3)}", color="red")
 
     ax.set_xlabel(xlbl)
     ax.set_xlim(0, 1)
@@ -231,7 +231,7 @@ def main(results_path: Path, out_path: Path) -> None:
 
 
 if __name__ == "__main__":
-    run_id = "20250324144648"
+    run_id = "20250324174559"
     results_path = Path(f"data/iou_curves/{run_id}")
     out_path = Path(f"data/iou_curves/{run_id}/comparison_ranking.pdf")
     main(results_path=results_path, out_path=out_path)
