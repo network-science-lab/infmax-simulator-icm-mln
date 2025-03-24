@@ -1,8 +1,10 @@
+dvc~=3.42.0
+dvc-gdrive~=3.0.1
 dotenv~=0.9.9
 GitPython~=3.1.43
 matplotlib~=3.9.0
 networkx~=3.3
-network-diffusion~= 0.17.0
+network-diffusion~=0.17.0
 numpy~=2.0.0
 pandas~=2.2.2
 pytest~=8.2.2
