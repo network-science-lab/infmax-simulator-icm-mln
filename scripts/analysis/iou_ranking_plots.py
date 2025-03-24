@@ -78,7 +78,7 @@ def average_curves(matrices: list[np.ndarray], kind: str = "linear") -> np.array
     return avg_curve
 
 
-def plot_accs(accs: dict[str, list[float]],  plot_avg: bool = True) -> Figure:
+def plot_accs(accs: dict[str, list[float]],  xlbl: str, ylbl: str, plot_avg: bool = True) -> Figure:
     """Plot curves for a given spreading conditions and networks."""
     fig, ax = plt.subplots(nrows=1, ncols=1)
     if plot_avg:
@@ -107,9 +107,9 @@ def plot_accs(accs: dict[str, list[float]],  plot_avg: bool = True) -> Figure:
     auc_rand = np.trapezoid(cutoffs_rand, cutoffs_rand)
     ax.plot(cutoffs_rand, cutoffs_rand, "--", label=f"acc rand, {round(auc_rand, 3)}", color="red")
 
-    ax.set_xlabel("size of cutoff")
+    ax.set_xlabel(xlbl)
     ax.set_xlim(0, 1)
-    ax.set_ylabel("intersection(y_hat, y) / cutoff")
+    ax.set_ylabel(ylbl)
     ax.set_ylim(0, 1)
     ax.legend(
         loc="lower right",
@@ -176,7 +176,12 @@ def main(results_path: Path, out_path: Path) -> None:
                 print(f"plotitng curves for {im_name}, {protocol}, {p}")
 
                 # plot for all networks for given params
-                fig, acc_avg, auc_avg = plot_accs(accs=pp_dict)
+                fig, acc_avg, auc_avg = plot_accs(
+                    accs=pp_dict,
+                    xlbl="size of cutoff",
+                    ylbl="intersection(y_hat, y) / cutoff",
+                    plot_avg=True,
+                )
                 fig.suptitle(f"im_name: {im_name}, protocol: {protocol}, p: {p}, auc: {auc_avg}")
                 fig.tight_layout()
                 fig.savefig(pdf, format="pdf")
@@ -200,7 +205,12 @@ def main(results_path: Path, out_path: Path) -> None:
                 k: v["acc"] for
                 k, v in sorted(pp_dict.items(), key=lambda item: item[1]["auc"], reverse=True)
             }
-            fig, _, _ = plot_accs(accs=sorted_dict, plot_avg=False)
+            fig, _, _ = plot_accs(
+                accs=sorted_dict,
+                xlbl="size of cutoff",
+                ylbl="intersection(y_hat, y) / cutoff",
+                plot_avg=False,
+            )
             fig.suptitle(f"averaged AuC, protocol: {protocol}, p: {p}")
             fig.tight_layout()
             fig.savefig(pdf, format="pdf")
@@ -210,7 +220,7 @@ def main(results_path: Path, out_path: Path) -> None:
 
 
 if __name__ == "__main__":
-    run_id = "20250318113642"
+    run_id = "20250324144648"
     results_path = Path(f"data/iou_curves/{run_id}")
     out_path = Path(f"data/iou_curves/{run_id}/comparison.pdf")
     main(results_path=results_path, out_path=out_path)

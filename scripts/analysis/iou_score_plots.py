@@ -39,9 +39,10 @@ def acc(arr_y: list[Any], arr_yhat: list[list[Any]], cutoff: int, df_sps: pd.Dat
     yhs = [set(ayh[:cutoff]) for ayh in arr_yhat]
     y_sps = df_sps.loc[df_sps.index.isin(y)].sum()
     yh_sps = np.mean([df_sps.loc[df_sps.index.isin(yh)].sum() for yh in yhs])
-    if yh_sps > y_sps:
+    res_acc = round(yh_sps / y_sps, 2)
+    if res_acc > 1:
         raise ValueError(f"{cutoff}, {yh_sps}, {y_sps}")
-    return yh_sps / y_sps
+    return res_acc
 
 
 def cummulated_acc(arr_y: list[Any], arr_yhat: list[list[Any]], df_sps: pd.Series) -> np.array:
@@ -115,7 +116,12 @@ def main(results_path: Path, out_path: Path) -> None:
                 print(f"plotitng curves for {im_name}, {protocol}, {p}")
 
                 # plot for all networks for given params
-                fig, acc_avg, auc_avg = plot_accs(accs=pp_dict)
+                fig, acc_avg, auc_avg = plot_accs(
+                    accs=pp_dict,
+                    xlbl="size of cutoff (c)",
+                    ylbl="SPS(y^hat_c) / SPS(y_c)",
+                    plot_avg=True,
+                )
                 fig.suptitle(f"im_name: {im_name}, protocol: {protocol}, p: {p}, auc: {auc_avg}")
                 fig.tight_layout()
                 fig.savefig(pdf, format="pdf")
@@ -139,7 +145,12 @@ def main(results_path: Path, out_path: Path) -> None:
                 k: v["acc"] for
                 k, v in sorted(pp_dict.items(), key=lambda item: item[1]["auc"], reverse=True)
             }
-            fig, _, _ = plot_accs(accs=sorted_dict, plot_avg=False)
+            fig, _, _ = plot_accs(
+                accs=sorted_dict,
+                xlbl="size of cutoff (c)",
+                ylbl="SPS(y^hat_c) / SPS(y_c)",
+                plot_avg=False,
+            )
             fig.suptitle(f"averaged AuC, protocol: {protocol}, p: {p}")
             fig.tight_layout()
             fig.savefig(pdf, format="pdf")
@@ -149,7 +160,7 @@ def main(results_path: Path, out_path: Path) -> None:
 
 
 if __name__ == "__main__":
-    run_id = "20250318141708"
+    run_id = "20250324144648"
     results_path = Path(f"data/iou_curves/{run_id}")
     out_path = Path(f"data/iou_curves/{run_id}/comparison_score.pdf")
     main(results_path=results_path, out_path=out_path)
