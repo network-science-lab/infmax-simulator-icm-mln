@@ -11,6 +11,7 @@ import numpy as np
 import scipy.interpolate
 from matplotlib.backends.backend_pdf import PdfPages
 from matplotlib.figure import Figure
+from mpl_toolkits.axes_grid1.inset_locator import mark_inset, zoomed_inset_axes
 
 
 def load_json_data(json_path: Path) -> dict[str, Any]:
@@ -82,7 +83,7 @@ def plot_accs(accs: dict[str, list[float]],  xlbl: str, ylbl: str, plot_avg: boo
     """Plot curves for a given spreading conditions and networks."""
     fig, ax = plt.subplots(nrows=1, ncols=1)
     if plot_avg:
-        alpha = 0.2
+        alpha = 0.3
     else:
         alpha = 0.6
 
@@ -122,6 +123,14 @@ def plot_accs(accs: dict[str, list[float]],  xlbl: str, ylbl: str, plot_avg: boo
     )
     ax.set_aspect("equal", anchor="SW")
 
+    # draw the zoomed area
+    axins = zoomed_inset_axes(ax, 2, loc="lower right", borderpad=1.8)
+    for line in ax.lines:
+        axins.plot(line.get_xdata(), line.get_ydata(), color=line.get_color(), alpha=alpha)
+    axins.set_xlim(0.0, 0.2)
+    axins.set_ylim(0.8, 1.0)
+    mark_inset(ax, axins, loc1=1, loc2=3, fc="none", ec="0.5")
+
     if plot_avg:
         return fig, acc_avg, round(auc_avg, 3)
     else:
@@ -138,6 +147,8 @@ def main(results_path: Path, out_path: Path) -> None:
 
     all_accs = {}
     for im_name, im_results in results_raw.items():
+        if im_name == "random_choice":
+            continue
         im_accs = {}
         for im_result in im_results:
             if im_result["net_type"] == im_result["net_name"]:
@@ -222,5 +233,5 @@ def main(results_path: Path, out_path: Path) -> None:
 if __name__ == "__main__":
     run_id = "20250324144648"
     results_path = Path(f"data/iou_curves/{run_id}")
-    out_path = Path(f"data/iou_curves/{run_id}/comparison.pdf")
+    out_path = Path(f"data/iou_curves/{run_id}/comparison_ranking.pdf")
     main(results_path=results_path, out_path=out_path)
