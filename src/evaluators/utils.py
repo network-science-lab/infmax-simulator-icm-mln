@@ -50,10 +50,11 @@ class SPScore:
     def __call__(self, sp: pd.DataFrame) -> pd.Series:
         for col in  [EXPOSED, SIMULATION_LENGTH, PEAK_INFECTED, PEAK_ITERATION]:
             sp[col] /= sp[col].max()
+        sp = sp.fillna(value=0)
         sp["score"] = (
             sp[EXPOSED] * self.exposed_weight +  # maximise
             (1 - sp[SIMULATION_LENGTH]) * self.simulation_length_weight +  # minimise
             sp[PEAK_INFECTED] * self.peak_infected_weight  +  # maximise
             (1 - sp[PEAK_ITERATION]) * self.peak_iteration_weight  # minimise
         )
-        return sp.sort_values(by="score", ascending=False)["score"]
+        return sp.sort_index().sort_values(by="score", ascending=False)["score"]

@@ -71,13 +71,12 @@ class GroundTruth(BaseChoice):
         }
 
     @staticmethod
-    def get_top_k(
+    def get_sp_score(
         sp_raw: pd.DataFrame,
         protocol: list[str],
         p: list[float],
-        nb_seeds: int,
         weights: dict[str, int],
-    ) -> list[str]:
+    ) -> pd.Series:
         """
         Get actors that performed the best in given spreading contitions.
 
@@ -90,13 +89,12 @@ class GroundTruth(BaseChoice):
         sp_filtered = sp_raw[sp_raw[PROTOCOL].isin([protocol]) & sp_raw[P].isin(p)]
         sp_filtered = sp_filtered.drop([P, PROTOCOL, NETWORK], axis=1)
         sp_mean = sp_filtered.groupby(by=[ACTOR]).mean()
-        sp_score = SPScore(
+        return SPScore(
             exposed_weight=weights[EXPOSED],
             simulation_length_weight=weights[SIMULATION_LENGTH],
             peak_infected_weight=weights[PEAK_INFECTED],
             peak_iteration_weight=weights[PEAK_ITERATION],
         )(sp_mean)
-        return sp_score.iloc[:nb_seeds].index.tolist()
 
     def __call__(
             self,
@@ -104,21 +102,23 @@ class GroundTruth(BaseChoice):
             net_name: str,
             protocol: Literal["OR", "AND"],
             p: float,  # -1 is a wildcard to get avg SP for all feasible p under a given protocol
-            nb_seeds: int,
+            nb_seeds: int | None,
             **kwargs,
-    ) -> list[str]:
+    ) -> list[str] | pd.Series:
         assert p in self.valid_icm_params[protocol] or p in self.valid_icm_params["WILDCARDS"], \
             "Evaluation is feasible only for a narrow range of p!"
         sp_paths = load_sp_paths(net_type=net_type, net_name=net_name)
         raw_sp = load_sp(csv_paths=sp_paths)
         p = [p_val for p_val in self.valid_icm_params[protocol]] if p == -1. else [p]
-        return self.get_top_k(
+        sp_score = self.get_sp_score(
             sp_raw=raw_sp,
-            nb_seeds=nb_seeds,
             protocol=protocol,
             p=p,
             weights=self.weights,
         )
+        if not nb_seeds:
+            return sp_score
+        return sp_score.iloc[:nb_seeds].index.tolist()
 
 
 class RandomChoice(BaseChoice):
