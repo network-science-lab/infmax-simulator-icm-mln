@@ -1,10 +1,16 @@
-# TODO: change prints to logs (consider using hydra)
-# TODO: change p_value in the config as it may be confusing
+"""
+Main entrypoint for the simulator. It can generate dataset / evaluate infmax methods.
+
+TODO: change prints to logs (consider using hydra)
+"""
 
 import argparse
+import pathlib
+
+import dotenv
 import yaml
 
-from src.evaluators import main_evaluator
+from src.evaluators import main_evaluator, gt_evaluator
 from src.generators import main_generator
 from src.os_utils import set_rng_seed
 
@@ -16,13 +22,19 @@ def parse_args(*args):
         help="Experiment config file.",
         nargs="?",
         type=str,
-        # default="_configs/eval_ssm.yaml",
-        default="_configs/gen_sp.yaml",
+        default="scripts/configs/eval_gt.yaml",
+        # default="scripts/configs/eval_ssm.yaml",
+        # default="scripts/configs/gen_sp.yaml",
     )
     return parser.parse_args(*args)
 
 
 if __name__ == "__main__":
+
+    dotenv.load_dotenv(
+        dotenv_path=pathlib.Path(__file__).parent / "env/variables.env",
+        override=True
+    )
 
     args = parse_args()
     with open(args.config, "r", encoding="utf-8") as f:
@@ -37,6 +49,8 @@ if __name__ == "__main__":
         runner = main_generator
     elif experiment_type == "evaluate":
         runner = main_evaluator
+    elif experiment_type == "evaluate_gt":
+        runner = gt_evaluator
     else:
         raise ValueError(f"Unknown experiment type {experiment_type}")
 

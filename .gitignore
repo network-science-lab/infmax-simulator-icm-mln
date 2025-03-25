@@ -1,5 +1,8 @@
 **/__pycache__
 **/.DS_Store
-_output_generator
-_output_evaluator
+example_results
 .vscode
+.neptune
+data
+env/variables.env
+src.egg-info

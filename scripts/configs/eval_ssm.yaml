@@ -140,4 +140,4 @@ run:
 
 logging:
   compress_to_zip: False
-  out_dir: "./_output_evaluator"
+  out_dir: "example_results/evaluator"

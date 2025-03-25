@@ -1,14 +1,14 @@
 # Inf. Max. Simulator for Multilayer Networks under ICM 
 
-A repository to generate dataset with marginal efficiency for each actor from the evaluated network
-and evaluete various influence maximisation methods.
+A repository for generating datasets with marginal efficiency for each actor from the evaluated 
+network and evaluating various influence maximisation methods.
 
 * Authors: Piotr Bródka, Michał Czuba, Adam Piróg, Mateusz Stolarski
 * Affiliation: WUST, Wrocław, Lower Silesia, Poland
 
 ## Configuration of the runtime
 
-First, initialise the enviornment:
+First, initialise the environment:
 
 ```bash
 conda env create -f env/conda.yaml
@@ -19,83 +19,103 @@ Then, pull the submodule with data loaders and install its code:
 
 ```bash
 git submodule init && git submodule update
-pip install -e _data_set
+pip install -e data/nslds
 ```
 
-A final step is to install wrappers for influence-maximisation methods into the conda environment.
-We recommend to link it in editable mode, so after you clone particular method just install it with
-`pip install -e ../path/to/infmax/method`.
+To use scripts that produce analysis, install the source code:
+
+```bash
+pip install -e .
+```
+
+The final step is to install wrappers for influence-maximisation methods into the conda environment.
+We recommend linking them in editable mode, so after cloning a particular method, simply install it 
+with: `pip install -e ../path/to/infmax/method`.
 
 ## Data
 
-Dataset is stored in a separate repository bounded with this project as a git submodule. Thus, to
-obtain it you have to pull the data from the DVC remote. In order to access it, please sent a
-request to get  an access via  e-mail (michal.czuba@pwr.edu.pl). Then, simply execute in a shell:
-* `cd _data_set && dvc pull nsl_data_sources/raw/multi_layer_networks/*.dvc && cd ..`
-* `cd _data_set && dvc pull nsl_data_sources/spreading_potentials/multi_layer_networks/*.dvc && cd ..`
-* `cd _data_set && dvc pull nsl_data_sources/centralities/multi_layer_networks/*.dvc && cd ..`
+The dataset is stored in a separate repository linked to this project as a Git submodule. To obtain
+it, you must pull the data from the DVC remote. To access it, please send a request via email
+(michal.czuba@pwr.edu.pl). Then, simply execute the following commands in a shell:
 
-## Structure of the repository
+```bash
+cd data/nslds && dvc pull nsl_data_sources/raw/multi_layer_networks/*.dvc && cd ..
+cd data/nslds && dvc pull nsl_data_sources/spreading_potentials/multi_layer_networks/*.dvc && cd ..
+cd data/nslds && dvc pull nsl_data_sources/centralities/multi_layer_networks/*.dvc && cd ..
 ```
+
+## Structure of the repository TODO - update it!
+
+```bash
 .
-├── _configs                -> eample configuration files to trigger the pipeline
-├── _data_set               -> networks to compute actors' marginal efficiency for
-├── _test_data              -> examplary outputs of the dataset generator used in the E2E test
-├── _output                 -> a directory where we recommend to save results
-├── env                     -> a definition of the runtime environment             
+├── README.md 
+├── data                     -> use DVC to fetch this folder
+│   ├── iou_curves           -> results of the evaluation
+│   ├── nslds                -> data set with aux. library providing loaders
+│   ├── networks             -> real networks used in experiments
+│   └── test                 -> data used in the E2E test
+├── env                      -> definition of the runtime environment
+├── scripts                  -> call these to process `data` with `src`
+│   ├── analysis
+│   └── configs
 ├── src
 │   ├── evaluators          -> scripts to evaluate performance of infmax methods
 │   ├── generators          -> scripts to generate SPs according to provided configs
-│   └── icm                 -> implementations of the ICM adapted to multilayer networks
-├── README.md          
-├── run_experiments.py      -> main entrypoint to trigger the pipeline
-└── test_reproducibility.py -> E2E test to prove that results can be repeated
+│   └── icm                 -> implementations of ICM adapted to multilayer networks
+├── run_experiments.py      -> main entry point to trigger the pipeline
+└── test_reproducibility.py -> E2E test to verify reproducibility of results
 ```
 
 ## Running the pipeline
 
-To run experiments execute: `run_experiments.py` and provide proper CLI arguments, i.e. a path to 
-the configuration file. See examples in `_configs` for inspirations. The pipeline has two modes
-defined under the `run:experiment_type` field.
+To run experiments, execute `run_experiments.py` and provide the appropriate CLI arguments, such as
+a path to the configuration file. See examples in `scripts/configs` for inspiration. The pipeline
+has two modes defined under the `run:experiment_type` field.
 
+### Generating a dataset
 
-### Generating dataset
-
-The first one (`"generate"`), for each evaluated case of ICM, produces a csv file a folllowing data
-regarding each actor of the network:
+The first mode (`"generate"`) produces a CSV file for each evaluated ICM case, containing the
+following data for each actor in the network:
 
 ```python
-actor: int              # actor's id
-simulation_length: int  # nb. of simulation steps
-exposed: int            # nb. of infected actors
-not_exposed: int        # nb. of not infected actors
-peak_infected: int      # maximal nb. of infected actors in a single sim. step
-peak_iteration: int     # a sim. step when the peak occured
+actor: int              # actor's ID
+simulation_length: int  # number of simulation steps
+exposed: int            # number of infected actors
+not_exposed: int        # number of non-infected actors
+peak_infected: int      # maximum number of infected actors in a single simulation step
+peak_iteration: int     # simulation step when the peak occurred
 ```
 
-### Evaluating seed selection methods
+### Evaluating seed selection methods with ICM
 
-The second option (`"evaluate"`) serves as an evaluation pipeline for various seed selection methods 
-which are defined in the study. That is, for each evaluated case of ICM it produces a following csv:
+The second mode (`"evaluate"`) serves as an evaluation pipeline for various seed selection methods
+defined in the study. For each evaluated case, the seed will be obtained, and ICM spreading will be
+executed to produce the following CSV:
 
 ```python
 infmax_model: str       # name of the model used in the evaluation
-seed_set: str           # IDs of seed-actors aggr. into str (sep. by ;)
+seed_set: str           # IDs of seed actors aggregated into a string (separated by ;)
 gain: float             # gain obtained using this seed set
-simulation_length: int  # nb. of simulation steps
-exposed: int            # nb. of active actors at the end of the simulation
-not_exposed: int        # nb. of actors that remained inactive
-peak_infected: int      # maximal nb. of infected actors in a single sim. step
-peak_iteration: int     # a sim. step when the peak occured
-expositions_rec: str    # record of new activations aggr. into str (sep. by ;)
+simulation_length: int  # number of simulation steps
+exposed: int            # number of active actors at the end of the simulation
+not_exposed: int        # number of actors that remained inactive
+peak_infected: int      # maximum number of infected actors in a single simulation step
+peak_iteration: int     # simulation step when the peak occurred
+expositions_rec: str    # record of new activations aggregated into a string (separated by ;)
 ```
 
-## GPU acceleration for the computations
+### Evaluating seed selection methods with GT
 
-Selecting GPU (for a `tensor` runner) is possible only by setting an env variable before executing 
-the Python code, e.g. `export CUDA_VISIBLE_DEVICES=3`
+Another option for evaluating seed selection methods is to compare seed sets with ground truth from
+the dataset. To do so, first run `evaluate_gt` to obtain a complete ranking of actors sorted by their
+spreading potential score. These rankings can then be compared with each other (`scripts/analysis`).
 
-For instance:
+## GPU acceleration for computations
+
+Selecting a GPU (for a `tensor` runner) is possible either by setting an environment variable before
+executing the Python code or by modifying `env/variables.env`.
+
+For example:
 
 ```bash
 conda activate infmax-simulator-icm-mln
@@ -103,6 +123,7 @@ export CUDA_VISIBLE_DEVICES=2
 python generate_sp.py _configs/example_tensor.yaml
 ```
 
-## Results reproducibility
+## Reproducibility of results
 
-Results are supposed to be fully reproducable. There is a test for that: `test_reproducibility.py`.
+Results are expected to be fully reproducible. A test is available for verification:
+`test_reproducibility.py`.

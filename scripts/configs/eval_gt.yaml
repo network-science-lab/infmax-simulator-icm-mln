@@ -1,0 +1,159 @@
+run:
+  experiment_type: "evaluate_gt"
+  nb_repetitions:
+    stochastic_infmax: 30
+  rng_seed: 43
+  device: cpu
+
+logging:
+  out_dir: "data/iou_curves"
+
+spreading_model:
+  parameters:
+    protocols: ["OR", "AND"]
+    p_values: [-1]  # standalone OR [0.05, 0.10, 0.15, 0.20], AND [0.80, 0.85, 0.90, 0.95]
+
+spreading_potential_score:
+    exposed_weight: 6
+    simulation_length_weight: 1
+    peak_infected_weight: 1
+    peak_iteration_weight: 1
+
+networks: [
+  # ##### ##### ##### ##### ##### ##### ##### ##### ##### train/eval split
+  "artificial_er-network_15",
+  "artificial_er-network_20",
+  "artificial_er-network_40",
+  "artificial_er-network_45",
+  "artificial_er-network_71",
+  "artificial_er-network_78",
+  # "artificial_er-network_79",
+  "artificial_er-network_80",
+  "artificial_pa-network_7",
+  "artificial_pa-network_22",
+  "artificial_pa-network_23",
+  "artificial_pa-network_39",
+  "artificial_pa-network_57",
+  "artificial_pa-network_58",
+  "artificial_pa-network_68",
+  "artificial_pa-network_75",
+  "artificial_pa-network_83",
+  "artificial_pa-network_85",
+  "artificial_pa-network_93",
+  "artificial_pa-network_95",
+  # "artificial_er-*",
+  # "artificial_pa-*",
+  # "artificial_small-*",
+  # ##### ##### ##### ##### ##### ##### ##### ##### ##### test split
+  "arxiv_netscience_coauthorship-arxiv_netscience_coauthorship",
+  "aucs",
+  "ckm_physicians",
+  "eu_transportation-eu_transportation",
+  "l2_course-l2_course_net_1",
+  "lazega",
+  "timik1q2009",
+  # ##### ##### ##### ##### ##### ##### ##### ##### ##### not used at all
+  # "arxiv_netscience_coauthorship-arxiv_netscience_coauthorship_math.oc",
+  # "cannes",
+  # "eu_transportation-eu_transport_klm",
+  # "fmri74",
+  # "toy_network",
+]
+
+infmax_models:
+  # ##### ##### ##### ##### ##### ##### ##### ##### ##### centrality based
+  - name: "degree"
+    class: "CentralityChoice"
+    parameters:
+      centrality: "degree"
+  - name: "betweenness"
+    class: "CentralityChoice"
+    parameters:
+      centrality: "betweenness"
+  - name: "closeness"
+    class: "CentralityChoice"
+    parameters:
+      centrality: "closeness"
+  - name: "core_number"
+    class: "CentralityChoice"
+    parameters:
+      centrality: "core_number"
+  - name: "neighbourhood_size"
+    class: "CentralityChoice"
+    parameters:
+      centrality: "neighbourhood_size"
+  - name: "voterank"
+    class: "CentralityChoice"
+    parameters:
+      centrality: "voterank"
+  # ##### ##### ##### ##### ##### ##### ##### ##### ##### random
+  - name: "random_choice"
+    class: "RandomChoice"
+  # ##### ##### ##### ##### ##### ##### ##### ##### ##### our GNNs
+  - name: "742"
+    class: "NeptuneDownloader"
+    parameters:
+      project: infmax/infmax-gnn
+      run: IN-742
+  - name: "746"
+    class: "NeptuneDownloader"
+    parameters:
+      project: infmax/infmax-gnn
+      run: IN-746
+  - name: "721"
+    class: "NeptuneDownloader"
+    parameters:
+      project: infmax/infmax-gnn
+      run: IN-721
+  - name: "718"
+    class: "NeptuneDownloader"
+    parameters:
+      project: infmax/infmax-gnn
+      run: IN-718
+  # ##### ##### ##### ##### ##### ##### ##### ##### ##### GBIM
+  # - name: "gbim"
+  #   class: "GBIM"  # TODO: integrate this method!
+  #   parameters:
+  #     rng_seed: auto
+  #     device: auto
+  #     common:
+  #       nb_seeds: auto
+  #       graphsample: 1000
+  #     datasample:
+  #       sample_num: 1000
+  #       simulate_times: 10
+  #     executor:
+  #       epochs: 300
+  # ##### ##### ##### ##### ##### ##### ##### ##### ##### deepim
+  # - name: "deep_im"
+  #   class: "DeepIM"  # TODO: integrate this method!
+  #   parameters:
+  #     rng_seed: auto
+  #     device: auto
+  #     seeding_budget: 5
+  #     common:
+  #       nb_pred_actos: auto
+  #       nb_pred_nodes: 4
+  #     executor:
+  #       train_epochs: 600
+  #       y_hat_epochs: 300
+  #       patience: 5
+  # ##### ##### ##### ##### ##### ##### ##### ##### ##### multi-node2vec-k-means
+  # - name: "mn2v_km"
+  #   class: "MultiNode2VecKMeansAuto"  # TODO: integrate this method!
+  #   parameters:
+  #     rng_seed: "auto"
+  #     multi_node2vec:
+  #       d: "auto"
+  #       window_size: 10
+  #       n_samples: 1
+  #       thresh: 0.5
+  #       pvals: 1
+  #       qvals: 0.5
+  #       rvals: 0.25
+  #     k_means:
+  #       nb_seeds: "auto"
+  #       max_nb_clusters: "auto"
+  #       centrality_criterium: "centroid"
+  #       experiment_name: ""
+  #       visualise: False

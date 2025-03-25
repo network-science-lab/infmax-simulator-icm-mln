@@ -9,7 +9,7 @@ from math import log10
 import network_diffusion as nd
 from tqdm import tqdm
 
-from _data_set.nsl_data_utils.loaders.net_loader import load_network, load_net_names
+from nsl_data_utils.loaders.net_loader import load_network, load_net_names
 
 warnings.filterwarnings(action="ignore", category=FutureWarning)
 

@@ -37,4 +37,4 @@ run:
 
 logging:
   compress_to_zip: False
-  out_dir: "./_output_generator"
+  out_dir: "./example_results/generator"

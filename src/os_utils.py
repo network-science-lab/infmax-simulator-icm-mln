@@ -13,6 +13,9 @@ import pandas as pd
 import torch
 
 
+_time_fmt = "%Y%m%d%H%M%S"
+
+
 def get_recent_git_sha() -> str:
     repo = git.Repo(search_parent_directories=True)
     git_sha = repo.head.object.hexsha
@@ -21,13 +24,12 @@ def get_recent_git_sha() -> str:
 
 def get_current_time() -> str:
     now = datetime.datetime.now()
-    return now.strftime("%Y-%m-%d %H:%M:%S")
+    return now.strftime(_time_fmt)
 
 
 def get_diff_of_times(strftime_1, strftime_2) -> datetime.timedelta:
-    fmt = "%Y-%m-%d %H:%M:%S"
-    t_1 = datetime.datetime.strptime(strftime_1, fmt)
-    t_2 = datetime.datetime.strptime(strftime_2, fmt)
+    t_1 = datetime.datetime.strptime(strftime_1, _time_fmt)
+    t_2 = datetime.datetime.strptime(strftime_2, _time_fmt)
     return t_2 - t_1
 
 
