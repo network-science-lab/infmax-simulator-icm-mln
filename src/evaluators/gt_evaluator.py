@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Any
 
 import json
+import logging
 import yaml
 from tqdm import tqdm
 
@@ -62,6 +63,7 @@ def run_experiments(config: dict[str, Any]) -> None:
             case_descr = sim_utils.get_case_name_base(inv_proto, inv_p, f"{inv_net.n_type}-{inv_net.n_name}")
             p_bar.set_description_str(f"[{ifm_name}]-{idx}/{len(p_bar)}-{case_descr}")
 
+            logging.critical(f'Started processing: {ifm_name}; for: {inv_net.n_type}-{inv_net.n_name}; proto: {inv_proto}; p: {inv_p}')
             try:
                 for _ in range(repetitions_stochastic if ifm_obj.is_stochastic else 1):
                     repetition_seeds = ifm_obj(
@@ -86,6 +88,7 @@ def run_experiments(config: dict[str, Any]) -> None:
                     "seed_sets": inv_seeds,
                 }
             )
+            logging.critical(f'Finished processing: {ifm_name}; for: {inv_net.n_type}-{inv_net.n_name}; proto: {inv_proto}; p: {inv_p}')
 
         with open(out_dir / f"{ifm_name}.json", "w") as file:
             json.dump(ifm_results, file)

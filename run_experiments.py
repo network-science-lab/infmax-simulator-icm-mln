@@ -7,7 +7,9 @@ TODO: change prints to logs (consider using hydra)
 import argparse
 import pathlib
 
+from datetime import datetime
 import dotenv
+import logging
 import yaml
 
 from src.evaluators import main_evaluator, gt_evaluator
@@ -27,6 +29,23 @@ def parse_args(*args):
         # default="scripts/configs/gen_sp.yaml",
     )
     return parser.parse_args(*args)
+
+
+def setup_logger(experiment_type: str) -> None:
+    log_folder = pathlib.Path('logs')
+    log_folder.mkdir(exist_ok=True)
+
+    current_time = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+    log_filename = log_folder / f'{experiment_type}-{current_time}.log'
+
+    logging.basicConfig(
+        level=logging.ERROR,
+        format='%(asctime)s - %(levelname)s - %(message)s',
+        handlers=[
+            logging.FileHandler(log_filename),
+            logging.StreamHandler(),
+        ]
+    )
 
 
 if __name__ == "__main__":
@@ -54,5 +73,6 @@ if __name__ == "__main__":
     else:
         raise ValueError(f"Unknown experiment type {experiment_type}")
 
+    setup_logger(experiment_type)
     print(f"Inferred experiment type as: {experiment_type}")
     runner.run_experiments(config)
