@@ -5,3 +5,4 @@ example_results
 .neptune
 env/variables.env
 src.egg-info
+/logs

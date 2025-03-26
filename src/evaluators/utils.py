@@ -4,6 +4,12 @@ from dataclasses import dataclass, asdict
 
 import numpy as np
 import pandas as pd
+import time
+import functools
+import json
+from datetime import datetime
+from pathlib import Path
+from typing import Any, Callable
 
 from nsl_data_utils.loaders.constants import (
     EXPOSED, PEAK_INFECTED, PEAK_ITERATION, SIMULATION_LENGTH
@@ -58,3 +64,42 @@ class SPScore:
             (1 - sp[PEAK_ITERATION]) * self.peak_iteration_weight  # minimise
         )
         return sp.sort_index().sort_values(by="score", ascending=False)["score"]
+
+
+def safe_serialize(value: Any) -> str:
+    try:
+        return json.dumps(value)
+    except (TypeError, ValueError):
+        return str(value)
+
+
+def log_function_details(func: Callable[..., Any]) -> Callable[..., Any]:
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        start_time = time.time()
+
+        result = func(*args, **kwargs)
+
+        end_time = time.time()
+        execution_time = end_time - start_time
+
+        log_folder = Path('logs')
+        log_folder.mkdir(exist_ok=True)
+
+        current_time = datetime.now().strftime('%Y-%m-%d')
+        log_filename = log_folder / f'{current_time}.log'
+
+        args_serialized = [safe_serialize(arg) for arg in args]
+        kwargs_serialized = {key: safe_serialize(value) for key, value in kwargs.items()}
+        kwargs_json = json.dumps(kwargs_serialized, indent=4)
+
+        with log_filename.open('a', encoding='utf-8') as log_file:
+            log_file.write(f"Function: {func.__name__}\n")
+            log_file.write(f"Arguments: args={args_serialized}\n")
+            if kwargs:
+                log_file.write(f"Keyword Arguments: {kwargs_json}\n")
+            log_file.write(f"Execution time: {execution_time:.4f} seconds\n")
+            log_file.write("-" * 50 + "\n")
+
+        return result
+    return wrapper
