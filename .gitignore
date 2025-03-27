@@ -3,6 +3,5 @@
 example_results
 .vscode
 .neptune
-data
 env/variables.env
 src.egg-info
