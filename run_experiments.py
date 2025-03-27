@@ -6,6 +6,7 @@ TODO: change prints to logs (consider using hydra)
 
 import argparse
 import pathlib
+from typing import Sequence
 
 import dotenv
 import yaml
@@ -15,7 +16,7 @@ from src.generators import main_generator
 from src.os_utils import set_rng_seed
 
 
-def parse_args(*args):
+def parse_args(*args: Sequence[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "config",
