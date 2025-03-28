@@ -9,6 +9,7 @@ from src.evaluators.infmax_methods import (
     GroundTruth,
     RandomChoice,
     NeptuneDownloader,
+    NeighbourhoodSizeDiscount,
 )
 from src.sim_utils import Network
 
@@ -80,6 +81,8 @@ def load_infmax_model(
         return RandomChoice()
     elif config_infmax["class"] == "NeptuneDownloader":
         return NeptuneDownloader(**config_infmax["parameters"], **config_sp)
+    elif config_infmax["class"] == "NeighbourhoodSizeDiscount":
+        return NeighbourhoodSizeDiscount()
     raise ValueError(f"Unknown infmax model class: {config_infmax['class']}!")
 
 
@@ -94,7 +97,7 @@ def get_seed_sets(
     """Obtain seed sets for a given infmax model on a given network and if needed repeat it."""
     seed_sets = []
     for ifm_name, ifm_obj in infmax_models.items():
-        repetitions_infmax = repetitions_diffusion if ifm_obj.if_stochastic else 1
+        repetitions_infmax = repetitions_diffusion if ifm_obj.is_stochastic else 1
         partial_seed_sets = [
             SeedSet(
                 method_name=ifm_name,

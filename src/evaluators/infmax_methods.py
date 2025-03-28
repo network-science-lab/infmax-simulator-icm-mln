@@ -2,7 +2,7 @@
 
 import os
 import tempfile
-from abc import ABC
+from abc import ABC, abstractmethod
 from random import shuffle
 from typing import Literal
 
@@ -21,6 +21,10 @@ from src.evaluators.utils import SPScore
 class BaseChoice(ABC):
 
     is_stochastic: bool = None
+
+    @abstractmethod
+    def __call__(self, nb_seeds: int, **kwargs) -> list[str]:
+        ...
 
 
 class CachedCentralityChoice(BaseChoice):
@@ -179,4 +183,13 @@ class NeptuneDownloader(BaseChoice):
 
 
 class NeighbourhoodSizeDiscount(BaseChoice):
-    ...
+    
+    is_stochastic = True
+
+    def __init__(self):
+        self.selector = nd.seeding.NeighbourhoodSizeDiscountSelector()
+
+    def __call__(self, network: nd.MultilayerNetwork, nb_seeds: int, **kwargs) -> list[str]:
+        ranking = self.selector()(network=network, actorwise=True)
+        print("aaaa")
+
