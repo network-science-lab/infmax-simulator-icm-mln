@@ -26,7 +26,7 @@ def experiment_step(
     marginal_efficiencies = []
 
     # iterate through all available actors and check their influencial power
-    for actor_name, actor_idx in net.n_graph.actors_map.items():
+    for actor_name, actor_idx in net.n_graph_pt.actors_map.items():
 
         # initialise model with "ranking" that prioritises current actor
         micm = TorchMICModel(protocol=protocol, probability=p)
@@ -44,7 +44,7 @@ def experiment_step(
                     case_idx=case_idx,
                     cases_nb=len(p_bar),
                     actor_idx=actor_idx,
-                    actors_nb=len(net.n_graph.actors_map),
+                    actors_nb=len(net.n_graph_pt.actors_map),
                     rep_idx=rep,
                     reps_nb=repetitions_nb
                 )
@@ -53,8 +53,8 @@ def experiment_step(
             # run experiment on a deep copy of the network!
             experiment = TorchMICSimulator(
                 model=micm,
-                net=net.n_graph,
-                n_steps=len(net.n_graph.actors_map) * 2,
+                net=net.n_graph_pt,
+                n_steps=len(net.n_graph_pt.actors_map) * 2,
                 seed_set={actor_name},
                 device=device,
             )

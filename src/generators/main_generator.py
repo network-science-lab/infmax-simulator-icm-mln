@@ -30,7 +30,6 @@ def run_experiments(config: dict[str, Any]) -> None:
         protocols=config["spreading_model"]["parameters"]["protocols"],
         p_values=config["spreading_model"]["parameters"]["p_values"],
         networks=config["networks"],
-        as_tensor=True if step_func == step_tensor else False,
     )
     repetitions = config["run"]["nb_repetitions"]["diffusion"]
     device = config["run"]["device"]

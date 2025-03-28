@@ -7,6 +7,7 @@ from itertools import product
 from math import log10
 
 import network_diffusion as nd
+from bidict import bidict
 from tqdm import tqdm
 
 from nsl_data_utils.loaders.net_loader import load_network, load_net_names
@@ -16,13 +17,19 @@ warnings.filterwarnings(action="ignore", category=FutureWarning)
 
 @dataclass(frozen=True)
 class Network:
-    n_type: str # this field has been added after generation of the dataset with spreading potentials!
+    n_type: str # this field has been added after generation of the dataset with spread. potentials!
     n_name: str
-    n_graph: nd.MultilayerNetwork | nd.MultilayerNetworkTorch
+    n_graph_pt: nd.MultilayerNetworkTorch
+    n_graph_nx: nd.MultilayerNetwork
 
     @classmethod
-    def from_str(cls, n_type: str, n_name: str, as_tensor: bool) -> "Network":
-        return cls(n_type, n_name, load_network(n_type, n_name, as_tensor=as_tensor))
+    def from_str(cls, n_type: str, n_name: str) -> "Network":
+        graph_nx: nd.MultilayerNetwork = load_network(n_type, n_name, as_tensor=False)
+        graph_pt = nd.MultilayerNetworkTorch.from_mln(graph_nx)
+        graph_pt.actors_map = bidict(
+            {str(a_id): a_idx for a_id, a_idx in graph_pt.actors_map.items()}
+        )
+        return cls(n_type, n_name, graph_pt, graph_nx)
 
 
 def compute_gain(seed_nb: int, exposed_nb: int, total_actors: int) -> float:
@@ -42,15 +49,13 @@ def parse_network_config(type_name: str) -> tuple[str, list[str]]:
     return match.group(1), [match.group(2)]  # by default name is anything after dash
 
 
-def get_parameter_space(
-    protocols: list[str], p_values: list[float], networks: list[str], as_tensor: bool
-) -> product:
+def get_parameter_space(protocols: list[str], p_values: list[float], networks: list[str]) -> product:
     nets = []
     for net_type in networks:
         net_type, net_names = parse_network_config(net_type)
         print(f"Loading {net_type} networks")
         for net_name in tqdm(net_names):
-            nets.append(Network.from_str(n_type=net_type, n_name=net_name, as_tensor=as_tensor))
+            nets.append(Network.from_str(n_type=net_type, n_name=net_name))
     return product(protocols, p_values, nets)
 
 

@@ -20,7 +20,6 @@ def run_experiments(config: dict[str, Any]) -> None:
         protocols=config["spreading_model"]["parameters"]["protocols"],
         p_values=config["spreading_model"]["parameters"]["p_values"],
         networks=config["networks"],
-        as_tensor=True,
     )
     p_space = list(p_space)
     repetitions_stochastic = config["run"]["nb_repetitions"]["stochastic_infmax"]
@@ -63,16 +62,31 @@ def run_experiments(config: dict[str, Any]) -> None:
             case_descr = sim_utils.get_case_name_base(inv_proto, inv_p, f"{inv_net.n_type}-{inv_net.n_name}")
             p_bar.set_description_str(f"[{ifm_name}]-{idx}/{len(p_bar)}-{case_descr}")
 
-            partial_result = process_case(
-                repetitions_stochastic=repetitions_stochastic,
-                ifm_obj=ifm_obj,
-                inv_net=inv_net,
-                inv_proto=inv_proto,
-                inv_p=inv_p,
-                inv_seeds=inv_seeds,
-                case_descr=case_descr,
+            try:
+                for _ in range(repetitions_stochastic if ifm_obj.is_stochastic else 1):
+                    repetition_seeds = ifm_obj(
+                        network_pt=inv_net.n_graph_pt,
+                        network_nx=inv_net.n_graph_nx,
+                        net_type=inv_net.n_type,
+                        net_name=inv_net.n_name,
+                        protocol=inv_proto,
+                        p=inv_p,
+                        nb_seeds=len(inv_net.n_graph_pt.actors_map),
+                    )
+                    inv_seeds.append(repetition_seeds)
+            except BaseException as e:
+                print(f"\nEvaluation failed for case: {case_descr}")
+                raise e
+
+            ifm_results.append(
+                {
+                    "net_type": inv_net.n_type,
+                    "net_name": inv_net.n_name,
+                    "protocol": inv_proto,
+                    "p": inv_p,
+                    "seed_sets": inv_seeds,
+                }
             )
-            ifm_results.append(partial_result)
 
         with open(out_dir / f"{ifm_name}.json", "w") as file:
             json.dump(ifm_results, file)

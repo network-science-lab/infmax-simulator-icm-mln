@@ -129,8 +129,8 @@ class RandomChoice(BaseChoice):
 
     is_stochastic = True
     
-    def __call__(self, network: nd.MultilayerNetworkTorch, nb_seeds: int, **kwargs) -> list[str]:
-        actors = list(network.actors_map.keys())
+    def __call__(self, network_pt: nd.MultilayerNetworkTorch, nb_seeds: int, **kwargs) -> list[str]:
+        actors = list(network_pt.actors_map.keys())
         shuffle(actors)
         return actors[:nb_seeds]
 

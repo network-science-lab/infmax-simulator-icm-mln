@@ -30,7 +30,6 @@ def run_experiments(config: dict[str, Any]) -> None:
         protocols=config["spreading_model"]["parameters"]["protocols"],
         p_values=config["spreading_model"]["parameters"]["p_values"],
         networks=config["networks"],
-        as_tensor=True if step_func == step_eval else False,
     )
     repetitions_diffusion = config["run"]["nb_repetitions"]["diffusion"]
     repetitions_stochastic = config["run"]["nb_repetitions"]["stochastic_infmax"]
