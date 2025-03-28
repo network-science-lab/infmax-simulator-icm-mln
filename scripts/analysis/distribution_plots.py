@@ -171,6 +171,7 @@ def main(results_path: Path, out_path: Path) -> None:
 
 if __name__ == "__main__":
     args = parse_args()
+    print(args)
     results_path = Path(f"data/iou_curves/{args.run_id}")
     out_path = Path(f"data/iou_curves/{args.run_id}/")
     main(results_path=results_path, out_path=out_path)
