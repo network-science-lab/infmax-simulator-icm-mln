@@ -31,32 +31,32 @@ networks: [
 infmax_models:
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### centrality based
   - name: "degree"
-    class: "CentralityChoice"
+    class: "CachedCentralityChoice"
     parameters:
       nb_seeds: "auto"
       centrality: "degree"
   - name: "betweenness"
-    class: "CentralityChoice"
+    class: "CachedCentralityChoice"
     parameters:
       nb_seeds: "auto"
       centrality: "betweenness"
   - name: "closeness"
-    class: "CentralityChoice"
+    class: "CachedCentralityChoice"
     parameters:
       nb_seeds: "auto"
       centrality: "closeness"
   - name: "core_number"
-    class: "CentralityChoice"
+    class: "CachedCentralityChoice"
     parameters:
       nb_seeds: "auto"
       centrality: "core_number"
   - name: "neighbourhood_size"
-    class: "CentralityChoice"
+    class: "CachedCentralityChoice"
     parameters:
       nb_seeds: "auto"
       centrality: "neighbourhood_size"
   - name: "voterank"
-    class: "CentralityChoice"
+    class: "CachedCentralityChoice"
     parameters:
       nb_seeds: "auto"
       centrality: "voterank"

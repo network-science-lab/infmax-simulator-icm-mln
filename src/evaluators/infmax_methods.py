@@ -23,7 +23,7 @@ class BaseChoice(ABC):
     is_stochastic: bool = None
 
 
-class CentralityChoice(BaseChoice):
+class CachedCentralityChoice(BaseChoice):
 
     centralities = [
         "degree",
@@ -176,3 +176,7 @@ class NeptuneDownloader(BaseChoice):
             peak_iteration_weight=self.weights[PEAK_ITERATION],
         )(df)
         return sp_score.iloc[:nb_seeds].index.tolist()
+
+
+class NeighbourhoodSizeDiscount(BaseChoice):
+    ...

@@ -5,7 +5,7 @@ from typing import Any
 
 from src.evaluators.infmax_methods import (
     BaseChoice,
-    CentralityChoice,
+    CachedCentralityChoice,
     GroundTruth,
     RandomChoice,
     NeptuneDownloader,
@@ -72,8 +72,8 @@ def load_infmax_model(
         model = load_model({"model": config_infmax})
         model.is_stochastic = False
         return model
-    elif config_infmax["class"] == "CentralityChoice":
-        return CentralityChoice(centrality_name=config_infmax["parameters"]["centrality"])
+    elif config_infmax["class"] == "CachedCentralityChoice":
+        return CachedCentralityChoice(centrality_name=config_infmax["parameters"]["centrality"])
     elif config_infmax["class"] == "GroundTruth":
         return GroundTruth(**config_sp)
     elif config_infmax["class"] == "RandomChoice":

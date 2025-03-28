@@ -6,7 +6,7 @@ run:
   device: cpu
 
 logging:
-  out_dir: "data/iou_curves"
+  out_dir: "example_results/evaluator_gt"
 
 spreading_model:
   parameters:
@@ -63,27 +63,27 @@ networks: [
 infmax_models:
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### centrality based
   - name: "degree"
-    class: "CentralityChoice"
+    class: "CachedCentralityChoice"
     parameters:
       centrality: "degree"
   - name: "betweenness"
-    class: "CentralityChoice"
+    class: "CachedCentralityChoice"
     parameters:
       centrality: "betweenness"
   - name: "closeness"
-    class: "CentralityChoice"
+    class: "CachedCentralityChoice"
     parameters:
       centrality: "closeness"
   - name: "core_number"
-    class: "CentralityChoice"
+    class: "CachedCentralityChoice"
     parameters:
       centrality: "core_number"
   - name: "neighbourhood_size"
-    class: "CentralityChoice"
+    class: "CachedCentralityChoice"
     parameters:
       centrality: "neighbourhood_size"
   - name: "voterank"
-    class: "CentralityChoice"
+    class: "CachedCentralityChoice"
     parameters:
       centrality: "voterank"
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### random
