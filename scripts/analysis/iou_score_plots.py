@@ -11,7 +11,7 @@ import pandas as pd
 import yaml
 from matplotlib.backends.backend_pdf import PdfPages
 
-from scripts.analysis.iou_ranking_plots import load_json_data, plot_accs, GTResults
+from scripts.analysis.iou_ranking_plots import load_json_data, parse_args, plot_accs, GTResults
 from src.evaluators.infmax_methods import GroundTruth
 
 
@@ -108,7 +108,7 @@ def main(results_path: Path, out_path: Path) -> None:
         all_accs[im_name] = im_accs
 
     # now draw the results
-    pdf = PdfPages(out_path)
+    pdf = PdfPages(out_path / "comparison_score.pdf")
     avg_accs = {}
     for im_name, im_dict in all_accs.items():
         for protocol, p_dict in im_dict.items():
@@ -160,7 +160,8 @@ def main(results_path: Path, out_path: Path) -> None:
 
 
 if __name__ == "__main__":
-    run_id = "20250324174559"
-    results_path = Path(f"data/iou_curves/{run_id}")
-    out_path = Path(f"data/iou_curves/{run_id}/comparison_score.pdf")
+    args = parse_args()
+    print(args)
+    results_path = Path(f"data/iou_curves/{args.run_id}")
+    out_path = Path(f"data/iou_curves/{args.run_id}")
     main(results_path=results_path, out_path=out_path)

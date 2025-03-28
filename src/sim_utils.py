@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from itertools import product
 from math import log10
 
+import networkx as nx
 import network_diffusion as nd
 from bidict import bidict
 from tqdm import tqdm
@@ -25,6 +26,11 @@ class Network:
     @classmethod
     def from_str(cls, n_type: str, n_name: str) -> "Network":
         graph_nx: nd.MultilayerNetwork = load_network(n_type, n_name, as_tensor=False)
+        # uncomment in case of problems with dtypes
+        # l_dict = {}
+        # for l_name, l_graph in graph_nx.layers.items():
+        #     l_dict[l_name] = nx.relabel_nodes(l_graph, {n: str(n) for n in l_graph.nodes})
+        # graph_nx = nd.MultilayerNetwork(layers=l_dict)
         graph_pt = nd.MultilayerNetworkTorch.from_mln(graph_nx)
         graph_pt.actors_map = bidict(
             {str(a_id): a_idx for a_id, a_idx in graph_pt.actors_map.items()}

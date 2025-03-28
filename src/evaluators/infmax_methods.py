@@ -189,7 +189,6 @@ class NeighbourhoodSizeDiscount(BaseChoice):
     def __init__(self):
         self.selector = nd.seeding.NeighbourhoodSizeDiscountSelector()
 
-    def __call__(self, network: nd.MultilayerNetwork, nb_seeds: int, **kwargs) -> list[str]:
-        ranking = self.selector()(network=network, actorwise=True)
-        print("aaaa")
-
+    def __call__(self, network_nx: nd.MultilayerNetwork, nb_seeds: int, **kwargs) -> list[str]:
+        ranking = self.selector(network=network_nx, actorwise=True)
+        return [str(actor.actor_id) for actor in ranking][:nb_seeds]

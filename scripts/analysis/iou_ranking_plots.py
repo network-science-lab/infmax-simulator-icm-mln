@@ -1,9 +1,10 @@
 """A script to plot IoU of seed sets constructed from full (i.e. comprising of all actors) ranks."""
 
+import argparse
 import json
 from functools import lru_cache
 from pathlib import Path
-from typing import Any
+from typing import Any, Sequence
 
 
 import matplotlib.pyplot as plt
@@ -19,6 +20,18 @@ def load_json_data(json_path: Path) -> dict[str, Any]:
     with open(json_path, "r") as file:
         data = json.load(file)
     return data
+
+
+def parse_args(*args: Sequence[str]) -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "run_id",
+        help="path to read configuration from",
+        nargs="?",
+        type=str,
+        default="20250324173316",
+    )
+    return parser.parse_args(*args)
 
 
 class GTResults:
@@ -179,7 +192,7 @@ def main(results_path: Path, out_path: Path) -> None:
         all_accs[im_name] = im_accs
 
     # now draw the results
-    pdf = PdfPages(out_path)
+    pdf = PdfPages(out_path / "comparison_ranking.pdf")
     avg_accs = {}
     for im_name, im_dict in all_accs.items():
         for protocol, p_dict in im_dict.items():
@@ -231,7 +244,8 @@ def main(results_path: Path, out_path: Path) -> None:
 
 
 if __name__ == "__main__":
-    run_id = "20250324174559"
-    results_path = Path(f"data/iou_curves/{run_id}")
-    out_path = Path(f"data/iou_curves/{run_id}/comparison_ranking.pdf")
+    args = parse_args()
+    print(args)
+    results_path = Path(f"data/iou_curves/{args.run_id}")
+    out_path = Path(f"data/iou_curves/{args.run_id}")
     main(results_path=results_path, out_path=out_path)
