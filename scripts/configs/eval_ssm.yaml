@@ -1,8 +1,8 @@
 run:
   experiment_type: "evaluate"
   nb_repetitions:
-    diffusion: 30
-    stochastic_infmax: 30
+    diffusion: 10
+    stochastic_infmax: 3
   nb_diffusion_seeds: 1
   rng_seed: 43
   average_results: False
@@ -31,10 +31,10 @@ networks: [
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### train/eval split
   # "artificial_er-*",
   # "artificial_pa-*",
-  "artificial_small-*",
+  # "artificial_small-*",
   # # ##### ##### ##### ##### ##### ##### ##### ##### ##### test split
   # "arxiv_netscience_coauthorship-arxiv_netscience_coauthorship",
-  # "aucs",
+  "aucs",
   # "ckm_physicians",
   # "eu_transportation-eu_transportation",
   "l2_course-l2_course_net_1",
@@ -45,46 +45,48 @@ networks: [
   # "cannes",
   # "eu_transportation-eu_transport_klm",
   # "fmri74",
-  # "toy_network",
+  "toy_network",
 ]
 
 infmax_models:
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### cached centr. based
-  - name: "degree"
+  - name: "deg-c"
     class: "CachedCentralityChoice"
     parameters:
       nb_seeds: "auto"
       centrality: "degree"
-  - name: "betweenness"
-    class: "CachedCentralityChoice"
-    parameters:
-      nb_seeds: "auto"
-      centrality: "betweenness"
-  - name: "closeness"
-    class: "CachedCentralityChoice"
-    parameters:
-      nb_seeds: "auto"
-      centrality: "closeness"
-  - name: "core_number"
-    class: "CachedCentralityChoice"
-    parameters:
-      nb_seeds: "auto"
-      centrality: "core_number"
-  - name: "neighbourhood_size"
+  # - name: "betweenness"
+  #   class: "CachedCentralityChoice"
+  #   parameters:
+  #     nb_seeds: "auto"
+  #     centrality: "betweenness"
+  # - name: "closeness"
+  #   class: "CachedCentralityChoice"
+  #   parameters:
+  #     nb_seeds: "auto"
+  #     centrality: "closeness"
+  # - name: "core_number"
+  #   class: "CachedCentralityChoice"
+  #   parameters:
+  #     nb_seeds: "auto"
+  #     centrality: "core_number"
+  - name: "nghb-s"
     class: "CachedCentralityChoice"
     parameters:
       nb_seeds: "auto"
       centrality: "neighbourhood_size"
-  - name: "voterank"
-    class: "CachedCentralityChoice"
-    parameters:
-      nb_seeds: "auto"
-      centrality: "voterank"
+  # - name: "voterank"
+  #   class: "CachedCentralityChoice"
+  #   parameters:
+  #     nb_seeds: "auto"
+  #     centrality: "voterank"
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### ground truth
   # TODO: update!
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### the best centr. based
   - name: "nghb-sd"
     class: "NeighbourhoodSizeDiscount"
+  - name: "deg-cd"
+    class: "DegreeCentralityDiscount"
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### random
   - name: "random_choice"
     class: "RandomChoice"

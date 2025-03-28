@@ -10,6 +10,7 @@ from src.evaluators.infmax_methods import (
     RandomChoice,
     NeptuneDownloader,
     NeighbourhoodSizeDiscount,
+    DegreeCentralityDiscount,
 )
 from src.sim_utils import Network
 
@@ -83,6 +84,8 @@ def load_infmax_model(
         return NeptuneDownloader(**config_infmax["parameters"], **config_sp)
     elif config_infmax["class"] == "NeighbourhoodSizeDiscount":
         return NeighbourhoodSizeDiscount()
+    elif config_infmax["class"] == "DegreeCentralityDiscount":
+        return DegreeCentralityDiscount()
     raise ValueError(f"Unknown infmax model class: {config_infmax['class']}!")
 
 

@@ -61,31 +61,36 @@ networks: [
 ]
 
 infmax_models:
-  # ##### ##### ##### ##### ##### ##### ##### ##### ##### centrality based
-  - name: "degree"
+  # ##### ##### ##### ##### ##### ##### ##### ##### ##### cached centr. based
+  - name: "deg-c"
     class: "CachedCentralityChoice"
     parameters:
       centrality: "degree"
-  - name: "betweenness"
-    class: "CachedCentralityChoice"
-    parameters:
-      centrality: "betweenness"
-  - name: "closeness"
-    class: "CachedCentralityChoice"
-    parameters:
-      centrality: "closeness"
-  - name: "core_number"
-    class: "CachedCentralityChoice"
-    parameters:
-      centrality: "core_number"
-  - name: "neighbourhood_size"
+  # - name: "betweenness"
+  #   class: "CachedCentralityChoice"
+  #   parameters:
+  #     centrality: "betweenness"
+  # - name: "closeness"
+  #   class: "CachedCentralityChoice"
+  #   parameters:
+  #     centrality: "closeness"
+  # - name: "core_number"
+  #   class: "CachedCentralityChoice"
+  #   parameters:
+  #     centrality: "core_number"
+  - name: "nghb-s"
     class: "CachedCentralityChoice"
     parameters:
       centrality: "neighbourhood_size"
-  - name: "voterank"
-    class: "CachedCentralityChoice"
-    parameters:
-      centrality: "voterank"
+  # - name: "voterank"
+  #   class: "CachedCentralityChoice"
+  #   parameters:
+  #     centrality: "voterank"
+  # ##### ##### ##### ##### ##### ##### ##### ##### ##### the best centr. based
+  - name: "nghb-sd"
+    class: "NeighbourhoodSizeDiscount"
+  - name: "deg-cd"
+    class: "DegreeCentralityDiscount"
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### random
   - name: "random_choice"
     class: "RandomChoice"

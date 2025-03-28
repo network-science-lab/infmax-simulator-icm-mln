@@ -192,3 +192,12 @@ class NeighbourhoodSizeDiscount(BaseChoice):
     def __call__(self, network_nx: nd.MultilayerNetwork, nb_seeds: int, **kwargs) -> list[str]:
         ranking = self.selector(network=network_nx, actorwise=True)
         return [str(actor.actor_id) for actor in ranking][:nb_seeds]
+
+
+class DegreeCentralityDiscount(NeighbourhoodSizeDiscount):
+    
+    is_stochastic = True
+
+    def __init__(self):
+        self.selector = nd.seeding.DegreeCentralityDiscountSelector()
+
