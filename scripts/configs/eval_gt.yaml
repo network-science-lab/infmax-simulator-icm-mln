@@ -6,7 +6,7 @@ run:
   device: cpu
 
 logging:
-  out_dir: "example_results/evaluator_gt"
+  out_dir: "data/iou_curves"
 
 spreading_model:
   parameters:
@@ -45,13 +45,13 @@ networks: [
   # "artificial_pa-*",
   # "artificial_small-*",
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### test split
-  "arxiv_netscience_coauthorship-arxiv_netscience_coauthorship",
-  "aucs",
-  "ckm_physicians",
-  "eu_transportation-eu_transportation",
-  "l2_course-l2_course_net_1",
-  "lazega",
-  "timik1q2009",
+  # "arxiv_netscience_coauthorship-arxiv_netscience_coauthorship",
+  # "aucs",
+  # "ckm_physicians",
+  # "eu_transportation-eu_transportation",
+  # "l2_course-l2_course_net_1",
+  # "lazega",
+  # "timik1q2009",
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### not used at all
   # "arxiv_netscience_coauthorship-arxiv_netscience_coauthorship_math.oc",
   # "cannes",
@@ -95,40 +95,26 @@ infmax_models:
   - name: "random_choice"
     class: "RandomChoice"
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### our GNNs
-  - name: "742"
-    class: "NeptuneDownloader"
-    parameters:
-      project: infmax/infmax-gnn
-      run: IN-742
-  - name: "746"
-    class: "NeptuneDownloader"
-    parameters:
-      project: infmax/infmax-gnn
-      run: IN-746
-  - name: "721"
-    class: "NeptuneDownloader"
-    parameters:
-      project: infmax/infmax-gnn
-      run: IN-721
-  - name: "718"
-    class: "NeptuneDownloader"
-    parameters:
-      project: infmax/infmax-gnn
-      run: IN-718
-  # ##### ##### ##### ##### ##### ##### ##### ##### ##### GBIM
-  # - name: "gbim"
-  #   class: "GBIM"  # TODO: integrate this method!
+  # - name: "742"
+  #   class: "NeptuneDownloader"
   #   parameters:
-  #     rng_seed: auto
-  #     device: auto
-  #     common:
-  #       nb_seeds: auto
-  #       graphsample: 1000
-  #     datasample:
-  #       sample_num: 1000
-  #       simulate_times: 10
-  #     executor:
-  #       epochs: 300
+  #     project: infmax/infmax-gnn
+  #     run: IN-742
+  # - name: "746"
+  #   class: "NeptuneDownloader"
+  #   parameters:
+  #     project: infmax/infmax-gnn
+  #     run: IN-746
+  # - name: "721"
+  #   class: "NeptuneDownloader"
+  #   parameters:
+  #     project: infmax/infmax-gnn
+  #     run: IN-721
+  # - name: "718"
+  #   class: "NeptuneDownloader"
+  #   parameters:
+  #     project: infmax/infmax-gnn
+  #     run: IN-718
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### deepim
   - name: "deep_im"
     class: "DeepIM"
