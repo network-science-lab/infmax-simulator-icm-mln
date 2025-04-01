@@ -38,11 +38,11 @@ valid_icm_params = {
 def parse_args(*args: Sequence[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "run_id",
+        "run_dir",
         help="path to read configuration from",
         nargs="?",
-        type=str,
-        default="20250324173316",
+        type=Path,
+        default=Path("data/iou_curves/20250327192049"),
     )
     return parser.parse_args(*args)
 
@@ -82,12 +82,13 @@ def read_sp(net_type: str, net_name: str, protocol: str, p: float) -> pd.DataFra
 
 
 def estimate_cutoff(scores: pd.DataFrame) -> dict[str, Any]:
-    eighth_centile = np.percentile(scores, 80)
-    border = np.argmin(np.abs(scores - eighth_centile))
+    eightieth_centile = np.percentile(scores, 80)
+    border = np.argmin(np.abs(scores - eightieth_centile))
     return {
         "border_actor": scores.index[border],
-        "border_score": eighth_centile.item(),
+        "border_score": eightieth_centile.item(),
         "centile_size": (border + 1).item(),
+        "centile_nb": (border + 1) / len(scores),
     }
 
 
@@ -144,6 +145,8 @@ def main(results_path: Path, out_path: Path) -> None:
     pdf = PdfPages(out_path / "distributions.pdf")
     cutoffs = []
     for network in networks:
+        # if network[0] in {"timik1q2009", "arxiv_netscience_coauthorship"}:
+        #         continue
         if network[0] == network[1]:
             case_name = network[0]
         else:
@@ -154,7 +157,8 @@ def main(results_path: Path, out_path: Path) -> None:
             sp = read_sp(net_type=network[0], net_name=network[1], protocol=protocol, p=p)
             sp_scores= SPScore(**score_weights)(sp)
             cutoff = estimate_cutoff(sp_scores)
-            cutoff[NETWORK] = f"{network[0]}-{network[1]}"
+            cutoff["net_type"] = network[0]
+            cutoff["net_name"] = network[1]
             cutoff[PROTOCOL] = protocol
             cutoff[P] = p
             cutoffs.append(cutoff)
@@ -171,6 +175,5 @@ def main(results_path: Path, out_path: Path) -> None:
 
 if __name__ == "__main__":
     args = parse_args()
-    results_path = Path(f"data/iou_curves/{args.run_id}")
-    out_path = Path(f"data/iou_curves/{args.run_id}/")
-    main(results_path=results_path, out_path=out_path)
+    print(args)
+    main(results_path=args.run_dir, out_path=args.run_dir)

@@ -74,6 +74,8 @@ def main(results_path: Path, out_path: Path) -> None:
     for im_name, im_results in results_raw.items():
         im_accs = {}
         for im_result in im_results:
+            if im_result["net_type"] in {"timik1q2009", "arxiv_netscience_coauthorship"}:
+                continue
             if im_result["net_type"] == im_result["net_name"]:
                 case_name = im_result["net_type"]
             else:
@@ -162,6 +164,4 @@ def main(results_path: Path, out_path: Path) -> None:
 if __name__ == "__main__":
     args = parse_args()
     print(args)
-    results_path = Path(f"data/iou_curves/{args.run_id}")
-    out_path = Path(f"data/iou_curves/{args.run_id}")
-    main(results_path=results_path, out_path=out_path)
+    main(results_path=args.run_dir, out_path=args.run_dir)
