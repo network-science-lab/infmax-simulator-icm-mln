@@ -9,7 +9,8 @@ from tqdm import tqdm
 
 from src import os_utils, sim_utils
 from src.evaluators import loader
-from src.evaluators.infmax_methods import GroundTruth
+from src.evaluators.infmax_methods import BaseChoice, GroundTruth
+from src.evaluators.utils import log_function_details
 
 
 def run_experiments(config: dict[str, Any]) -> None:
@@ -62,30 +63,16 @@ def run_experiments(config: dict[str, Any]) -> None:
             case_descr = sim_utils.get_case_name_base(inv_proto, inv_p, f"{inv_net.n_type}-{inv_net.n_name}")
             p_bar.set_description_str(f"[{ifm_name}]-{idx}/{len(p_bar)}-{case_descr}")
 
-            try:
-                for _ in range(repetitions_stochastic if ifm_obj.is_stochastic else 1):
-                    repetition_seeds = ifm_obj(
-                        network=inv_net.n_graph,
-                        net_type=inv_net.n_type,
-                        net_name=inv_net.n_name,
-                        protocol=inv_proto,
-                        p=inv_p,
-                        nb_seeds=len(inv_net.n_graph.actors_map),
-                    )
-                    inv_seeds.append(repetition_seeds)
-            except BaseException as e:
-                print(f"\nEvaluation failed for case: {case_descr}")
-                raise e
-
-            ifm_results.append(
-                {
-                    "net_type": inv_net.n_type,
-                    "net_name": inv_net.n_name,
-                    "protocol": inv_proto,
-                    "p": inv_p,
-                    "seed_sets": inv_seeds,
-                }
+            partial_result = process_case(
+                repetitions_stochastic=repetitions_stochastic,
+                ifm_obj=ifm_obj,
+                inv_net=inv_net,
+                inv_proto=inv_proto,
+                inv_p=inv_p,
+                inv_seeds=inv_seeds,
+                case_descr=case_descr,
             )
+            ifm_results.append(partial_result)
 
         with open(out_dir / f"{ifm_name}.json", "w") as file:
             json.dump(ifm_results, file)
@@ -93,3 +80,37 @@ def run_experiments(config: dict[str, Any]) -> None:
     finish_time = os_utils.get_current_time()
     print(f"Evaluations finished at {finish_time}")
     print(f"Evaluations lasted {os_utils.get_diff_of_times(start_time, finish_time)} minutes")
+
+
+@log_function_details
+def process_case(
+    repetitions_stochastic: Any,
+    ifm_obj: BaseChoice,
+    inv_net: Any | sim_utils.Network,
+    inv_proto: Any,
+    inv_p: Any,
+    inv_seeds: list,
+    case_descr: str,
+) -> dict[str, Any]:
+    try:
+        for _ in range(repetitions_stochastic if ifm_obj.is_stochastic else 1):
+            repetition_seeds = ifm_obj(
+                network=inv_net.n_graph,
+                net_type=inv_net.n_type,
+                net_name=inv_net.n_name,
+                protocol=inv_proto,
+                p=inv_p,
+                nb_seeds=len(inv_net.n_graph.actors_map),
+            )
+            inv_seeds.append(repetition_seeds)
+    except BaseException as e:
+        print(f"\nEvaluation failed for case: {case_descr}")
+        raise e
+
+    return {
+        "net_type": inv_net.n_type,
+        "net_name": inv_net.n_name,
+        "protocol": inv_proto,
+        "p": inv_p,
+        "seed_sets": inv_seeds,
+    }

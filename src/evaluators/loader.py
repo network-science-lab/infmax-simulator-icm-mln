@@ -49,7 +49,9 @@ def load_infmax_model(
         if config_infmax["parameters"]["rng_seed"] == "auto":
             config_infmax["parameters"]["rng_seed"] = rng_seed
         config_infmax["name"] = config_infmax["class"]
-        return load_model({"model": config_infmax})
+        model = load_model({"model": config_infmax})
+        model.is_stochastic = False
+        return model
     elif config_infmax["class"] == "GBIM":
         from gbim_nsl_adaptation.loader import load_model
         if config_infmax["parameters"]["rng_seed"] == "auto":
@@ -57,7 +59,9 @@ def load_infmax_model(
         if config_infmax["parameters"]["device"] == "auto":
             config_infmax["parameters"]["device"] = device
         config_infmax["name"] = config_infmax["class"]
-        return load_model({"model": config_infmax})
+        model = load_model({"model": config_infmax})
+        model.is_stochastic = False
+        return model
     elif config_infmax["class"] == "DeepIM":
         from deepim_nsl_adaptation.loader import load_model
         if config_infmax["parameters"]["rng_seed"] == "auto":
@@ -65,7 +69,9 @@ def load_infmax_model(
         if config_infmax["parameters"]["device"] == "auto":
             config_infmax["parameters"]["device"] = device
         config_infmax["name"] = config_infmax["class"]
-        return load_model({"model": config_infmax})
+        model = load_model({"model": config_infmax})
+        model.is_stochastic = False
+        return model
     elif config_infmax["class"] == "CentralityChoice":
         return CentralityChoice(centrality_name=config_infmax["parameters"]["centrality"])
     elif config_infmax["class"] == "GroundTruth":
