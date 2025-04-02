@@ -163,10 +163,7 @@ def plot_accs(
 
     cutoffs_rand = get_cutoffs_fract(100)
     auc_rand = np.trapezoid(cutoffs_rand, cutoffs_rand)
-    label = "x=y"
-    if curve_label == "full":
-        label = f"{label}, {round(auc_rand, 3)}"
-    ax.plot(cutoffs_rand, cutoffs_rand, "--", label=label, color="red")
+    ax.plot(cutoffs_rand, cutoffs_rand, "--", label="x=y", color="red")
 
     ax.set_xlabel(xlbl)
     ax.set_xlim(0, 1)
