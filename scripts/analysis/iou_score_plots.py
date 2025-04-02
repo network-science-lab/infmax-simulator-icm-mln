@@ -11,7 +11,17 @@ import pandas as pd
 import yaml
 from matplotlib.backends.backend_pdf import PdfPages
 
-from scripts.analysis.iou_ranking_plots import load_json_data, parse_args, plot_accs, GTResults
+from scripts.analysis.iou_ranking_plots import (
+    AuxResults,
+    GTResults,
+    average_curves,
+    load_cutoffs,
+    load_json_data,
+    parse_args,
+    plot_accs,
+    read_scores_auc,
+    save_accs,
+)
 from src.evaluators.infmax_methods import GroundTruth
 
 
@@ -70,17 +80,21 @@ def main(results_path: Path, out_path: Path) -> None:
     gt_results = GTResultsScore(results_raw["ground_truth"], config["spreading_potential_score"])
     del results_raw["ground_truth"]
 
-    all_accs = {}
+    print("loading cutoffs")
+    cutoffs = load_cutoffs(results_path / "cutoffs.csv")
+
+    all_accs: list[AuxResults] = []
+    im_names = set()
+    protocols = set()
+    ps = set()
     for im_name, im_results in results_raw.items():
-        im_accs = {}
         for im_result in im_results:
-            if im_result["net_type"] in {"timik1q2009", "arxiv_netscience_coauthorship"}:
-                continue
-            if im_result["net_type"] == im_result["net_name"]:
-                case_name = im_result["net_type"]
-            else:
-                case_name = f"{im_result["net_type"]}_{im_result["net_name"]}"
-            print(f"computing curve for {im_name}, {im_result['protocol']}, {im_result['p']}, {case_name}")
+            # if im_result["net_type"] in {"timik1q2009", "arxiv_netscience_coauthorship"}:
+            #     continue
+            print(
+                f"computing curve for {im_name}, {im_result['protocol']}, {im_result['p']}, "
+                f"{im_result['net_type']}, {im_result['net_name']}"
+            )
 
             # obtain cumulated accuracy of seed sets
             gt_result = gt_results.get_ranking(
@@ -96,69 +110,119 @@ def main(results_path: Path, out_path: Path) -> None:
                 p=im_result["p"],
             )
             ca = cummulated_acc(arr_y=gt_result, arr_yhat=im_result["seed_sets"], df_sps=df_sps)
+            ss_cutoff =  cutoffs.loc[
+                (cutoffs["protocol"] == im_result["protocol"]) &
+                (cutoffs["p"] == im_result["p"]) &
+                (cutoffs["net_type"] == im_result["net_type"]) &
+                (cutoffs["net_name"] == im_result["net_name"])
+            ]["centile_size"].item()
+            scores_auc = read_scores_auc(cumulated_accs=ca, ss_cutoff=ss_cutoff)
 
-            # save obtained curve in the dictionary and if needed create new fields there
-            if not im_accs.get(im_result["protocol"]):
-                im_accs[im_result["protocol"]] = {}    
-            if not im_accs[im_result["protocol"]].get(im_result["p"]):
-                im_accs[im_result["protocol"]][im_result["p"]] = {}
-            if im_accs[im_result["protocol"]][im_result["p"]].get(case_name):
-                raise ValueError(f"{case_name} already in parsed results!")
-            im_accs[im_result["protocol"]][im_result["p"]][case_name] = ca
-
-        # when iterating through the method is over - save all results
-        all_accs[im_name] = im_accs
+            # save obtained curve in a dataclass
+            all_accs.append(
+                AuxResults(
+                    im_name=im_name,
+                    protocol=im_result["protocol"],
+                    p=im_result["p"],
+                    net_type=im_result["net_type"],
+                    net_name=im_result["net_name"],
+                    cumulated_acc=ca,
+                    auc_single=scores_auc["auc"]["single"],
+                    auc_cutoff=scores_auc["auc"]["ss_cutoff"],
+                    auc_full=scores_auc["auc"]["full"],
+                    val_single=scores_auc["val"]["single"],
+                    val_cutoff=scores_auc["val"]["ss_cutoff"],
+                    val_full=scores_auc["val"]["full"],
+                )
+            )
+            im_names.add(im_name)
+            protocols.add(im_result["protocol"])
+            ps.add(im_result["p"])
 
     # now draw the results
     pdf = PdfPages(out_path / "comparison_score.pdf")
-    avg_accs = {}
-    for im_name, im_dict in all_accs.items():
-        for protocol, p_dict in im_dict.items():
-            for p, pp_dict in p_dict.items():
+    avg_accs = []
+    for im_name in sorted(list(im_names)):
+        for protocol in sorted(list(protocols)):
+            for p in sorted(list(ps)):
                 print(f"plotitng curves for {im_name}, {protocol}, {p}")
 
-                # plot for all networks for given params
-                fig, acc_avg, auc_avg = plot_accs(
-                    accs=pp_dict,
-                    xlbl="size of cutoff (c)",
-                    ylbl="SPS(y^hat_c) / SPS(y_c)",
-                    plot_avg=True,
+                # select results matching this case
+                sub_results = [
+                    aux_result for aux_result in all_accs if (
+                        aux_result.im_name == im_name and
+                        aux_result.protocol == protocol and
+                        aux_result.p == p
+                    )
+                ]
+
+                # compute average curve
+                avg_acc = average_curves([sr.cumulated_acc for sr in sub_results])
+                avg_ss_cutoff = int(
+                    len(avg_acc) * cutoffs.loc[
+                        (cutoffs["protocol"] == protocol) & (cutoffs["p"] == p)
+                    ]["centile_nb"].mean()
                 )
-                fig.suptitle(f"im_name: {im_name}, protocol: {protocol}, p: {p}, auc: {auc_avg}")
-                fig.tight_layout()
+                avg_scores_auc = read_scores_auc(cumulated_accs=avg_acc, ss_cutoff=avg_ss_cutoff)
+                avg_ar = AuxResults(
+                    im_name=im_name,
+                    protocol=protocol,
+                    p=p,
+                    net_type=im_name,  # a workaround
+                    net_name=im_name,  # a workaround
+                    cumulated_acc=avg_acc,
+                    auc_single=avg_scores_auc["auc"]["single"],
+                    auc_cutoff=avg_scores_auc["auc"]["ss_cutoff"],
+                    auc_full=avg_scores_auc["auc"]["full"],
+                    val_single=avg_scores_auc["val"]["single"],
+                    val_cutoff=avg_scores_auc["val"]["ss_cutoff"],
+                    val_full=avg_scores_auc["val"]["full"],
+                )
+                avg_accs.append(avg_ar)
+                sub_results.append(avg_ar)
+
+                # plot for all networks for given params
+                fig = plot_accs(
+                    accs=sub_results,
+                    xlbl="size of cutoff",
+                    ylbl="SPS(y^hat) / SPS(y)",
+                    avg_idx=len(sub_results)-1,
+                    curve_label="reduced",
+                )
+                fig.suptitle(
+                    f"im: {im_name}, protocol: {protocol}, p: {p}, auc: {round(avg_ar.auc_full, 3)}"
+                )
+                # fig.tight_layout()
                 fig.savefig(pdf, format="pdf")
                 plt.close(fig)
 
-                # save average acc in to plot it again against all methods
-                if not avg_accs.get(protocol):
-                    avg_accs[protocol] = {}
-                if not avg_accs[protocol].get(p):
-                    avg_accs[protocol][p] = {}
-                if avg_accs[protocol][p].get(im_name):
-                    raise ValueError(f"{im_name} already in parsed results!")
-                avg_accs[protocol][p][im_name] = {"acc": acc_avg, "auc": auc_avg}
-
     # draw average curves for each infmax method on a single canvas
     print("plotting average curves")
-    for protocol, p_dict in avg_accs.items():
-        for p, pp_dict in p_dict.items():
-            # convert dict so that curves are inserted according to AuC (to sort legend on plots)
-            sorted_dict = {
-                k: v["acc"] for
-                k, v in sorted(pp_dict.items(), key=lambda item: item[1]["auc"], reverse=True)
-            }
-            fig, _, _ = plot_accs(
-                accs=sorted_dict,
-                xlbl="size of cutoff (c)",
-                ylbl="SPS(y^hat_c) / SPS(y_c)",
-                plot_avg=False,
+    for protocol in sorted(list(protocols)):
+        for p in sorted(list(ps)):
+            print(f"plotitng curves for {protocol}, {p}")
+            sub_results = [
+                aux_result for aux_result in avg_accs if (
+                    aux_result.protocol == protocol and aux_result.p == p
+                )
+            ]
+            fig = plot_accs(
+                accs=sorted(sub_results, key=lambda item: item.val_cutoff, reverse=True),
+                xlbl="size of cutoff",
+                ylbl="SPS(y^hat) / SPS(y)",
+                avg_idx=None,
+                curve_label="full",
             )
-            fig.suptitle(f"averaged AuC, protocol: {protocol}, p: {p}")
+            fig.suptitle(f"averaged SPS curves, protocol: {protocol}, p: {p}")
             fig.tight_layout()
             fig.savefig(pdf, format="pdf")
             plt.close(fig)
 
     pdf.close()
+
+    # save all particular accs as svc file
+    save_accs(all_accs, out_path / "comparison_score_partial.csv")
+    save_accs(avg_accs, out_path / "comparison_score_avg.csv")
 
 
 if __name__ == "__main__":

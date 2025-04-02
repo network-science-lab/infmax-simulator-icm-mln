@@ -151,14 +151,14 @@ def plot_accs(
             continue
         label = ar.net_type if ar.net_type == ar.net_name else f"{ar.net_type}-{ar.net_name}"
         if curve_label == "full":
-            label = f"{label}, {round(ar.auc_single, 3)}, {round(ar.auc_cutoff, 3)}, {round(ar.auc_full, 3)}"
+            label = f"{label}, {round(ar.val_single, 3)}, {round(ar.val_cutoff, 3)}, {round(ar.val_full, 3)}"
         ax.plot(get_cutoffs_fract(len(ar.cumulated_acc)), ar.cumulated_acc, label=label, alpha=alpha)
 
     if avg_idx is not None:
         ar = accs[avg_idx]
         label = "avg"
         if curve_label == "full":
-            label = f"{label}, {round(ar.auc_single, 3)}, {round(ar.auc_cutoff, 3)}, {round(ar.auc_full, 3)}"
+            label = f"{label}, {round(ar.val_single, 3)}, {round(ar.val_cutoff, 3)}, {round(ar.val_full, 3)}"
         ax.plot(get_cutoffs_fract(len(ar.cumulated_acc)), ar.cumulated_acc, label=label, color="green")
 
     cutoffs_rand = get_cutoffs_fract(100)
@@ -173,22 +173,29 @@ def plot_accs(
     ax.set_ylabel(ylbl)
     ax.set_ylim(0, 1)
     ax.legend(
-        loc="lower right",
-        bbox_to_anchor=(1.5, 0),
+        loc="lower left",
+        bbox_to_anchor=(1.05, 0),
         handletextpad=0.05,
         borderaxespad=0.05,
-        fontsize=7,
+        fontsize=6,
     )
     ax.set_aspect("equal", anchor="SW")
 
     # draw the zoomed area
     axins = zoomed_inset_axes(ax, 2, loc="lower right", borderpad=1.8)
-    for line in ax.lines:
-        axins.plot(line.get_xdata(), line.get_ydata(), color=line.get_color(), alpha=alpha)
+    for l_idx, line in enumerate(ax.lines):
+        if avg_idx is not None:
+            if l_idx == avg_idx:
+                _alpha = 1
+            else:
+                _alpha = alpha
+        else:
+            _alpha = alpha
+        axins.plot(line.get_xdata(), line.get_ydata(), color=line.get_color(), alpha=_alpha)
     axins.set_xlim(0.0, 0.2)
     axins.set_ylim(0.8, 1.0)
     mark_inset(ax, axins, loc1=1, loc2=3, fc="none", ec="0.5")
-
+    fig.set_size_inches(6, 4)
     return fig
 
 
@@ -213,11 +220,11 @@ def main(results_path: Path, out_path: Path) -> None:
     protocols = set()
     ps = set()
     for im_name, im_results in results_raw.items():
-        if im_name == "random_choice":
-            continue
         for im_result in im_results:
+            # if im_result["net_type"] in {"timik1q2009", "arxiv_netscience_coauthorship"}:
+            #     continue
             print(
-                f"curve for {im_name}, {im_result['protocol']}, {im_result['p']}, "
+                f"computing curve for {im_name}, {im_result['protocol']}, {im_result['p']}, "
                 f"{im_result['net_type']}, {im_result['net_name']}"
             )
 
@@ -304,7 +311,7 @@ def main(results_path: Path, out_path: Path) -> None:
                 fig = plot_accs(
                     accs=sub_results,
                     xlbl="size of cutoff",
-                    ylbl="intersection(y_hat, y) / cutoff",
+                    ylbl="IoU(y_hat, y)",
                     avg_idx=len(sub_results)-1,
                     curve_label="reduced",
                 )
@@ -318,24 +325,24 @@ def main(results_path: Path, out_path: Path) -> None:
     # draw average curves for each infmax method on a single canvas
     print("plotting average curves")
     for protocol in sorted(list(protocols)):
-            for p in sorted(list(ps)):
-                print(f"plotitng curves for {protocol}, {p}")
-                sub_results = [
-                    aux_result for aux_result in avg_accs if (
-                        aux_result.protocol == protocol and aux_result.p == p
-                    )
-                ]
-                fig = plot_accs(
-                    accs=sorted(sub_results, key=lambda item: item.auc_cutoff, reverse=True),
-                    xlbl="size of cutoff",
-                    ylbl="intersection(y_hat, y) / cutoff",
-                    avg_idx=None,
-                    curve_label="full",
+        for p in sorted(list(ps)):
+            print(f"plotitng curves for {protocol}, {p}")
+            sub_results = [
+                aux_result for aux_result in avg_accs if (
+                    aux_result.protocol == protocol and aux_result.p == p
                 )
-                fig.suptitle(f"averaged AuC, protocol: {protocol}, p: {p}")
-                fig.tight_layout()
-                fig.savefig(pdf, format="pdf")
-                plt.close(fig)
+            ]
+            fig = plot_accs(
+                accs=sorted(sub_results, key=lambda item: item.val_cutoff, reverse=True),
+                xlbl="size of cutoff",
+                ylbl="IoU(y_hat, y)",
+                avg_idx=None,
+                curve_label="full",
+            )
+            fig.suptitle(f"averaged IoU curves, protocol: {protocol}, p: {p}")
+            fig.tight_layout()
+            fig.savefig(pdf, format="pdf")
+            plt.close(fig)
 
     pdf.close()
 
