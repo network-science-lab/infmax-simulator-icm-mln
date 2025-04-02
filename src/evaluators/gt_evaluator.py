@@ -103,6 +103,7 @@ def run_experiments(config: dict[str, Any]) -> None:
                 inv_proto=inv_proto,
                 inv_p=inv_p,
                 case_descr=case_descr,
+                log_dir=out_dir,
             )
             ifm_results.append(partial_result)
 

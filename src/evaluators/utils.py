@@ -4,7 +4,6 @@ import functools
 import json
 import time
 from dataclasses import dataclass, asdict
-from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable
 
@@ -77,25 +76,20 @@ def serialise_safely(value: Any) -> str:
 def log_function_details(func: Callable[..., Any]) -> Callable[..., Any]:
     """Measure time of execution and """
     @functools.wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args, log_dir: Path, **kwargs) -> Any:
         start_time = time.time()
-
         result = func(*args, **kwargs)
-
         end_time = time.time()
         execution_time = end_time - start_time
 
-        log_folder = Path('logs')
-        log_folder.mkdir(exist_ok=True)
-
-        current_time = datetime.now().strftime('%Y-%m-%d')
-        log_filename = log_folder / f'{current_time}.log'
+        log_dir.mkdir(exist_ok=True)
+        log_filename = log_dir / f"execution_times.log"
 
         args_serialised = [serialise_safely(arg) for arg in args]
         kwargs_serialised = {key: serialise_safely(value) for key, value in kwargs.items()}
         kwargs_json = json.dumps(kwargs_serialised, indent=4)
 
-        with log_filename.open('a', encoding='utf-8') as log_file:
+        with log_filename.open("a", encoding="utf-8") as log_file:
             log_file.write(f"Function: {func.__name__}\n")
             log_file.write(f"Arguments: args={args_serialised}\n")
             if kwargs:

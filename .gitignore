@@ -1,8 +1,7 @@
 **/__pycache__
 **/.DS_Store
-example_results
 .vscode
 .neptune
 env/variables.env
+example_results
 src.egg-info
-/logs
