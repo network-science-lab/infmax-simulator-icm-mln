@@ -13,6 +13,41 @@ from src.evaluators.infmax_methods import BaseChoice, GroundTruth
 from src.evaluators.utils import log_function_details
 
 
+@log_function_details
+def process_case(
+    repetitions_stochastic: Any,
+    ifm_obj: BaseChoice,
+    inv_net: Any | sim_utils.Network,
+    inv_proto: Any,
+    inv_p: Any,
+    case_descr: str,
+) -> dict[str, Any]:
+    inv_seeds = []
+    try:
+        for _ in range(repetitions_stochastic if ifm_obj.is_stochastic else 1):
+            repetition_seeds = ifm_obj(
+                network_pt=inv_net.n_graph_pt,
+                network_nx=inv_net.n_graph_nx,
+                net_type=inv_net.n_type,
+                net_name=inv_net.n_name,
+                protocol=inv_proto,
+                p=inv_p,
+                nb_seeds=len(inv_net.n_graph_pt.actors_map),
+            )
+            inv_seeds.append(repetition_seeds)
+    except BaseException as e:
+        print(f"\nEvaluation failed for case: {case_descr}")
+        raise e
+
+    return {
+        "net_type": inv_net.n_type,
+        "net_name": inv_net.n_name,
+        "protocol": inv_proto,
+        "p": inv_p,
+        "seed_sets": inv_seeds,
+    }
+
+
 def run_experiments(config: dict[str, Any]) -> None:
 
     # get parameter space and experiment's hyperparams
@@ -57,36 +92,19 @@ def run_experiments(config: dict[str, Any]) -> None:
             inv_proto = investigated_case[0]
             inv_p = investigated_case[1]
             inv_net: sim_utils.Network = investigated_case[2]
-            inv_seeds = []
 
             case_descr = sim_utils.get_case_name_base(inv_proto, inv_p, f"{inv_net.n_type}-{inv_net.n_name}")
             p_bar.set_description_str(f"[{ifm_name}]-{idx}/{len(p_bar)}-{case_descr}")
 
-            try:
-                for _ in range(repetitions_stochastic if ifm_obj.is_stochastic else 1):
-                    repetition_seeds = ifm_obj(
-                        network_pt=inv_net.n_graph_pt,
-                        network_nx=inv_net.n_graph_nx,
-                        net_type=inv_net.n_type,
-                        net_name=inv_net.n_name,
-                        protocol=inv_proto,
-                        p=inv_p,
-                        nb_seeds=len(inv_net.n_graph_pt.actors_map),
-                    )
-                    inv_seeds.append(repetition_seeds)
-            except BaseException as e:
-                print(f"\nEvaluation failed for case: {case_descr}")
-                raise e
-
-            ifm_results.append(
-                {
-                    "net_type": inv_net.n_type,
-                    "net_name": inv_net.n_name,
-                    "protocol": inv_proto,
-                    "p": inv_p,
-                    "seed_sets": inv_seeds,
-                }
+            partial_result = process_case(
+                repetitions_stochastic=repetitions_stochastic,
+                ifm_obj=ifm_obj,
+                inv_net=inv_net,
+                inv_proto=inv_proto,
+                inv_p=inv_p,
+                case_descr=case_descr,
             )
+            ifm_results.append(partial_result)
 
         with open(out_dir / f"{ifm_name}.json", "w") as file:
             json.dump(ifm_results, file)
@@ -94,37 +112,3 @@ def run_experiments(config: dict[str, Any]) -> None:
     finish_time = os_utils.get_current_time()
     print(f"Evaluations finished at {finish_time}")
     print(f"Evaluations lasted {os_utils.get_diff_of_times(start_time, finish_time)} minutes")
-
-
-@log_function_details
-def process_case(
-    repetitions_stochastic: Any,
-    ifm_obj: BaseChoice,
-    inv_net: Any | sim_utils.Network,
-    inv_proto: Any,
-    inv_p: Any,
-    inv_seeds: list,
-    case_descr: str,
-) -> dict[str, Any]:
-    try:
-        for _ in range(repetitions_stochastic if ifm_obj.is_stochastic else 1):
-            repetition_seeds = ifm_obj(
-                network=inv_net.n_graph,
-                net_type=inv_net.n_type,
-                net_name=inv_net.n_name,
-                protocol=inv_proto,
-                p=inv_p,
-                nb_seeds=len(inv_net.n_graph.actors_map),
-            )
-            inv_seeds.append(repetition_seeds)
-    except BaseException as e:
-        print(f"\nEvaluation failed for case: {case_descr}")
-        raise e
-
-    return {
-        "net_type": inv_net.n_type,
-        "net_name": inv_net.n_name,
-        "protocol": inv_proto,
-        "p": inv_p,
-        "seed_sets": inv_seeds,
-    }

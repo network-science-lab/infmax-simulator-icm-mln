@@ -21,32 +21,32 @@ spreading_potential_score:
 
 networks: [
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### train/eval split
-  "artificial_er-network_15",
-  "artificial_er-network_20",
-  "artificial_er-network_40",
-  "artificial_er-network_45",
-  "artificial_er-network_71",
-  "artificial_er-network_78",
-  # "artificial_er-network_79",
-  "artificial_er-network_80",
-  "artificial_pa-network_7",
-  "artificial_pa-network_22",
-  "artificial_pa-network_23",
-  "artificial_pa-network_39",
-  "artificial_pa-network_57",
-  "artificial_pa-network_58",
-  "artificial_pa-network_68",
-  "artificial_pa-network_75",
-  "artificial_pa-network_83",
-  "artificial_pa-network_85",
-  "artificial_pa-network_93",
-  "artificial_pa-network_95",
+  # "artificial_er-network_15",
+  # "artificial_er-network_20",
+  # "artificial_er-network_40",
+  # "artificial_er-network_45",
+  # "artificial_er-network_71",
+  # "artificial_er-network_78",
+  # "artificial_er-network_79",  #
+  # "artificial_er-network_80",
+  # "artificial_pa-network_7",
+  # "artificial_pa-network_22",
+  # "artificial_pa-network_23",
+  # "artificial_pa-network_39",
+  # "artificial_pa-network_57",
+  # "artificial_pa-network_58",
+  # "artificial_pa-network_68",
+  # "artificial_pa-network_75",
+  # "artificial_pa-network_83",
+  # "artificial_pa-network_85",
+  # "artificial_pa-network_93",
+  # "artificial_pa-network_95",
   # "artificial_er-*",
   # "artificial_pa-*",
   # "artificial_small-*",
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### test split
   # "arxiv_netscience_coauthorship-arxiv_netscience_coauthorship",
-  # "aucs",
+  "aucs",
   # "ckm_physicians",
   # "eu_transportation-eu_transportation",
   # "l2_course-l2_course_net_1",
@@ -57,7 +57,7 @@ networks: [
   # "cannes",
   # "eu_transportation-eu_transport_klm",
   # "fmri74",
-  # "toy_network",
+  "toy_network",
 ]
 
 infmax_models:
@@ -116,35 +116,35 @@ infmax_models:
   #     project: infmax/infmax-gnn
   #     run: IN-718
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### deepim
-  - name: "deep_im"
-    class: "DeepIM"
-    parameters:
-      rng_seed: auto
-      device: auto
-      seeding_budget: -1
-      common:
-        nb_pred_actos: -1
-        nb_pred_nodes: 4
-      executor:
-        train_epochs: 600
-        y_hat_epochs: 300
-        patience: 5
+  # - name: "deep_im"
+  #   class: "DeepIM"
+  #   parameters:
+  #     rng_seed: auto
+  #     device: auto
+  #     seeding_budget: -1
+  #     common:
+  #       nb_pred_actos: -1
+  #       nb_pred_nodes: 4
+  #     executor:
+  #       train_epochs: 600
+  #       y_hat_epochs: 300
+  #       patience: 5
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### multi-node2vec-k-means
-  - name: "mn2v_km"
-    class: "MultiNode2VecKMeansAuto"
-    parameters:
-      rng_seed: "auto"
-      multi_node2vec:
-        d: "auto"
-        window_size: 10
-        n_samples: 1
-        thresh: 0.5
-        pvals: 1
-        qvals: 0.5
-        rvals: 0.25
-      k_means:
-        nb_seeds: -1
-        max_nb_clusters: "auto"
-        centrality_criterium: "centroid"
-        experiment_name: ""
-        visualise: False
+  # - name: "mn2v_km"
+  #   class: "MultiNode2VecKMeansAuto"
+  #   parameters:
+  #     rng_seed: "auto"
+  #     multi_node2vec:
+  #       d: "auto"
+  #       window_size: 10
+  #       n_samples: 1
+  #       thresh: 0.5
+  #       pvals: 1
+  #       qvals: 0.5
+  #       rvals: 0.25
+  #     k_means:
+  #       nb_seeds: -1
+  #       max_nb_clusters: "auto"
+  #       centrality_criterium: "centroid"
+  #       experiment_name: ""
+  #       visualise: False
