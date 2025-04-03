@@ -1,3 +1,17 @@
+run:
+  experiment_type: "evaluate"
+  nb_repetitions:
+    diffusion: 10
+    stochastic_infmax: 3
+  nb_diffusion_seeds: 1
+  rng_seed: 43
+  average_results: False
+  device: cpu
+
+logging:
+  compress_to_zip: False
+  out_dir: "example_results/evaluator"
+
 spreading_model:
   name: "TorchMICModel"
   parameters:
@@ -7,14 +21,20 @@ spreading_model:
   #   protocols: ["AND"]
   #   p_values: [0.80, 0.85, 0.90, 0.95]
 
+spreading_potential_score:
+  exposed_weight: 0.5002
+  peak_infected_weight: 0.1666
+  peak_iteration_weight: 0.1666
+  simulation_length_weight: 0.1666
+
 networks: [
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### train/eval split
   # "artificial_er-*",
   # "artificial_pa-*",
-  "artificial_small-*",
+  # "artificial_small-*",
   # # ##### ##### ##### ##### ##### ##### ##### ##### ##### test split
   # "arxiv_netscience_coauthorship-arxiv_netscience_coauthorship",
-  # "aucs",
+  "aucs",
   # "ckm_physicians",
   # "eu_transportation-eu_transportation",
   "l2_course-l2_course_net_1",
@@ -25,119 +45,82 @@ networks: [
   # "cannes",
   # "eu_transportation-eu_transport_klm",
   # "fmri74",
-  # "toy_network",
+  "toy_network",
 ]
 
 infmax_models:
-  # ##### ##### ##### ##### ##### ##### ##### ##### ##### centrality based
-  - name: "degree"
-    class: "CentralityChoice"
+  # ##### ##### ##### ##### ##### ##### ##### ##### ##### cached centr. based
+  - name: "deg-c"
+    class: "CachedCentralityChoice"
     parameters:
       nb_seeds: "auto"
       centrality: "degree"
-  - name: "betweenness"
-    class: "CentralityChoice"
-    parameters:
-      nb_seeds: "auto"
-      centrality: "betweenness"
-  - name: "closeness"
-    class: "CentralityChoice"
-    parameters:
-      nb_seeds: "auto"
-      centrality: "closeness"
-  - name: "core_number"
-    class: "CentralityChoice"
-    parameters:
-      nb_seeds: "auto"
-      centrality: "core_number"
-  - name: "neighbourhood_size"
-    class: "CentralityChoice"
+  # - name: "betweenness"
+  #   class: "CachedCentralityChoice"
+  #   parameters:
+  #     nb_seeds: "auto"
+  #     centrality: "betweenness"
+  # - name: "closeness"
+  #   class: "CachedCentralityChoice"
+  #   parameters:
+  #     nb_seeds: "auto"
+  #     centrality: "closeness"
+  # - name: "core_number"
+  #   class: "CachedCentralityChoice"
+  #   parameters:
+  #     nb_seeds: "auto"
+  #     centrality: "core_number"
+  - name: "nghb-s"
+    class: "CachedCentralityChoice"
     parameters:
       nb_seeds: "auto"
       centrality: "neighbourhood_size"
-  - name: "voterank"
-    class: "CentralityChoice"
-    parameters:
-      nb_seeds: "auto"
-      centrality: "voterank"
+  # - name: "voterank"
+  #   class: "CachedCentralityChoice"
+  #   parameters:
+  #     nb_seeds: "auto"
+  #     centrality: "voterank"
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### ground truth
-  - name: "gt_absoulute"
-    class: "GroundTruth"
-    parameters:
-      average_protocol: False
-      average_p_value: False
-  - name: "gt_avg_p"
-    class: "GroundTruth"
-    parameters:
-      average_protocol: False
-      average_p_value: True
+  # TODO: update!
+  # ##### ##### ##### ##### ##### ##### ##### ##### ##### the best centr. based
+  - name: "nghb-sd"
+    class: "NeighbourhoodSizeDiscount"
+  - name: "deg-cd"
+    class: "DegreeCentralityDiscount"
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### random
   - name: "random_choice"
     class: "RandomChoice"
     nb_seeds: "auto"
-  # ##### ##### ##### ##### ##### ##### ##### ##### ##### df choice
-  - name: "ssnet"
-    class: "DFChoice"
-    parameters:
-      result_dir: ""
-  # ##### ##### ##### ##### ##### ##### ##### ##### ##### GBIM
-  - name: "gbim"
-    class: "GBIM"
-    parameters:
-      rng_seed: auto
-      device: auto
-      common:
-        nb_seeds: auto
-        graphsample: 1000
-      datasample:
-        sample_num: 1000
-        simulate_times: 10
-      executor:
-        epochs: 300
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### deepim
-  - name: "deep_im"
-    class: "DeepIM"
-    parameters:
-      rng_seed: auto
-      device: auto
-      seeding_budget: 5
-      common:
-        nb_pred_actos: auto
-        nb_pred_nodes: 4
-      executor:
-        train_epochs: 600
-        y_hat_epochs: 300
-        patience: 5
+  # - name: "deep_im"
+  #   class: "DeepIM"
+  #   parameters:
+  #     rng_seed: auto
+  #     device: auto
+  #     seeding_budget: 5
+  #     common:
+  #       nb_pred_actos: auto
+  #       nb_pred_nodes: 4
+  #     executor:
+  #       train_epochs: 600
+  #       y_hat_epochs: 300
+  #       patience: 5
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### multi-node2vec-k-means
-  - name: "mn2v_km"
-    class: "MultiNode2VecKMeansAuto"
-    parameters:
-      rng_seed: "auto"
-      multi_node2vec:
-        d: "auto"
-        window_size: 10
-        n_samples: 1
-        thresh: 0.5
-        pvals: 1
-        qvals: 0.5
-        rvals: 0.25
-      k_means:
-        nb_seeds: "auto"
-        max_nb_clusters: "auto"
-        centrality_criterium: "centroid"
-        experiment_name: ""
-        visualise: False
-
-run:
-  experiment_type: "evaluate"
-  nb_diffusion_seeds: 1
-  nb_repetitions:
-    diffusion: 30
-    stochastic_infmax: 30
-  rng_seed: 43
-  average_results: False
-  device: cpu
-
-logging:
-  compress_to_zip: False
-  out_dir: "example_results/evaluator"
+  # - name: "mn2v_km"
+  #   class: "MultiNode2VecKMeansAuto"
+  #   parameters:
+  #     rng_seed: "auto"
+  #     multi_node2vec:
+  #       d: "auto"
+  #       window_size: 10
+  #       n_samples: 1
+  #       thresh: 0.5
+  #       pvals: 1
+  #       qvals: 0.5
+  #       rvals: 0.25
+  #     k_means:
+  #       nb_seeds: "auto"
+  #       max_nb_clusters: "auto"
+  #       centrality_criterium: "centroid"
+  #       experiment_name: ""
+  #       visualise: False

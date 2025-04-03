@@ -2,7 +2,7 @@
 
 import os
 import tempfile
-from abc import ABC
+from abc import ABC, abstractmethod
 from random import shuffle
 from typing import Literal
 
@@ -22,8 +22,12 @@ class BaseChoice(ABC):
 
     is_stochastic: bool = None
 
+    @abstractmethod
+    def __call__(self, nb_seeds: int, **kwargs) -> list[str]:
+        ...
 
-class CentralityChoice(BaseChoice):
+
+class CachedCentralityChoice(BaseChoice):
 
     centralities = [
         "degree",
@@ -125,8 +129,8 @@ class RandomChoice(BaseChoice):
 
     is_stochastic = True
     
-    def __call__(self, network: nd.MultilayerNetworkTorch, nb_seeds: int, **kwargs) -> list[str]:
-        actors = list(network.actors_map.keys())
+    def __call__(self, network_pt: nd.MultilayerNetworkTorch, nb_seeds: int, **kwargs) -> list[str]:
+        actors = list(network_pt.actors_map.keys())
         shuffle(actors)
         return actors[:nb_seeds]
 
@@ -176,3 +180,24 @@ class NeptuneDownloader(BaseChoice):
             peak_iteration_weight=self.weights[PEAK_ITERATION],
         )(df)
         return sp_score.iloc[:nb_seeds].index.tolist()
+
+
+class NeighbourhoodSizeDiscount(BaseChoice):
+    
+    is_stochastic = True
+
+    def __init__(self):
+        self.selector = nd.seeding.NeighbourhoodSizeDiscountSelector()
+
+    def __call__(self, network_nx: nd.MultilayerNetwork, nb_seeds: int, **kwargs) -> list[str]:
+        ranking = self.selector(network=network_nx, actorwise=True)
+        return [str(actor.actor_id) for actor in ranking][:nb_seeds]
+
+
+class DegreeCentralityDiscount(NeighbourhoodSizeDiscount):
+    
+    is_stochastic = True
+
+    def __init__(self):
+        self.selector = nd.seeding.DegreeCentralityDiscountSelector()
+

@@ -5,10 +5,12 @@ from typing import Any
 
 from src.evaluators.infmax_methods import (
     BaseChoice,
-    CentralityChoice,
+    CachedCentralityChoice,
     GroundTruth,
     RandomChoice,
     NeptuneDownloader,
+    NeighbourhoodSizeDiscount,
+    DegreeCentralityDiscount,
 )
 from src.sim_utils import Network
 
@@ -72,14 +74,18 @@ def load_infmax_model(
         model = load_model({"model": config_infmax})
         model.is_stochastic = False
         return model
-    elif config_infmax["class"] == "CentralityChoice":
-        return CentralityChoice(centrality_name=config_infmax["parameters"]["centrality"])
+    elif config_infmax["class"] == "CachedCentralityChoice":
+        return CachedCentralityChoice(centrality_name=config_infmax["parameters"]["centrality"])
     elif config_infmax["class"] == "GroundTruth":
         return GroundTruth(**config_sp)
     elif config_infmax["class"] == "RandomChoice":
         return RandomChoice()
     elif config_infmax["class"] == "NeptuneDownloader":
         return NeptuneDownloader(**config_infmax["parameters"], **config_sp)
+    elif config_infmax["class"] == "NeighbourhoodSizeDiscount":
+        return NeighbourhoodSizeDiscount()
+    elif config_infmax["class"] == "DegreeCentralityDiscount":
+        return DegreeCentralityDiscount()
     raise ValueError(f"Unknown infmax model class: {config_infmax['class']}!")
 
 
@@ -94,13 +100,14 @@ def get_seed_sets(
     """Obtain seed sets for a given infmax model on a given network and if needed repeat it."""
     seed_sets = []
     for ifm_name, ifm_obj in infmax_models.items():
-        repetitions_infmax = repetitions_diffusion if ifm_obj.if_stochastic else 1
+        repetitions_infmax = repetitions_diffusion if ifm_obj.is_stochastic else 1
         partial_seed_sets = [
             SeedSet(
                 method_name=ifm_name,
                 repetition_nb=i,
                 seeds=ifm_obj(
-                    network=net.n_graph,
+                    network_pt=net.n_graph_pt,
+                    network_nx=net.n_graph_nx,
                     net_name=net.n_name,
                     net_type=net.n_type,
                     protocol=protocol,

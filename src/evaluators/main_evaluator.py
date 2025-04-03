@@ -30,7 +30,6 @@ def run_experiments(config: dict[str, Any]) -> None:
         protocols=config["spreading_model"]["parameters"]["protocols"],
         p_values=config["spreading_model"]["parameters"]["p_values"],
         networks=config["networks"],
-        as_tensor=True if step_func == step_eval else False,
     )
     repetitions_diffusion = config["run"]["nb_repetitions"]["diffusion"]
     repetitions_stochastic = config["run"]["nb_repetitions"]["stochastic_infmax"]
@@ -39,9 +38,8 @@ def run_experiments(config: dict[str, Any]) -> None:
     # initialise influence maximisation models
     infmax_models = loader.load_infmax_models(
         config_infmax=config["infmax_models"],
-        config_icm=config["spreading_model"],
+        config_sp=config["spreading_potential_score"],
         rng_seed=config["run"]["rng_seed"],
-        nb_seeds=config["run"]["nb_diffusion_seeds"],
         device=device,
     )
 
@@ -76,6 +74,7 @@ def run_experiments(config: dict[str, Any]) -> None:
                 repetitions_diffusion=repetitions_stochastic,
                 protocol=investigated_case[0],
                 p=investigated_case[1],
+                nb_seeds=config["run"]["nb_diffusion_seeds"],
             )
             step_func.evaluation_step(
                 protocol=investigated_case[0],

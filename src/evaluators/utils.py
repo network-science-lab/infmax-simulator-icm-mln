@@ -1,15 +1,14 @@
 """Evaluator's utilities."""
 
+import functools
+import json
+import time
 from dataclasses import dataclass, asdict
+from pathlib import Path
+from typing import Any, Callable
 
 import numpy as np
 import pandas as pd
-import time
-import functools
-import json
-from datetime import datetime
-from pathlib import Path
-from typing import Any, Callable
 
 from nsl_data_utils.loaders.constants import (
     EXPOSED, PEAK_INFECTED, PEAK_ITERATION, SIMULATION_LENGTH
@@ -66,7 +65,8 @@ class SPScore:
         )
         return sp_.sort_index().sort_values(by="score", ascending=False)["score"]
 
-def safe_serialize(value: Any) -> str:
+
+def serialise_safely(value: Any) -> str:
     try:
         return json.dumps(value)
     except (TypeError, ValueError):
@@ -74,28 +74,24 @@ def safe_serialize(value: Any) -> str:
 
 
 def log_function_details(func: Callable[..., Any]) -> Callable[..., Any]:
+    """Measure time of execution and """
     @functools.wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args, log_dir: Path, **kwargs) -> Any:
         start_time = time.time()
-
         result = func(*args, **kwargs)
-
         end_time = time.time()
         execution_time = end_time - start_time
 
-        log_folder = Path('logs')
-        log_folder.mkdir(exist_ok=True)
+        log_dir.mkdir(exist_ok=True)
+        log_filename = log_dir / f"execution_times.log"
 
-        current_time = datetime.now().strftime('%Y-%m-%d')
-        log_filename = log_folder / f'{current_time}.log'
+        args_serialised = [serialise_safely(arg) for arg in args]
+        kwargs_serialised = {key: serialise_safely(value) for key, value in kwargs.items()}
+        kwargs_json = json.dumps(kwargs_serialised, indent=4)
 
-        args_serialized = [safe_serialize(arg) for arg in args]
-        kwargs_serialized = {key: safe_serialize(value) for key, value in kwargs.items()}
-        kwargs_json = json.dumps(kwargs_serialized, indent=4)
-
-        with log_filename.open('a', encoding='utf-8') as log_file:
+        with log_filename.open("a", encoding="utf-8") as log_file:
             log_file.write(f"Function: {func.__name__}\n")
-            log_file.write(f"Arguments: args={args_serialized}\n")
+            log_file.write(f"Arguments: args={args_serialised}\n")
             if kwargs:
                 log_file.write(f"Keyword Arguments: {kwargs_json}\n")
             log_file.write(f"Execution time: {execution_time:.4f} seconds\n")

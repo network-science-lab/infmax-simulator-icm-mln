@@ -36,8 +36,8 @@ def evaluation_step(
             # run experiment on a deep copy of the network!
             simulator = TorchMICSimulator(
                 model=micm,
-                net=net.n_graph,
-                n_steps=len(net.n_graph.actors_map) * 2,
+                net=net.n_graph_pt,
+                n_steps=len(net.n_graph_pt.actors_map) * 2,
                 seed_set=seed_set.seeds,
                 device=device,
             )

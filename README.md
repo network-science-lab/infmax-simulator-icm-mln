@@ -110,6 +110,17 @@ Another option for evaluating seed selection methods is to compare seed sets wit
 the dataset. To do so, first run `evaluate_gt` to obtain a complete ranking of actors sorted by their
 spreading potential score. These rankings can then be compared with each other (`scripts/analysis`).
 
+Here is an order of execution for evaluation scripts:
+
+```bash
+scripts
+├── analysis
+│   ├── distribution_plots.py
+│   ├── iou_ranking_plots.py
+│   └── rel_score_plots.py
+└── configs
+```
+
 ## GPU acceleration for computations
 
 Selecting a GPU (for a `tensor` runner) is possible either by setting an environment variable before

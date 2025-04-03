@@ -26,7 +26,7 @@ def experiment_step(
     out_dir: Path,
     **kwargs,
 ) -> None:
-    actors = net.n_graph.get_actors()
+    actors = net.n_graph_nx.get_actors()
     marginal_efficiencies = []
 
     # iterate through all available actors and check their influencial power
@@ -60,7 +60,7 @@ def experiment_step(
             )
 
             # run experiment on a deep copy of the network!
-            experiment = nd.Simulator(model=micm, network=net.n_graph.copy())
+            experiment = nd.Simulator(model=micm, network=net.n_graph_nx.copy())
             logs = experiment.perform_propagation(
                 n_epochs=len(actors) * 2,  # this value is an "overkill"
                 patience=1,
@@ -68,7 +68,7 @@ def experiment_step(
 
             # compute boost that current actor provides
             simulation_result = extract_simulation_result(
-                logs.get_detailed_logs(), net.n_graph, actor
+                logs.get_detailed_logs(), net.n_graph_nx, actor
             )
             repeated_results.append(simulation_result)
         
