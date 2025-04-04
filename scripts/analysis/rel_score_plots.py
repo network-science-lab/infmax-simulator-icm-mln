@@ -187,7 +187,7 @@ def main(results_path: Path, out_path: Path) -> None:
                     xlbl="size of cutoff",
                     ylbl="SPS(y^hat) / SPS(y)",
                     avg_idx=len(sub_results)-1,
-                    curve_label="reduced",
+                    curve_label="full",
                 )
                 fig.suptitle(
                     f"im: {im_name}, protocol: {protocol}, p: {p}, auc: {round(avg_ar.auc_full, 3)}"

@@ -95,16 +95,36 @@ infmax_models:
   - name: "random_choice"
     class: "RandomChoice"
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### our GNNs
-  # - name: "721"
-  #   class: "NeptuneDownloader"
-  #   parameters:
-  #     project: infmax/infmax-gnn
-  #     run: IN-721
   # - name: "718"
   #   class: "NeptuneDownloader"
   #   parameters:
   #     project: infmax/infmax-gnn
   #     run: IN-718
+  # - name: "763"
+  #   class: "NeptuneDownloader"
+  #   parameters:
+  #     project: infmax/infmax-gnn
+  #     run: IN-763
+  # - name: "762"
+  #   class: "NeptuneDownloader"
+  #   parameters:
+  #     project: infmax/infmax-gnn
+  #     run: IN-762
+  # - name: "765"
+  #   class: "NeptuneDownloader"
+  #   parameters:
+  #     project: infmax/infmax-gnn
+  #     run: IN-765
+  # - name: "764"
+  #   class: "NeptuneDownloader"
+  #   parameters:
+  #     project: infmax/infmax-gnn
+  #     run: IN-764
+  # - name: "721"
+  #   class: "NeptuneDownloader"
+  #   parameters:
+  #     project: infmax/infmax-gnn
+  #     run: IN-721
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### deepim
   # - name: "deep_im"
   #   class: "DeepIM"

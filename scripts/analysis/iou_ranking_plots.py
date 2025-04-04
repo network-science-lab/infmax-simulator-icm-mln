@@ -162,7 +162,6 @@ def plot_accs(
         ax.plot(get_cutoffs_fract(len(ar.cumulated_acc)), ar.cumulated_acc, label=label, color="green")
 
     cutoffs_rand = get_cutoffs_fract(100)
-    auc_rand = np.trapezoid(cutoffs_rand, cutoffs_rand)
     ax.plot(cutoffs_rand, cutoffs_rand, "--", label="x=y", color="red")
 
     ax.set_xlabel(xlbl)
@@ -310,7 +309,7 @@ def main(results_path: Path, out_path: Path) -> None:
                     xlbl="size of cutoff",
                     ylbl="IoU(y_hat, y)",
                     avg_idx=len(sub_results)-1,
-                    curve_label="reduced",
+                    curve_label="full",
                 )
                 fig.suptitle(
                     f"im: {im_name}, protocol: {protocol}, p: {p}, auc: {round(avg_ar.auc_full, 3)}"
