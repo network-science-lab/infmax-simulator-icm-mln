@@ -3,4 +3,4 @@ outs:
   size: 1069598
   nfiles: 14
   hash: md5
-  path: ml_artificial
+  path: 'ml_artificial'
