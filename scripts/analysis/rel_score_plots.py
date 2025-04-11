@@ -115,7 +115,7 @@ def main(results_path: Path, out_path: Path) -> None:
                 (cutoffs["p"] == im_result["p"]) &
                 (cutoffs["net_type"] == im_result["net_type"]) &
                 (cutoffs["net_name"] == im_result["net_name"])
-            ]["centile_size"].item()
+            ]["centile_nb"].item()
             scores_auc = read_scores_auc(cumulated_accs=ca, ss_cutoff=ss_cutoff)
 
             # save obtained curve in a dataclass
@@ -157,26 +157,19 @@ def main(results_path: Path, out_path: Path) -> None:
                 ]
 
                 # compute average curve
-                avg_acc = average_curves([sr.cumulated_acc for sr in sub_results])
-                avg_ss_cutoff = int(
-                    len(avg_acc) * cutoffs.loc[
-                        (cutoffs["protocol"] == protocol) & (cutoffs["p"] == p)
-                    ]["centile_nb"].mean()
-                )
-                avg_scores_auc = read_scores_auc(cumulated_accs=avg_acc, ss_cutoff=avg_ss_cutoff)
                 avg_ar = AuxResults(
                     im_name=im_name,
                     protocol=protocol,
                     p=p,
                     net_type=im_name,  # a workaround
                     net_name=im_name,  # a workaround
-                    cumulated_acc=avg_acc,
-                    auc_single=avg_scores_auc["auc"]["single"],
-                    auc_cutoff=avg_scores_auc["auc"]["ss_cutoff"],
-                    auc_full=avg_scores_auc["auc"]["full"],
-                    val_single=avg_scores_auc["val"]["single"],
-                    val_cutoff=avg_scores_auc["val"]["ss_cutoff"],
-                    val_full=avg_scores_auc["val"]["full"],
+                    cumulated_acc=average_curves([sr.cumulated_acc for sr in sub_results]),
+                    auc_single=np.mean([sr.auc_single for sr in sub_results]),
+                    auc_cutoff=np.mean([sr.auc_cutoff for sr in sub_results]),
+                    auc_full=np.mean([sr.auc_full for sr in sub_results]),
+                    val_single=np.mean([sr.val_single for sr in sub_results]),
+                    val_cutoff=np.mean([sr.val_cutoff for sr in sub_results]),
+                    val_full=np.mean([sr.val_full for sr in sub_results]),
                 )
                 avg_accs.append(avg_ar)
                 sub_results.append(avg_ar)
