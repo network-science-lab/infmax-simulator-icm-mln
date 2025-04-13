@@ -1,6 +1,6 @@
 outs:
-- md5: d7bd4ffd91dec6af1d7fae83c5de7f14.dir
-  size: 15473394
+- md5: fd3ebc2758e78be03beae75f1b2fa665.dir
+  size: 15473282
   nfiles: 16
   hash: md5
-  path: 'hr_artificial'
+  path: hr_artificial

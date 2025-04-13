@@ -1,6 +1,6 @@
 outs:
-- md5: a97f77162479826fcf17df85e0b6f1b4.dir
-  size: 1069598
+- md5: 2e212c556c6f1cafb025d41ed3996745.dir
+  size: 1069558
   nfiles: 14
   hash: md5
-  path: 'ml_artificial'
+  path: ml_artificial
