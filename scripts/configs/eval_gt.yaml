@@ -11,7 +11,7 @@ logging:
 spreading_model:
   parameters:
     protocols: ["OR", "AND"]
-    p_values: [-1]  # standalone OR [0.05, 0.10, 0.15, 0.20], AND [0.80, 0.85, 0.90, 0.95]
+    p_values: [-1]  # OR [0.05, 0.10, 0.15, 0.20], AND [0.80, 0.85, 0.90, 0.95]
 
 spreading_potential_score:
   exposed_weight: 0.5002
@@ -21,32 +21,32 @@ spreading_potential_score:
 
 networks: [
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### train/eval split
-  # "artificial_er-network_15",
-  # "artificial_er-network_20",
-  # "artificial_er-network_40",
-  # "artificial_er-network_45",
-  # "artificial_er-network_71",
-  # "artificial_er-network_78",
-  # "artificial_er-network_79",  #
-  # "artificial_er-network_80",
-  # "artificial_pa-network_7",
-  # "artificial_pa-network_22",
-  # "artificial_pa-network_23",
-  # "artificial_pa-network_39",
-  # "artificial_pa-network_57",
-  # "artificial_pa-network_58",
-  # "artificial_pa-network_68",
-  # "artificial_pa-network_75",
-  # "artificial_pa-network_83",
-  # "artificial_pa-network_85",
-  # "artificial_pa-network_93",
-  # "artificial_pa-network_95",
+  "artificial_er-network_15",
+  "artificial_er-network_20",
+  "artificial_er-network_40",
+  "artificial_er-network_45",
+  "artificial_er-network_71",
+  "artificial_er-network_78",
+  "artificial_er-network_79",
+  "artificial_er-network_80",
+  "artificial_pa-network_7",
+  "artificial_pa-network_23",
+  "artificial_pa-network_39",
+  "artificial_pa-network_57",
+  "artificial_pa-network_58",
+  "artificial_pa-network_75",
+  "artificial_pa-network_85",
+  "artificial_pa-network_95",
+  # "artificial_pa-network_22",  # it was in test split but is not used in eval
+  # "artificial_pa-network_68",  # to balance pa/er
+  # "artificial_pa-network_83",  # ditto
+  # "artificial_pa-network_93",  # ditto
   # "artificial_er-*",
   # "artificial_pa-*",
   # "artificial_small-*",
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### test split
   # "arxiv_netscience_coauthorship-arxiv_netscience_coauthorship",
-  "aucs",
+  # "aucs",
   # "ckm_physicians",
   # "eu_transportation-eu_transportation",
   # "l2_course-l2_course_net_1",
@@ -57,7 +57,7 @@ networks: [
   # "cannes",
   # "eu_transportation-eu_transport_klm",
   # "fmri74",
-  "toy_network",
+  # "toy_network",
 ]
 
 infmax_models:
@@ -95,26 +95,36 @@ infmax_models:
   - name: "random_choice"
     class: "RandomChoice"
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### our GNNs
-  # - name: "742"
-  #   class: "NeptuneDownloader"
-  #   parameters:
-  #     project: infmax/infmax-gnn
-  #     run: IN-742
-  # - name: "746"
-  #   class: "NeptuneDownloader"
-  #   parameters:
-  #     project: infmax/infmax-gnn
-  #     run: IN-746
-  # - name: "721"
-  #   class: "NeptuneDownloader"
-  #   parameters:
-  #     project: infmax/infmax-gnn
-  #     run: IN-721
   # - name: "718"
   #   class: "NeptuneDownloader"
   #   parameters:
   #     project: infmax/infmax-gnn
   #     run: IN-718
+  # - name: "763"
+  #   class: "NeptuneDownloader"
+  #   parameters:
+  #     project: infmax/infmax-gnn
+  #     run: IN-763
+  # - name: "762"
+  #   class: "NeptuneDownloader"
+  #   parameters:
+  #     project: infmax/infmax-gnn
+  #     run: IN-762
+  # - name: "765"
+  #   class: "NeptuneDownloader"
+  #   parameters:
+  #     project: infmax/infmax-gnn
+  #     run: IN-765
+  # - name: "764"
+  #   class: "NeptuneDownloader"
+  #   parameters:
+  #     project: infmax/infmax-gnn
+  #     run: IN-764
+  # - name: "721"
+  #   class: "NeptuneDownloader"
+  #   parameters:
+  #     project: infmax/infmax-gnn
+  #     run: IN-721
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### deepim
   # - name: "deep_im"
   #   class: "DeepIM"

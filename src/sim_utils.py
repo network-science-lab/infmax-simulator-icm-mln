@@ -37,6 +37,18 @@ class Network:
         )
         return cls(n_type, n_name, graph_pt, graph_nx)
 
+    def __repr__(self) -> str:
+        return "{0} at {1}; {2}, {3}, {4} at {5}, {6} at {7}".format(
+            self.__class__.__name__,
+            id(self),
+            self.n_type,
+            self.n_name,
+            self.n_graph_pt.__class__.__name__,
+            id(self.n_graph_pt),
+            self.n_graph_nx.__class__.__name__,
+            id(self.n_graph_nx),
+        )
+
 
 def compute_gain(seed_nb: int, exposed_nb: int, total_actors: int) -> float:
     max_available_gain = total_actors - seed_nb
