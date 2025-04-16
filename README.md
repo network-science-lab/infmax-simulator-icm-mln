@@ -117,7 +117,9 @@ scripts
 ├── analysis
 │   ├── distribution_plots.py
 │   ├── iou_ranking_plots.py
-│   └── rel_score_plots.py
+│   ├── rel_score_plots.py
+│   ├── merge_csvs.py
+│   └── produce_rankings.py
 └── configs
 ```
 
