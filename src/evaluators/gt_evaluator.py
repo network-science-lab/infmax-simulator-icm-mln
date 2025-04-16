@@ -70,7 +70,7 @@ def run_experiments(config: dict[str, Any]) -> None:
         device=config["run"]["device"],
     )
 
-    # get a starting time
+    # get the starting time
     start_time = os_utils.get_current_time()
     print(f"Evaluations started at {start_time}")
 

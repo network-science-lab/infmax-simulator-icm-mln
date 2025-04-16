@@ -13,6 +13,7 @@ import yaml
 
 from src.evaluators import main_evaluator, gt_evaluator
 from src.generators import main_generator
+from src.regression import main_regression
 from src.os_utils import set_rng_seed
 
 
@@ -23,9 +24,10 @@ def parse_args(*args: Sequence[str]) -> argparse.Namespace:
         help="Experiment config file.",
         nargs="?",
         type=str,
-        default="scripts/configs/eval_gt.yaml",
-        # default="scripts/configs/eval_ssm.yaml",
         # default="scripts/configs/gen_sp.yaml",
+        # default="scripts/configs/eval_ssm.yaml",
+        # default="scripts/configs/eval_gt.yaml",
+        default="scripts/configs/regr.yaml",
     )
     return parser.parse_args(*args)
 
@@ -52,6 +54,8 @@ if __name__ == "__main__":
         runner = main_evaluator
     elif experiment_type == "evaluate_gt":
         runner = gt_evaluator
+    elif experiment_type == "regression":
+        runner = main_regression
     else:
         raise ValueError(f"Unknown experiment type {experiment_type}")
 
