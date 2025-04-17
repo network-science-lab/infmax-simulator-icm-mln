@@ -5,3 +5,4 @@
 env/variables.env
 example_results
 src.egg-info
+data/regression

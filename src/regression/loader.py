@@ -6,7 +6,7 @@ from typing import Any
 
 from tqdm import tqdm
 
-from src.regression.regr_methods import CachedCentralityRegressor
+from src.regression.regr_methods import CachedCentralityRegressor, NeptuneRegressor
 from src.sim_utils import Network, parse_network_config
 
 
@@ -51,4 +51,6 @@ def load_regr_model(config_regr: dict[str, Any], nb_repetitions: int, rng_seed: 
         if config_regr["parameters"]["nb_repetitions"] == "auto":
             config_regr["parameters"]["nb_repetitions"] = nb_repetitions
         return CachedCentralityRegressor(**config_regr["parameters"])
+    elif config_regr["class"] == "NeptuneRegressor":
+        return NeptuneRegressor(**config_regr["parameters"])
     raise ValueError(f"Unknown regression model class: {config_regr['class']}!")
