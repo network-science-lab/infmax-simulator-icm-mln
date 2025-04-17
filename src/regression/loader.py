@@ -45,11 +45,13 @@ def load_regr_models(config_regr: dict[str, Any], nb_repetitions: int, rng_seed:
 
 
 def load_regr_model(config_regr: dict[str, Any], nb_repetitions: int, rng_seed: int) -> Any:
+    # fill all occurences of "auto"
+    if config_regr["parameters"]["rng_seed"] == "auto":
+        config_regr["parameters"]["rng_seed"] = rng_seed
+    if config_regr["parameters"]["nb_repetitions"] == "auto":
+        config_regr["parameters"]["nb_repetitions"] = nb_repetitions
+    # initialise the model
     if config_regr["class"] == "CachedCentralityRegressor":
-        if config_regr["parameters"]["rng_seed"] == "auto":
-            config_regr["parameters"]["rng_seed"] = rng_seed
-        if config_regr["parameters"]["nb_repetitions"] == "auto":
-            config_regr["parameters"]["nb_repetitions"] = nb_repetitions
         return CachedCentralityRegressor(**config_regr["parameters"])
     elif config_regr["class"] == "NeptuneRegressor":
         return NeptuneRegressor(**config_regr["parameters"])

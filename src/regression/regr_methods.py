@@ -70,6 +70,7 @@ class CachedCentralityRegressor(BaseRegressor):
     def __init__(self, centrality_names: list[str], rng_seed: int, nb_repetitions: int) -> None:
         self.centrality_names = centrality_names
         self.rng_seed = rng_seed
+        self.shuffle_rng = np.random.RandomState(seed=rng_seed)
         self.nb_repetitions = nb_repetitions
         if len(self._centralities.intersection(set(self.centrality_names))) == 0:
             raise ValueError("Unknown centrality name!")
@@ -91,7 +92,7 @@ class CachedCentralityRegressor(BaseRegressor):
         rmse = root_mean_squared_error(y_test, y_pred)
         r2 = r2_score(y_test, y_pred)
         return rmse, r2
-    
+
     def __call__(
         self,
         net_type: str,
@@ -109,7 +110,7 @@ class CachedCentralityRegressor(BaseRegressor):
         for _ in range(self.nb_repetitions):
 
             # shuffle input data
-            _xy_arr = xy_arr[np.random.permutation(xy_arr.shape[0])]
+            _xy_arr = xy_arr[self.shuffle_rng.permutation(xy_arr.shape[0])]
             x_arr = _xy_arr[:, :-4]
             y_arr = _xy_arr[:, -4:]
 
@@ -131,7 +132,10 @@ class CachedCentralityRegressor(BaseRegressor):
 
 class NeptuneRegressor(BaseRegressor):
 
-    def __init__(self, project: str, run: str) -> None:
+    def __init__(self, project: str, run: str, rng_seed: int, nb_repetitions: int) -> None:
+        self.rng_seed = rng_seed
+        self.shuffle_rng = np.random.RandomState(seed=rng_seed)
+        self.nb_repetitions = nb_repetitions
         self.session = neptune.init_run(
             api_token=os.getenv(key="NEPTUNE_API_KEY", default=neptune.ANONYMOUS_API_TOKEN),
             project=project,
@@ -143,7 +147,7 @@ class NeptuneRegressor(BaseRegressor):
         df.index.name = ACTOR
         df.index = df.index.astype(str)
         df = df[self._sp_order]
-        return df / df.max()
+        return df # / df.max()
 
     def __call__(
         self,
@@ -161,15 +165,29 @@ class NeptuneRegressor(BaseRegressor):
 
         # align two dataframes and convert to numpy
         ygt_ypred = pd.concat([y_gt, y_pred], axis=1).to_numpy()
-        ygt_arr = ygt_ypred[:, :4]
-        ypred_arr = ygt_ypred[:, 4:]
 
-        # compute RMSE and R2 score and return them
-        rmse = root_mean_squared_error(ygt_arr, ypred_arr)
-        r2 = r2_score(ygt_arr, ypred_arr)
+        # now test the model
+        rmses, r2s = [], []
+        for _ in range(self.nb_repetitions):
+
+            # shuffle input data and split to reflect conditions as from CachedCentralityRegressor
+            _ygt_ypred = ygt_ypred[self.shuffle_rng.permutation(ygt_ypred.shape[0])]
+            _, ygt_ypred_test = train_test_split(_ygt_ypred, test_size=0.2, random_state=self.rng_seed)
+
+            # check the quality of the model
+            y_gt_test = ygt_ypred_test[:, :4]
+            y_pred_test = ygt_ypred_test[:, 4:]
+            rmse = root_mean_squared_error(y_gt_test, y_pred_test)
+            r2 = r2_score(y_gt_test, y_pred_test)
+            rmses.append(rmse)
+            r2s.append(r2)
+        
+        # return mean and std of these two metrics
+        rmses = np.array(rmses)
+        r2s = np.array(r2s)
         return {
-            "rmse_avg": rmse,
-            "rmse_std": 0.,
-            "r2_avg": r2,
-            "r2_std": 0.,
+            "rmse_avg": rmses.mean(),
+            "rmse_std": rmses.std(),
+            "r2_avg": r2s.mean(),
+            "r2_std": r2s.std(),
         }

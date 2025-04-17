@@ -39,10 +39,10 @@ networks: [
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### test split
   # "arxiv_netscience_coauthorship-arxiv_netscience_coauthorship",
   "aucs",
-  # "ckm_physicians",
-  # "eu_transportation-eu_transportation",
-  # "l2_course-l2_course_net_1",
-  # "lazega",
+  "ckm_physicians",
+  "eu_transportation-eu_transportation",
+  "l2_course-l2_course_net_1",
+  "lazega",
   # "timik1q2009",
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### not used at all
   # "arxiv_netscience_coauthorship-arxiv_netscience_coauthorship_math.oc",
@@ -59,56 +59,74 @@ regr_models:
       centrality_names: ["degree"]
       rng_seed: "auto"
       nb_repetitions: "auto"
-  # - name: "btwns"
-  #   class: "CachedCentralityRegressor"
-  #   parameters:
-  #     centrality_names: ["betweenness"]
-  #     rng_seed: "auto"
-  #     nb_repetitions: "auto"
-  # - name: "clsns"
-  #   class: "CachedCentralityRegressor"
-  #   parameters:
-  #     centrality_names: ["closeness"]
-  #     rng_seed: "auto"
-  #     nb_repetitions: "auto"
-  # - name: "k-sh"
-  #   class: "CachedCentralityRegressor"
-  #   parameters:
-  #     centrality_names: ["core_number"]
-  #     rng_seed: "auto"
-  #     nb_repetitions: "auto"
-  # - name: "nghb-s"
-  #   class: "CachedCentralityRegressor"
-  #   parameters:
-  #     centrality_names: ["neighbourhood_size"]
-  #     rng_seed: "auto"
-  #     nb_repetitions: "auto"
-  # - name: "v-rnk-m"
-  #   class: "CachedCentralityRegressor"
-  #   parameters:
-  #     centrality_names: ["voterank"]
-  #     rng_seed: "auto"
-  #     nb_repetitions: "auto"
-  # - name: "dbccnv"
-  #   class: "CachedCentralityRegressor"
-  #   parameters:
-  #     centrality_names: [
-  #       "degree",
-  #       "betweenness",
-  #       "closeness",
-  #       "core_number",
-  #       "neighbourhood_size",
-  #       "voterank",
-  #     ]
-  #     rng_seed: "auto"
-  #     nb_repetitions: "auto"
+  - name: "btwns"
+    class: "CachedCentralityRegressor"
+    parameters:
+      centrality_names: ["betweenness"]
+      rng_seed: "auto"
+      nb_repetitions: "auto"
+  - name: "clsns"
+    class: "CachedCentralityRegressor"
+    parameters:
+      centrality_names: ["closeness"]
+      rng_seed: "auto"
+      nb_repetitions: "auto"
+  - name: "k-sh"
+    class: "CachedCentralityRegressor"
+    parameters:
+      centrality_names: ["core_number"]
+      rng_seed: "auto"
+      nb_repetitions: "auto"
+  - name: "nghb-s"
+    class: "CachedCentralityRegressor"
+    parameters:
+      centrality_names: ["neighbourhood_size"]
+      rng_seed: "auto"
+      nb_repetitions: "auto"
+  - name: "v-rnk-m"
+    class: "CachedCentralityRegressor"
+    parameters:
+      centrality_names: ["voterank"]
+      rng_seed: "auto"
+      nb_repetitions: "auto"
+  - name: "dbccnv"
+    class: "CachedCentralityRegressor"
+    parameters:
+      centrality_names: [
+        "degree",
+        "betweenness",
+        "closeness",
+        "core_number",
+        "neighbourhood_size",
+        "voterank",
+      ]
+      rng_seed: "auto"
+      nb_repetitions: "auto"
+  - name: "784"
+    class: "NeptuneRegressor"
+    parameters:
+      rng_seed: "auto"
+      nb_repetitions: "auto"
+      project: infmax/infmax-gnn
+      run: IN-784
+  - name: "782"
+    class: "NeptuneRegressor"
+    parameters:
+      rng_seed: "auto"
+      nb_repetitions: "auto"
+      project: infmax/infmax-gnn
+      run: IN-782
   - name: "801"
     class: "NeptuneRegressor"
     parameters:
+      rng_seed: "auto"
+      nb_repetitions: "auto"
       project: infmax/infmax-gnn
       run: IN-801
   - name: "802"
     class: "NeptuneRegressor"
     parameters:
+      rng_seed: "auto"
+      nb_repetitions: "auto"
       project: infmax/infmax-gnn
       run: IN-802
