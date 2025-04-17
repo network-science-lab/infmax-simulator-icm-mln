@@ -8,7 +8,6 @@ from typing import Literal
 import neptune
 import numpy as np
 import pandas as pd
-from sklearn.discriminant_analysis import StandardScaler
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import root_mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
@@ -85,7 +84,6 @@ class CachedCentralityRegressor(BaseRegressor):
     @staticmethod
     def regress(x: np.ndarray, y: np.ndarray, rng: int) -> tuple[float, float]:
         x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=rng)
-        # model = Pipeline([("scaler", StandardScaler()), ("regressor", LinearRegression())])
         model = LinearRegression()
         model.fit(x_train, y_train)
         y_pred = model.predict(x_test)
@@ -147,7 +145,7 @@ class NeptuneRegressor(BaseRegressor):
         df.index.name = ACTOR
         df.index = df.index.astype(str)
         df = df[self._sp_order]
-        return df # / df.max()
+        return df / df.max()
 
     def __call__(
         self,
