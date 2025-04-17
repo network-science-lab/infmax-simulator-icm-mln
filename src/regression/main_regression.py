@@ -8,13 +8,13 @@ from tqdm import tqdm
 import yaml
 
 from src import os_utils, sim_utils
-from src.regression.loader import RegrResult, load_regr_models
+from src.regression.loader import RegrResult, load_regr_models, get_parameter_space
 
 
 def run_experiments(config: dict[str, Any]) -> None:
 
     # get parameter space and experiment's hyperparams
-    p_space = sim_utils.get_parameter_space(
+    p_space = get_parameter_space(
         protocols=config["spreading_model"]["parameters"]["protocols"],
         p_values=config["spreading_model"]["parameters"]["p_values"],
         networks=config["networks"],
