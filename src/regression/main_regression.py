@@ -4,15 +4,11 @@ from pathlib import Path
 from typing import Any
 
 import pandas as pd
-import numpy as np
+from tqdm import tqdm
 import yaml
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error, r2_score
-from sklearn.model_selection import train_test_split
 
 from src import os_utils, sim_utils
-from src.regression.regr_methods import CachedCentralityRegressor
-
+from src.regression.loader import RegrResult, load_regr_models
 
 
 def run_experiments(config: dict[str, Any]) -> None:
@@ -24,38 +20,61 @@ def run_experiments(config: dict[str, Any]) -> None:
         networks=config["networks"],
     )
     p_space = list(p_space)
-    print(p_space)
 
-
-    # initialise influence maximisation models
-    # infmax_models = loader.load_infmax_models(
-    #     config_infmax=[
-    #         *config["infmax_models"],
-    #         {"name": "ground_truth", "class": GroundTruth.__name__},
-    #     ],
-    #     config_sp=config["spreading_potential_score"],
-    #     rng_seed=config["run"]["rng_seed"],
-    #     device=config["run"]["device"],
-    # )
-
-    # # get the starting time
-    # start_time = os_utils.get_current_time()
-    # print(f"Experiments started at {start_time}")
-
-    # # prepare output directory and deterimne how to store results
-    # out_dir = Path(config["logging"]["out_dir"]) / start_time
-    # out_dir.mkdir(exist_ok=True, parents=True)
-
-    # # save the config
-    # config["git_sha"] = os_utils.get_recent_git_sha()
-    # with open(out_dir / f"config.yaml", "w", encoding="utf-8") as f:
-    #     yaml.dump(config, f)
-    
-    # for regr_method in config["features"]:
-    #     print(regr_method)
-    result = CachedCentralityRegressor(
-        centrality_names=["degree"],
+    # initialise regression models
+    regr_models = load_regr_models(
+        config_regr=config["regr_models"],
         rng_seed=config["run"]["rng_seed"],
-        nb_repetitions= config["run"]["nb_repetitions"],
-    )(net_type="aucs", net_name="aucs", protocol="AND", p=-1)
-    print(result)
+        nb_repetitions=config["run"]["nb_repetitions"],
+    )
+
+    # get the starting time
+    start_time = os_utils.get_current_time()
+    print(f"Experiments started at {start_time}")
+
+    # prepare output directory and deterimne how to store results
+    out_dir = Path(config["logging"]["out_dir"]) / start_time
+    out_dir.mkdir(exist_ok=True, parents=True)
+
+    # save the config
+    config["git_sha"] = os_utils.get_recent_git_sha()
+    with open(out_dir / f"config.yaml", "w", encoding="utf-8") as f:
+        yaml.dump(config, f)
+
+    # main loop
+    results = []
+    p_bar = tqdm(list(p_space), desc="", leave=False, colour="green")
+    for idx, investigated_case in enumerate(p_bar):
+        case_descr = sim_utils.get_case_name_base(
+                investigated_case[0],
+                investigated_case[1],
+                f"{investigated_case[2].n_type}-{investigated_case[2].n_name}",
+            )
+        p_bar.set_description_str(f"{idx}/{len(p_bar)}-{case_descr}")
+        for regr_name, regr_model in regr_models.items():
+            result = regr_model(
+                net_type=investigated_case[2].n_type,
+                net_name=investigated_case[2].n_name,
+                protocol=investigated_case[0],
+                p=investigated_case[1],
+            )
+            results.append(
+                RegrResult(
+                    net_type=investigated_case[2].n_type,
+                    net_name=investigated_case[2].n_name,
+                    protocol=investigated_case[0],
+                    p=investigated_case[1],
+                    regr_name=regr_name,
+                    rmse_avg=result["rmse_avg"],
+                    rmse_std=result["rmse_std"],
+                    r2_avg=result["r2_avg"],
+                    r2_std=result["r2_std"],
+                )
+            )
+
+    # save global logs and config
+    pd.DataFrame(results).to_csv(out_dir / "results.csv")
+
+    finish_time = os_utils.get_current_time()
+    print(f"Evaluations finished at {finish_time}")
+    print(f"Evaluations lasted {os_utils.get_diff_of_times(start_time, finish_time)} minutes")

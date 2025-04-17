@@ -100,7 +100,7 @@ class CachedCentralityRegressor:
 
         # now test the model
         rmses, r2s = [], []
-        for repetition in range(self.nb_repetitions):
+        for _ in range(self.nb_repetitions):
 
             # shuffle input data
             _xy_arr = xy_arr[np.random.permutation(xy_arr.shape[0])]

@@ -52,25 +52,53 @@ networks: [
   # "toy_network",
 ]
 
-features:
+regr_models:
   - name: "deg-c"
-    centralities: ["degree"]
+    class: "CachedCentralityRegressor"
+    parameters:
+      centrality_names: ["degree"]
+      rng_seed: "auto"
+      nb_repetitions: "auto"
   - name: "btwns"
-    centralities: ["betweenness"]
+    class: "CachedCentralityRegressor"
+    parameters:
+      centrality_names: ["betweenness"]
+      rng_seed: "auto"
+      nb_repetitions: "auto"
   - name: "clsns"
-    centralities: ["closeness"]
+    class: "CachedCentralityRegressor"
+    parameters:
+      centrality_names: ["closeness"]
+      rng_seed: "auto"
+      nb_repetitions: "auto"
   - name: "k-sh"
-    centralities: ["core_number"]
+    class: "CachedCentralityRegressor"
+    parameters:
+      centrality_names: ["core_number"]
+      rng_seed: "auto"
+      nb_repetitions: "auto"
   - name: "nghb-s"
-    centralities: ["neighbourhood_size"]
+    class: "CachedCentralityRegressor"
+    parameters:
+      centrality_names: ["neighbourhood_size"]
+      rng_seed: "auto"
+      nb_repetitions: "auto"
   - name: "v-rnk-m"
-    centralities: ["voterank"]
+    class: "CachedCentralityRegressor"
+    parameters:
+      centrality_names: ["voterank"]
+      rng_seed: "auto"
+      nb_repetitions: "auto"
   - name: "dbccnv"
-    centralities: [
-      "degree",
-      "betweenness",
-      "closeness",
-      "core_number",
-      "neighbourhood_size",
-      "voterank",
-    ]
+    class: "CachedCentralityRegressor"
+    parameters:
+      centrality_names: [
+        "degree",
+        "betweenness",
+        "closeness",
+        "core_number",
+        "neighbourhood_size",
+        "voterank",
+      ]
+      rng_seed: "auto"
+      nb_repetitions: "auto"
