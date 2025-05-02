@@ -151,6 +151,8 @@ def plot_accs(
         if idx == avg_idx:
             continue
         label = ar.net_type if ar.net_type == ar.net_name else f"{ar.net_type}-{ar.net_name}"
+        if label == "random_choice":
+            label = "random"
         if curve_label == "full":
             label = f"{label}, {round(ar.val_single, 3)}, {round(ar.val_cutoff, 3)}, {round(ar.val_full, 3)}"
         ax.plot(get_cutoffs_fract(len(ar.cumulated_acc)), ar.cumulated_acc, label=label, alpha=alpha)

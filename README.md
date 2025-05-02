@@ -138,3 +138,7 @@ python generate_sp.py _configs/example_tensor.yaml
 
 Results are expected to be fully reproducible. A test is available for verification:
 `test_reproducibility.py`.
+
+
+# TODO: 
+replace 821 with 832 in all files from final_artificial and final_real

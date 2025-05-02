@@ -12,33 +12,6 @@ IM_ORDER = [
     "ts-net"
 ]
 
-
-# FINAL TABLE
-
-# csv_path_real = "data/iou_curves/final_real/comparison_score_avg.csv"
-# csv_path_art = "data/iou_curves/final_artificial/comparison_score_avg.csv"
-
-# def process_averaged_csv(csv_path):
-#     df = pd.read_csv(csv_path, index_col=0)
-#     print(df)
-#     df = df.loc[df["protocol"] == "AND"][
-#         # ["im_name", "auc_single", "auc_cutoff", "auc_full", "val_single", "val_cutoff"]
-#         ["im_name", "val_single", "auc_cutoff", "val_cutoff", "auc_full"]
-#     ]
-#     df = df.set_index("im_name").rename(index={"random_choice": "random"}).reindex(IM_ORDER)
-#     return df
-
-# df_real = process_averaged_csv(csv_path_real)
-# df_art = process_averaged_csv(csv_path_art)
-# print(df_real)
-# print(df_art)
-
-# df_all = df_art.join(df_real, lsuffix="_a", rsuffix="_r")
-# print(df_all)
-# df_all = df_all.style.format(precision=3)
-# df_all.to_latex("avg_scores.tex")
-
-
 def wrap_top3(col: pd.Series, only_first: bool = False) -> pd.Series:
     col = col.astype(float).round(3)
     ranking = col.rank(method="min", ascending=False)
@@ -71,9 +44,12 @@ def wrap_top3(col: pd.Series, only_first: bool = False) -> pd.Series:
 # print(pivot_df)
 # pivot_df.to_latex("partial_scores.tex")
 
-# ABLATION STUDY
+# ABLATION STUDY / AVERAGED RESULTS
 
 FOLDERS = [
+    "final_artificial",
+    "final_real",
+    "avg-scores",
     # "20250419220536",
     # "20250419220605",
     # "model-aggregations",
@@ -89,15 +65,15 @@ FOLDERS = [
     # "20250424065140",
     # "20250424065230",
     # "data-features"
-                        # "20250425072846",
-                        # "20250425073145",
-                        # "task-or_mae"
+    # "20250425072846",  # this should be manualy splitted into two tables
+    # "20250425073145",
+    # "task-and-mae"  # or
 ]
 
 def process_averaged_csv(csv_path):
     df = pd.read_csv(csv_path, index_col=0)
     print(df)
-    df = df.loc[df["protocol"] == "OR"][
+    df = df.loc[df["protocol"] == "AND"][
         ["im_name", "val_single", "auc_cutoff", "val_cutoff", "auc_full"]
     ]
     df = df.set_index("im_name").rename(index={"random_choice": "random"}).sort_index()
@@ -119,7 +95,7 @@ df_all = df_all.rename(columns={
     "val_cutoff": "$S_{val}$",
     "auc_full": "$F_{auc}$",
 }, level=1)
-df_all = df_all.apply(wrap_top3, only_first=True)
+df_all = df_all.apply(wrap_top3, only_first=False)
 print(FOLDERS[2])
 print(df_all)
 df_all.to_latex(f"{FOLDERS[2]}.tex")
