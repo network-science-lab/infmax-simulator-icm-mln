@@ -266,8 +266,8 @@ def main(results_path: Path, out_path: Path, metric: str) -> None:
     ps = set()
     for im_name, im_results in results_raw.items():
         for im_result in im_results:
-            if im_result["net_type"] in {"timik1q2009", "arxiv_netscience_coauthorship"}:
-                continue
+            # if im_result["net_type"] in {"timik1q2009", "arxiv_netscience_coauthorship"}:
+            #     continue
             print(
                 f"computing curve for {im_name}, {im_result['protocol']}, {im_result['p']}, "
                 f"{im_result['net_type']}, {im_result['net_name']}"
