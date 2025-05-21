@@ -1,8 +1,4 @@
-"""
-Main entrypoint for the simulator. It can generate dataset / evaluate infmax methods.
-
-TODO: change prints to logs (consider using hydra)
-"""
+"""Main entrypoint for the simulator. It can generate dataset / evaluate infmax methods."""
 
 import argparse
 import pathlib

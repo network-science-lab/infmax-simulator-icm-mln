@@ -98,6 +98,3 @@ def run_experiments(config: dict[str, Any]) -> None:
     finish_time = os_utils.get_current_time()
     print(f"Evaluations finished at {finish_time}")
     print(f"Evaluations lasted {os_utils.get_diff_of_times(start_time, finish_time)} minutes")
-
-
-# TODO: supress logging from 3-rd party SSMs
