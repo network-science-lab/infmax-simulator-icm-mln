@@ -31,7 +31,7 @@ def parse_args(*args: Sequence[str]) -> argparse.Namespace:
         help="name of the metric to use",
         nargs="?",
         type=str,
-        choices=["jaccard", "prec", "avg_prec", "pos_acc"],
+        choices=["jaccard", "prec", "pos_acc"],
         default="pos_acc",
     )
     return parser.parse_args(*args)
@@ -100,19 +100,15 @@ def jaccard_at_k(arr_y: list[Any], arr_yhat: list[list[Any]], cutoff: int) -> fl
 
 
 def precision_at_k(arr_y: list[Any], arr_yhat: list[list[Any]], cutoff: int) -> float:
-    """Compute precision for given cutoff; in our case precision==recall."""
+    """
+    Compute precision for given cutoff; in our case precision==recall.
+
+    In the "older" experiments this is the same as "acc" (or "comparison_ranking_{partial/avg}.csv)
+    """
     y = set(arr_y[:cutoff])
     yhs = [set(ayh[:cutoff]) for ayh in arr_yhat]
     accs = [len(y.intersection(yh)) / cutoff for yh in yhs]
     return np.mean(accs).item()
-
-
-# def average_precision_at_k(arr_y: list[Any], arr_yhat: list[list[Any]], cutoff: int) -> float:
-#     """Compute average precision up to the given cutoff."""
-#     precisions = []
-#     for _cutoff in range(cutoff):
-#         precisions.append(precision_at_k(arr_y, arr_yhat, _cutoff))
-#     return np.mean(precisions).item()
 
 
 def positional_accuracy(arr_y: list[Any], arr_yhat: list[list[Any]], cutoff: int) -> float:
@@ -129,8 +125,6 @@ def cummulated_acc(arr_y: list[Any], arr_yhat: list[list[Any]], metric: str) -> 
         acc = jaccard_at_k
     elif metric== "prec":
         acc = precision_at_k
-    # elif metric == "avg_prec":
-    #     acc = average_precision_at_k
     elif metric == "pos_acc":
         acc = positional_accuracy
     else:
@@ -184,7 +178,7 @@ def plot_accs(
     xlbl: str,
     ylbl: str,
     avg_idx: int | None,
-    curve_label: str = Literal["reduced", "full"],
+    curve_label: Literal["reduced", "full"],
 ) -> Figure:
     """Plot curves for a given spreading conditions and networks."""
     fig, ax = plt.subplots(nrows=1, ncols=1)
@@ -399,5 +393,6 @@ if __name__ == "__main__":
     args = parse_args()
     print(args)
     out_path=Path("./dump")
+    out_path=args.run_dir
     out_path.mkdir(exist_ok=True, parents=True)
     main(results_path=args.run_dir, out_path=out_path, metric=args.metric)

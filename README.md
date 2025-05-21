@@ -1,9 +1,10 @@
-# Inf. Max. Simulator for Multilayer Networks under ICM 
+# Inf. Max. Simulator / Evaluator for Multilayer Networks under ICM 
 
-A repository for generating datasets with marginal efficiency for each actor from the evaluated 
-network and evaluating various influence maximisation methods.
+A repository for (1) computing actor spreading potentials in multilayer networks, and (2) evaluating
+various methods for the super-spreader identification problem. This code was used in the preparation
+of the paper [Identifying Super Spreaders in Multilayer Networks](https://link.to.the.paper).
 
-* Authors: Piotr Bródka, Michał Czuba, Adam Piróg, Mateusz Stolarski
+* Authors: Michał Czuba, Mateusz Stolarski, Adam Piróg, Piotr Bielak, Piotr Bródka
 * Affiliation: WUST, Wrocław, Lower Silesia, Poland
 
 ## Configuration of the runtime
@@ -36,7 +37,7 @@ with: `pip install -e ../path/to/infmax/method`.
 
 The dataset is stored in a separate repository linked to this project as a Git submodule. To obtain
 it, you must pull the data from the DVC remote. To access it, please send a request via email
-(michal.czuba@pwr.edu.pl). Then, simply execute the following commands in a shell:
+(michal.czuba@pwr.edu.pl). Then, execute the following commands in a shell:
 
 ```bash
 cd data/nslds && dvc pull nsl_data_sources/raw/multi_layer_networks/*.dvc && cd ..
@@ -44,7 +45,7 @@ cd data/nslds && dvc pull nsl_data_sources/spreading_potentials/multi_layer_netw
 cd data/nslds && dvc pull nsl_data_sources/centralities/multi_layer_networks/*.dvc && cd ..
 ```
 
-## Structure of the repository TODO - update it!
+## Structure of the repository
 
 ```bash
 .
@@ -52,7 +53,6 @@ cd data/nslds && dvc pull nsl_data_sources/centralities/multi_layer_networks/*.d
 ├── data                     -> use DVC to fetch this folder
 │   ├── iou_curves           -> results of the evaluation
 │   ├── nslds                -> data set with aux. library providing loaders
-│   ├── networks             -> real networks used in experiments
 │   └── test                 -> data used in the E2E test
 ├── env                      -> definition of the runtime environment
 ├── scripts                  -> call these to process `data` with `src`
@@ -70,7 +70,7 @@ cd data/nslds && dvc pull nsl_data_sources/centralities/multi_layer_networks/*.d
 
 To run experiments, execute `run_experiments.py` and provide the appropriate CLI arguments, such as
 a path to the configuration file. See examples in `scripts/configs` for inspiration. The pipeline
-has two modes defined under the `run:experiment_type` field.
+has three modes defined under the `run:experiment_type` field.
 
 ### Generating a dataset
 
@@ -117,28 +117,11 @@ scripts
 ├── analysis
 │   ├── distribution_plots.py
 │   ├── iou_ranking_plots.py
-│   └── rel_score_plots.py
+│   ├── rel_score_plots.py
+│   └── generate_tables.py
 └── configs
-```
-
-## GPU acceleration for computations
-
-Selecting a GPU (for a `tensor` runner) is possible either by setting an environment variable before
-executing the Python code or by modifying `env/variables.env`.
-
-For example:
-
-```bash
-conda activate infmax-simulator-icm-mln
-export CUDA_VISIBLE_DEVICES=2
-python generate_sp.py _configs/example_tensor.yaml
 ```
 
 ## Reproducibility of results
 
-Results are expected to be fully reproducible. A test is available for verification:
-`test_reproducibility.py`.
-
-
-# TODO: 
-replace 821 with 832 in all files from final_artificial and final_real
+Results are expected to be fully reproducible. A test is available: `test_reproducibility.py`.
