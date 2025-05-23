@@ -80,8 +80,6 @@ infmax_models:
   #   parameters:
   #     nb_seeds: "auto"
   #     centrality: "voterank"
-  # ##### ##### ##### ##### ##### ##### ##### ##### ##### ground truth
-  # TODO: update!
   # ##### ##### ##### ##### ##### ##### ##### ##### ##### the best centr. based
   - name: "nghb-sd"
     class: "NeighbourhoodSizeDiscount"

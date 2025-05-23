@@ -1,5 +1,6 @@
 **/__pycache__
 **/.DS_Store
+*.tex
 .vscode
 .neptune
 env/variables.env

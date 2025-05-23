@@ -1,0 +1,6 @@
+outs:
+- md5: 75fa6758fd84d36da11334b3fefa5a5a.dir
+  size: 17422915
+  nfiles: 23
+  hash: md5
+  path: final_artificial

@@ -24,7 +24,15 @@ def parse_args(*args: Sequence[str]) -> argparse.Namespace:
         help="name of the configuration directory",
         nargs="?",
         type=Path,
-        default=Path("data/iou_curves/hr_real"),
+        default=Path("data/iou_curves/final_real"),
+    )
+    parser.add_argument(
+        "metric",
+        help="name of the metric to use",
+        nargs="?",
+        type=str,
+        choices=["jaccard", "prec", "pos_acc"],
+        default="pos_acc",
     )
     return parser.parse_args(*args)
 
@@ -73,6 +81,9 @@ class AuxResults:
     val_single: float
     val_cutoff: float
     val_full: float
+    avg_single: float = None
+    avg_cutoff: float = None
+    avg_full: float = None
 
     def to_dict_partial(self) -> dict[str, float | str]:
         self_dict = asdict(self)
@@ -80,17 +91,44 @@ class AuxResults:
         return self_dict
 
 
-def acc(arr_y: list[Any], arr_yhat: list[list[Any]], cutoff: int) -> float:
+def jaccard_at_k(arr_y: list[Any], arr_yhat: list[list[Any]], cutoff: int) -> float:
     """Compute IoU for given cutoff."""
+    y = set(arr_y[:cutoff])
+    yhs = [set(ayh[:cutoff]) for ayh in arr_yhat]
+    accs = [len(y.intersection(yh)) / len(y.union(yh)) for yh in yhs]
+    return np.mean(accs).item()
+
+
+def precision_at_k(arr_y: list[Any], arr_yhat: list[list[Any]], cutoff: int) -> float:
+    """
+    Compute precision for given cutoff; in our case precision==recall.
+
+    In the "older" experiments this is the same as "acc" (or "comparison_ranking_{partial/avg}.csv)
+    """
     y = set(arr_y[:cutoff])
     yhs = [set(ayh[:cutoff]) for ayh in arr_yhat]
     accs = [len(y.intersection(yh)) / cutoff for yh in yhs]
     return np.mean(accs).item()
 
 
-def cummulated_acc(arr_y: list[Any], arr_yhat: list[list[Any]]) -> np.array:
+def positional_accuracy(arr_y: list[Any], arr_yhat: list[list[Any]], cutoff: int) -> float:
+    y = arr_y[:cutoff]
+    yhs = [ayh[:cutoff] for ayh in arr_yhat]
+    matches = [[gt == pred for gt, pred in zip(y, yh)] for yh in yhs]
+    return np.mean(matches)
+
+
+def cummulated_acc(arr_y: list[Any], arr_yhat: list[list[Any]], metric: str) -> np.array:
     """Compute IoU for cufoofs from 0% to 100% of actors."""
     assert all([len(arr_y) == len(ayh) for ayh in arr_yhat])
+    if metric == "jaccard":
+        acc = jaccard_at_k
+    elif metric== "prec":
+        acc = precision_at_k
+    elif metric == "pos_acc":
+        acc = positional_accuracy
+    else:
+        raise AttributeError("Incorrect name of metric!")
     accs = []
     cutoffs = np.linspace(1, len(arr_y), len(arr_y) if len(arr_y) <= 1000 else 1000 , dtype=int)
     for cutoff in cutoffs:
@@ -108,13 +146,15 @@ def read_scores_auc(cumulated_accs: np.ndarray, ss_cutoff: float) -> dict[str, f
     """Get scores and AuC for given cutoffs."""
     aucs = {"single": cumulated_accs[0]}  # this is due to approx. error in trapezoid func.
     vals = {"single": cumulated_accs[0]}
+    avgs = {"single": cumulated_accs[0]}
     ss_cutoff_int = round(ss_cutoff * len(cumulated_accs))
     for cutoff_s, cutoff_n in zip([ss_cutoff_int, len(cumulated_accs)], ["ss_cutoff", "full"]):
         cutoff_ca = cumulated_accs[:cutoff_s]
         auc = np.trapezoid(cutoff_ca, get_cutoffs_fract(len(cutoff_ca)))
         aucs[cutoff_n] = auc
         vals[cutoff_n] = cutoff_ca[-1]
-    return {"val": vals, "auc": aucs}
+        avgs[cutoff_n] = np.mean(cutoff_ca).item()
+    return {"val": vals, "auc": aucs, "avg": avgs}
 
 
 def average_curves(matrices: list[np.ndarray], kind: str = "linear") -> np.array:
@@ -138,7 +178,7 @@ def plot_accs(
     xlbl: str,
     ylbl: str,
     avg_idx: int | None,
-    curve_label: str = Literal["reduced", "full"],
+    curve_label: Literal["reduced", "full"],
 ) -> Figure:
     """Plot curves for a given spreading conditions and networks."""
     fig, ax = plt.subplots(nrows=1, ncols=1)
@@ -151,6 +191,8 @@ def plot_accs(
         if idx == avg_idx:
             continue
         label = ar.net_type if ar.net_type == ar.net_name else f"{ar.net_type}-{ar.net_name}"
+        if label == "random_choice":
+            label = "random"
         if curve_label == "full":
             label = f"{label}, {round(ar.val_single, 3)}, {round(ar.val_cutoff, 3)}, {round(ar.val_full, 3)}"
         ax.plot(get_cutoffs_fract(len(ar.cumulated_acc)), ar.cumulated_acc, label=label, alpha=alpha)
@@ -201,7 +243,7 @@ def save_accs(accs: list[AuxResults], out_path: Path) -> None:
     pd.DataFrame(accs_dicts).to_csv(out_path)
 
 
-def main(results_path: Path, out_path: Path) -> None:
+def main(results_path: Path, out_path: Path, metric: str) -> None:
     """A main function to produce visualisations."""
     print("loading jsons")
     results_jsons = list(results_path.glob("*.json"))
@@ -232,7 +274,7 @@ def main(results_path: Path, out_path: Path) -> None:
                 protocol=im_result["protocol"],
                 p=im_result["p"],
             )
-            ca = cummulated_acc(arr_y=gt_result, arr_yhat=im_result["seed_sets"])
+            ca = cummulated_acc(arr_y=gt_result, arr_yhat=im_result["seed_sets"], metric=metric)
             ss_cutoff =  cutoffs.loc[
                 (cutoffs["protocol"] == im_result["protocol"]) &
                 (cutoffs["p"] == im_result["p"]) &
@@ -256,6 +298,9 @@ def main(results_path: Path, out_path: Path) -> None:
                     val_single=scores_auc["val"]["single"],
                     val_cutoff=scores_auc["val"]["ss_cutoff"],
                     val_full=scores_auc["val"]["full"],
+                    avg_single=scores_auc["avg"]["single"],
+                    avg_cutoff=scores_auc["avg"]["ss_cutoff"],
+                    avg_full=scores_auc["avg"]["full"],
                 )
             )
             im_names.add(im_name)
@@ -263,7 +308,7 @@ def main(results_path: Path, out_path: Path) -> None:
             ps.add(im_result["p"])
 
     # now draw the results
-    pdf = PdfPages(out_path / "comparison_ranking.pdf")
+    pdf = PdfPages(out_path / f"comparison_ranking_{metric}.pdf")
     avg_accs = []
     for im_name in sorted(list(im_names)):
         for protocol in sorted(list(protocols)):
@@ -293,6 +338,9 @@ def main(results_path: Path, out_path: Path) -> None:
                     val_single=np.mean([sr.val_single for sr in sub_results]),
                     val_cutoff=np.mean([sr.val_cutoff for sr in sub_results]),
                     val_full=np.mean([sr.val_full for sr in sub_results]),
+                    avg_single=np.mean([sr.avg_single for sr in sub_results]),
+                    avg_cutoff=np.mean([sr.avg_cutoff for sr in sub_results]),
+                    avg_full=np.mean([sr.avg_full for sr in sub_results]),
                 )
                 avg_accs.append(avg_ar)
                 sub_results.append(avg_ar)
@@ -337,11 +385,14 @@ def main(results_path: Path, out_path: Path) -> None:
     pdf.close()
 
     # save all particular accs as svc file
-    save_accs(all_accs, out_path / "comparison_ranking_partial.csv")
-    save_accs(avg_accs, out_path / "comparison_ranking_avg.csv")
+    save_accs(all_accs, out_path / f"comparison_ranking_{metric}_partial.csv")
+    save_accs(avg_accs, out_path / f"comparison_ranking_{metric}_avg.csv")
 
 
 if __name__ == "__main__":
     args = parse_args()
     print(args)
-    main(results_path=args.run_dir, out_path=args.run_dir)
+    out_path=Path("./dump")
+    out_path=args.run_dir
+    out_path.mkdir(exist_ok=True, parents=True)
+    main(results_path=args.run_dir, out_path=out_path, metric=args.metric)

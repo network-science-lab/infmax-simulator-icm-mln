@@ -1,8 +1,9 @@
 """A script to plot IoU of seed sets constructed from full (i.e. comprising of all actors) ranks."""
 
+import argparse
 from functools import lru_cache
 from pathlib import Path
-from typing import Any
+from typing import Any, Sequence
 
 
 import matplotlib.pyplot as plt
@@ -15,14 +16,26 @@ from scripts.analysis.iou_ranking_plots import (
     AuxResults,
     GTResults,
     average_curves,
+    get_cutoffs_fract,
     load_cutoffs,
     load_json_data,
-    parse_args,
     plot_accs,
     read_scores_auc,
     save_accs,
 )
 from src.evaluators.infmax_methods import GroundTruth
+
+
+def parse_args(*args: Sequence[str]) -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "run_dir",
+        help="name of the configuration directory",
+        nargs="?",
+        type=Path,
+        default=Path("data/iou_curves/final_real"),
+    )
+    return parser.parse_args(*args)
 
 
 class GTResultsScore(GTResults):
@@ -65,6 +78,19 @@ def cummulated_acc(arr_y: list[Any], arr_yhat: list[list[Any]], df_sps: pd.Serie
         cutoff_acc = acc(arr_y=arr_y, arr_yhat=arr_yhat, cutoff=cutoff, df_sps=df_sps)
         accs.append(cutoff_acc)
     return np.array(accs)
+
+
+def read_scores_auc(cumulated_accs: np.ndarray, ss_cutoff: float) -> dict[str, float]:
+    """Get scores and AuC for given cutoffs."""
+    aucs = {"single": cumulated_accs[0]}  # this is due to approx. error in trapezoid func.
+    vals = {"single": cumulated_accs[0]}
+    ss_cutoff_int = round(ss_cutoff * len(cumulated_accs))
+    for cutoff_s, cutoff_n in zip([ss_cutoff_int, len(cumulated_accs)], ["ss_cutoff", "full"]):
+        cutoff_ca = cumulated_accs[:cutoff_s]
+        auc = np.trapezoid(cutoff_ca, get_cutoffs_fract(len(cutoff_ca)))
+        aucs[cutoff_n] = auc
+        vals[cutoff_n] = cutoff_ca[-1]
+    return {"val": vals, "auc": aucs}
 
 
 def main(results_path: Path, out_path: Path) -> None:
