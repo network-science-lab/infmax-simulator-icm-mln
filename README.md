@@ -2,7 +2,7 @@
 
 A repository for (1) computing actor spreading potentials in multilayer networks, and (2) evaluating
 various methods for the super-spreader identification problem. This code was used in the preparation
-of the paper [Identifying Super Spreaders in Multilayer Networks](https://link.to.the.paper).
+of the paper [Identifying Super Spreaders in Multilayer Networks](https://arxiv.org/abs/2505.20980).
 
 * Authors: Michał Czuba, Mateusz Stolarski, Adam Piróg, Piotr Bielak, Piotr Bródka
 * Affiliation: WUST, Wrocław, Lower Silesia, Poland
