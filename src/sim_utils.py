@@ -11,7 +11,7 @@ import network_diffusion as nd
 from bidict import bidict
 from tqdm import tqdm
 
-from nsl_data_utils.loaders.net_loader import load_network, load_net_names
+from tsds_utils.loaders.net_loader import load_network, load_net_names
 
 warnings.filterwarnings(action="ignore", category=FutureWarning)
 

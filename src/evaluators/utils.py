@@ -10,7 +10,7 @@ from typing import Any, Callable
 import numpy as np
 import pandas as pd
 
-from nsl_data_utils.loaders.constants import (
+from tsds_utils.loaders.constants import (
     EXPOSED, PEAK_INFECTED, PEAK_ITERATION, SIMULATION_LENGTH
 )
 

@@ -17,7 +17,7 @@ from src.sim_utils import Network
 
 @dataclass
 class SeedSet:
-    """Aux. class to store a seedset and its metadata."""
+    """Aux. class to store a seed set and its metadata."""
     method_name: str
     repetition_nb: int
     seeds: set[str]
