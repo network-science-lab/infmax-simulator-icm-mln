@@ -41,7 +41,7 @@ ground truth, but can be utilised to evaluate e.g. larger seed sets.
 │   ├── generators            -> generate SPs according to provided configs
 │   └── icm                   -> ICM adapted to multilayer networks
 ├── run_experiments.py        -> main entry point to trigger the pipeline
-└── test_reproducibility.py   -> E2E test to verify reproducibility of results
+└── test_reproducibility.py   -> E2E test of simulations reproducibility
 ```
 
 ## Runtime configuration
@@ -60,19 +60,35 @@ git submodule init && git submodule update
 pip install -e data/top_spreaders_dataset 
 ```
 
-III. The source files are stored with DVC. To them, follow the instructions in
-[README.md](data/top_spreaders_dataset/README.md).
-
-IV. Install the source code as an editable package:
+III. Install the source code as an editable package:
 
 ```bash
 pip install -e .
 ```
 
-V. Finally, install wrappers for the influence maximisation methods into the conda
+IV. Finally, (optionally) install wrappers for the influence maximisation methods into the conda
 environment. We recommend linking them in editable mode: after cloning a particular method,
 install it using `pip install -e ../path/to/infmax/method`. Wrappers for the competitive evaluated
 methods are available upon request.
+
+## Source Data Files
+
+The _TopSpreadersDataset_ is managed using DVC. To fetch it, follow the instructions in
+[README.md](data/top_spreaders_dataset/README.md). Additionally, most of results obtained with this 
+repository is also stored with DVC - below we describe how to fetch them.
+
+### Full Access
+
+To download the result files, you must authenticate with a Google account that has access to the
+shared Google Drive storage:
+https://drive.google.com/drive/u/1/folders/1pLWobDjds8SF5rh9_HlvSd9B3ja8QdqN. If you
+need access, please contact one of the contributors. Then, to fetch the data, run `dvc pull`.
+
+### Paper Version
+
+A public DVC configuration for the result files in a version used in the paper is available at:
+https://drive.google.com/file/d/14p4EDGq4acUOVnqenDyBSbtI9bPF7Jta. To use it, unpack the archive,
+and move its contents into the `.dvc` directory of this project. Then, execute: `dvc checkout`.
 
 ## Using the package
 
