@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "src"
-version = "3.5.0"
-description = "Inf. Max. Simulator for Multilayer Networks under ICM"
+version = "3.5.1"
+description = "Inf. Max. Simulator / Evaluator for Multilayer Nets. under ICM"
 requires-python = ">=3.12"
 authors = [
     {name = "Piotr Bielak", email="an.e@ma.il"},

@@ -1,10 +1,10 @@
-# Inf. Max. Simulator / Evaluator for Multilayer Networks under ICM 
+# Inf. Max. Simulator / Evaluator for Multilayer Networks under ICM
 
 A repository for (1) computing actor spreading potentials in multilayer networks, and (2) evaluating
 various methods for the super-spreader identification problem. This code was used in the preparation
 of the paper [Identifying Super Spreaders in Multilayer Networks](https://arxiv.org/abs/2505.20980).
 
-* Authors: Michał Czuba, Mateusz Stolarski, Adam Piróg, Piotr Bielak, Piotr Bródka
+* Authors: Michał Czuba, Mateusz Stolarski, Adam Piróg, Piotr Bielak, Piotr Bródka  
 * Affiliation: WUST, Wrocław, Lower Silesia, Poland
 
 ## Functionality
@@ -12,16 +12,16 @@ of the paper [Identifying Super Spreaders in Multilayer Networks](https://arxiv.
 The project has three main functions:
 
 1. Generate spreading potentials for actors of a given multilayer network according to the provided
-configuration. This moed was used to generate the
+configuration. This mode was used to generate the
 [TopSpreadersDataset](https://github.com/network-science-lab/top-spreaders-dataset).
 
-2. Evaluate given methods for super-spreaders identification according to the TopSpreadersDataset,
-which is use as a ground truth. Then with proper scripts from `scripts/analysis` one can compare
-the obtained results.  
+2. Evaluate given methods for super-spreader identification using the TopSpreadersDataset,
+which serves as ground truth. With the scripts in `scripts/analysis`, the obtained results
+can then be compared.
 
-3. Evaluate given methods for super-spreaders identification according to the Multilayer 
-Inddepenent Cascade Model. This mode was not used in experiments due to impossibility to use it as
-a ground truth, but can be utulised to evaluate e.g. seed sets.
+3. Evaluate given methods for super-spreader identification under the Multilayer 
+Independent Cascade Model. This mode was not used in experiments, as it cannot serve as 
+ground truth, but can be utilised to evaluate e.g. larger seed sets.
 
 ## Structure of the repository
 
@@ -30,7 +30,7 @@ a ground truth, but can be utulised to evaluate e.g. seed sets.
 ├── README.md 
 ├── data                      -> use DVC to fetch this folder
 │   ├── iou_curves            -> results of the evaluation
-│   ├── top_spreaders_dataset -> data set with aux. library providing loaders
+│   ├── top_spreaders_dataset -> dataset with aux. library providing loaders
 │   └── test                  -> data used in the E2E test
 ├── env                       -> definition of the runtime environment
 ├── scripts                   -> call these to process `data` with `src`
@@ -44,41 +44,41 @@ a ground truth, but can be utulised to evaluate e.g. seed sets.
 └── test_reproducibility.py   -> E2E test to verify reproducibility of results
 ```
 
-## Configuration of the runtime
+## Runtime configuration
 
-I First, initialise the environment:
+I. First, initialise the environment:
 
 ```bash
 conda env create -f env/conda.yaml
 conda activate infmax-simulator-icm-mln
 ```
 
-II Then, pull the submodule with data loaders and install its code:
+II. Then, pull the Git submodule with data loaders and install its code:
 
 ```bash
 git submodule init && git submodule update
 pip install -e data/top_spreaders_dataset 
 ```
 
-III Install the source code as an editable package:
+III. The source files are stored with DVC. To them, follow the instructions in
+[README.md](data/top_spreaders_dataset/README.md).
+
+IV. Install the source code as an editable package:
 
 ```bash
 pip install -e .
 ```
 
-IV The dataset is stored in a separate repository linked to this project as a Git submodule. To
-obtain it, follow the manual from the [README.md](data/top_spreaders_dataset/README.md).
-
-V The final step is to install wrappers for influence-maximisation methods into the conda
-environment. We recommend linking them in editable mode, so after cloning a particular method,
-simply install it with: `pip install -e ../path/to/infmax/method`. The wrappers for competitive
-approaches are available upon request.
+V. Finally, install wrappers for the influence maximisation methods into the conda
+environment. We recommend linking them in editable mode: after cloning a particular method,
+install it using `pip install -e ../path/to/infmax/method`. Wrappers for the competitive evaluated
+methods are available upon request.
 
 ## Using the package
 
 To run experiments, execute `run_experiments.py` and provide the appropriate CLI arguments, such as
-a path to the configuration file. See examples in `scripts/configs` for inspiration. The pipeline
-has three modes defined under the `run:experiment_type` field.
+a path to the configuration file. See examples in `scripts/configs` for reference. The pipeline
+has three modes, defined under the `run:experiment_type` field.
 
 ### MODE 1: Generating a dataset
 
@@ -98,11 +98,11 @@ Results are expected to be reproducible. A test is available: `test_reproducibil
 
 ### MODE 2: Evaluating seed selection methods with GT
 
-Another option for evaluating seed selection methods is to compare seed sets with ground truth from
-the dataset. To do so, first run `evaluate_gt` to obtain a complete ranking of actors sorted by their
-spreading potential score. These rankings can then be compared with each other (`scripts/analysis`).
+This mode compares seed sets with ground truth from the dataset. First, run `evaluate_gt` to obtain
+a complete ranking of actors sorted by their spreading potential score. These rankings can then be 
+compared using the scripts in `scripts/analysis`.
 
-Here is an order of execution for evaluation scripts:
+An order of execution for evaluation scripts:
 
 ```bash
 scripts
@@ -116,9 +116,9 @@ scripts
 
 ### MODE 3: Evaluating seed selection methods with ICM
 
-The second mode (`"evaluate"`) serves as an evaluation pipeline for various seed selection methods
-defined in the study. For each evaluated case, the seed will be obtained, and ICM spreading will be
-executed to produce the following CSV:
+The third mode (`evaluate`) serves as an evaluation pipeline for various seed selection methods
+defined in the study. For each evaluated case, a seed set is selected, and ICM is used to simulate
+spreading. The output CSV contains:
 
 ```python
 infmax_model: str       # name of the model used in the evaluation
